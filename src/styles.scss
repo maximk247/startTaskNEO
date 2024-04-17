@@ -1,0 +1,33 @@
+@use "@angular/material" as mat;
+
+@include mat.core;
+
+$start-task-primary: mat.define-palette(mat.$indigo-palette);
+$start-task-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+$start-task-warn: mat.define-palette(mat.$red-palette);
+$start-task-theme: mat.define-light-theme(
+	(
+		color: (
+			primary: $start-task-primary,
+			accent: $start-task-accent,
+			warn: $start-task-warn,
+		),
+	)
+);
+
+@include mat.all-component-themes($start-task-theme);
+
+html,
+body {
+	height: 100%;
+	overflow: hidden;
+}
+
+body {
+	margin: 0;
+	font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+main {
+	display: flex;
+}
