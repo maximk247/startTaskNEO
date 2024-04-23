@@ -1,0 +1,24 @@
+.controls {
+	position: absolute;
+	right: 1em;
+	bottom: calc(46.5px + 0.8em);
+	z-index: 5;
+	display: flex;
+	flex-direction: column-reverse;
+}
+
+.cursor-controls {
+	display: flex;
+	justify-content: flex-end;
+	margin-bottom: 0.8333rem;
+}
+
+::ng-deep .ol-mouse-position {
+	position: static;
+	font-size: 14px;
+	text-shadow:
+		-1.5px 0 rgb(255 255 255 / 75%),
+		0 1.5px rgb(255 255 255 / 75%),
+		1.5px 0 rgb(255 255 255 / 75%),
+		0 -1.5px rgb(255 255 255 / 75%);
+}

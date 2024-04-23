@@ -1,15 +1,51 @@
-.map-container {
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-}
-
 .side-nav-container {
 	position: absolute;
 	inset: 0;
+	box-sizing: border-box;
+	border-right: 0;
+
+	&__side-nav {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		height: 100%;
+		background-color: #01123d;
+		border-right: 0;
+	}
+
+	&__button {
+		width: 100%;
+		height: 45px;
+		color: white;
+		cursor: pointer;
+		background-color: #01123d;
+		border: none;
+		outline: none;
+	}
+
+	&__button:hover {
+		background-color: #0041ff;
+	}
+
+	&__button.active {
+		background-color: #0041ff;
+	}
 }
 
-.side-nav {
-	display: block;
-	width: 45px;
+.logo {
+	&__icon {
+		width: 100%;
+		height: 47px;
+		padding: 10px;
+		cursor: pointer;
+		background-color: #01123d;
+		border: none;
+		outline: none;
+
+		img {
+			width: 25px;
+			height: 27px;
+			object-fit: contain;
+		}
+	}
 }

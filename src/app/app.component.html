@@ -1,8 +1,47 @@
 <main>
 	<mat-sidenav-container class="side-nav-container">
-		<mat-sidenav class="side-nav" mode="side" opened></mat-sidenav>
-		<mat-sidenav-content
-			><div id="ol-map" class="map-container"></div
-		></mat-sidenav-content>
+		<mat-sidenav mode="side" opened> <!-- пока что положил все компоненты, относящиеся к этому блоку, в папку sidenav -->
+			<div class="side-nav-container__side-nav">
+				<button class="logo__icon">
+					<img src="app/assets/images/logo.png" alt="" />
+				</button>
+				<button
+					class="side-nav-container__button"
+					(click)="toggleWindow('menu')"
+					[ngClass]="getButtonClass('menu')"
+				>
+					<app-menu></app-menu>
+				</button>
+				<button
+					class="side-nav-container__button"
+					(click)="toggleWindow('measurement')"
+					[ngClass]="getButtonClass('measurement')"
+				>
+					<app-measurement></app-measurement>
+				</button>
+				<button
+					class="side-nav-container__button"
+					(click)="toggleWindow('coordinates')"
+					[ngClass]="getButtonClass('coordinates')"
+				>
+					<app-coordinates></app-coordinates>
+				</button>
+				<button
+					class="side-nav-container__button"
+					(click)="toggleWindow('draw')"
+					[ngClass]="getButtonClass('draw')"
+				>
+					<app-draw></app-draw>
+				</button>
+			</div>
+		</mat-sidenav>
+		<mat-sidenav-content>
+			<app-modal
+				[mode]="menuMode"
+				*ngIf="menuMode !== null && isWindowVisible"
+			>
+			</app-modal>
+			<app-map></app-map>
+		</mat-sidenav-content>
 	</mat-sidenav-container>
 </main>

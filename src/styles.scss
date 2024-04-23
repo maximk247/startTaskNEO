@@ -31,3 +31,15 @@ body {
 main {
 	display: flex;
 }
+
+*,
+::before,
+::after {
+	box-sizing: border-box;
+	background-repeat: no-repeat;
+}
+
+:root {
+	--ol-foreground-color: #000 !important;
+	--ol-subtle-foreground-color: #000 !important;
+}
