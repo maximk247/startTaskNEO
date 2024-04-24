@@ -2,7 +2,7 @@ import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 
 import { AppRoutingModule } from "./app-routing.module";
-import { DragDropModule } from "@angular/cdk/drag-drop";
+import { CdkDrag, DragDropModule } from "@angular/cdk/drag-drop";
 import { AppComponent } from "./app.component";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatSidenavModule } from "@angular/material/sidenav";
@@ -16,7 +16,7 @@ import { MenuComponent } from "./components/sidenav/menu/menu.component";
 import { MapComponent } from "./components/map/map.component";
 import { ScaleBarComponent } from "./components/map-widgets/scale-bar/scale-bar.component";
 import { SliderComponent } from "./components/map-widgets/slider/slider.component";
-import { ControlsComponent } from './components/map-widgets/controls/controls.component';
+import { ControlsComponent } from "./components/map-widgets/controls/controls.component";
 
 @NgModule({
 	declarations: [
@@ -28,7 +28,8 @@ import { ControlsComponent } from './components/map-widgets/controls/controls.co
 		MapComponent,
 		ScaleBarComponent,
 		SliderComponent,
-  ControlsComponent,
+		ControlsComponent,
+		ModalComponent,
 	],
 	imports: [
 		BrowserModule,
@@ -38,7 +39,7 @@ import { ControlsComponent } from './components/map-widgets/controls/controls.co
 		MatSidenavModule,
 		MatSliderModule,
 		MatMenuModule,
-		ModalComponent,
+		CdkDrag,
 	],
 	providers: [],
 	bootstrap: [AppComponent],
