@@ -1,32 +1,56 @@
-.modal {
+.modal-container {
 	position: absolute;
 	z-index: 3;
 	box-sizing: border-box;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 200px;
-	height: 200px;
-	padding: 10px;
-	margin-right: 25px;
-	color: rgb(0 0 0 / 87%);
+	display: flex;
+	flex-direction: column;
+	min-width: 164px;
 	text-align: center;
 	cursor: move;
 	background: #fff;
-	border: solid 1px #ccc;
-	border-radius: 4px;
 	box-shadow:
 		0 3px 1px -2px rgb(0 0 0 / 20%),
 		0 2px 2px 0 rgb(0 0 0 / 14%),
 		0 1px 5px 0 rgb(0 0 0 / 12%);
 	transition: box-shadow 200ms cubic-bezier(0, 0, 0.2, 1);
+
+	&__header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 1rem 1.333rem;
+		color: #fff;
+		background-color: #2c3242;
+	}
+
+	&__content {
+		padding: 1.25rem;
+	}
 }
 
-.modal:active {
+.modal-container:active {
 	box-shadow:
 		0 5px 5px -3px rgb(0 0 0 / 20%),
 		0 8px 10px 1px rgb(0 0 0 / 14%),
 		0 3px 14px 2px rgb(0 0 0 / 12%);
+}
+
+.header {
+	&__buttons {
+		display: flex;
+		gap: 0.8333rem;
+	}
+
+	&__buttons > button {
+		min-width: 1rem;
+		height: 1rem;
+		padding: 0;
+		line-height: 0;
+		cursor: pointer;
+		background-color: inherit;
+		border: none;
+		outline: none;
+	}
 }
 
 .box-boundary {

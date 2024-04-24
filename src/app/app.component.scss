@@ -49,3 +49,7 @@
 		}
 	}
 }
+
+::ng-deep .mat-drawer-side {
+	border: none !important;
+}
