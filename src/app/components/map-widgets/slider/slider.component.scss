@@ -1,4 +1,39 @@
 .slider-container {
+	position: relative;
 	display: flex;
+	align-items: center;
+	justify-content: center;
 	margin-left: 1.25rem;
+	background-color: #2c3242;
+
+	&__slider {
+		box-sizing: border-box;
+		display: inline-block;
+		width: auto;
+		min-width: 112px;
+		margin-right: 12px;
+		margin-left: 12px;
+		vertical-align: middle;
+		outline: none;
+	}
+
+	&__button-fixer {
+		left: 0;
+		z-index: 2;
+		height: 100%;
+
+		&--reverse {
+			right: 0;
+
+			svg {
+				transform: rotate(180deg);
+			}
+		}
+	}
+
+	&__button-fixer > button {
+		background-color: inherit;
+		border: none;
+		outline: none;
+	}
 }
