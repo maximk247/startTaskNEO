@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import Map from "ol/Map";
 import View from "ol/View";
 import ScaleLine from "ol/control/ScaleLine";
-import { toStringHDMS } from "ol/coordinate";
+import { Coordinate, toStringHDMS } from "ol/coordinate";
 import MousePosition from "ol/control/MousePosition";
 import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
@@ -16,11 +16,7 @@ export class MapService {
 
 	mousePositionControl: MousePosition;
 
-	initMap(
-		target: string,
-		scaleBarElement: HTMLElement,
-		mousePositionElement: HTMLElement,
-	) {
+	initMap(target: string) {
 		this.map = new Map({
 			target: target,
 
@@ -36,19 +32,17 @@ export class MapService {
 
 			controls: [
 				new ScaleLine({
-					target: scaleBarElement,
+					target: "controls",
 					bar: true,
 					steps: 4,
 					text: true,
 					minWidth: 140,
-					className: "ol-scale-bar ",
 				}),
 				new MousePosition({
-					coordinateFormat: (coordinate: any): string => {
-						return toStringHDMS(coordinate);
+					coordinateFormat: (coordinate?: Coordinate): string => {
+						return toStringHDMS(coordinate as Coordinate);
 					},
-					className: "ol-mouse-position",
-					target: mousePositionElement,
+					target: "controls",
 				}),
 			],
 		});

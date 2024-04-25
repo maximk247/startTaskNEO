@@ -12,16 +12,9 @@ export class MapComponent implements AfterViewInit {
 	coordinates: Coordinate;
 	formattedCoordinates: string;
 
-	constructor(
-		private mapService: MapService,
-		private elementRef: ElementRef,
-	) {}
+	constructor(private mapService: MapService) {}
 
 	ngAfterViewInit() {
-		const scaleBarElement =
-			this.elementRef.nativeElement.querySelector(".scale-bar");
-		const mousePositionElement =
-			this.elementRef.nativeElement.querySelector(".cursor-controls");
-		this.mapService.initMap("map", scaleBarElement, mousePositionElement);
+		this.mapService.initMap("map");
 	}
 }

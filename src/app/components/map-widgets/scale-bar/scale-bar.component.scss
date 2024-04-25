@@ -1,18 +1,11 @@
-.scale-bar-container {
-	display: flex;
-	flex-flow: row-reverse nowrap;
-	gap: 0.8333rem;
-}
-
-.scale-bar {
+::ng-deep .ol-scale-bar {
+	position: relative;
+	top: 5px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 }
 
-::ng-deep .ol-scale-bar {
-	position: relative;
-	bottom: 0;
-	left: 0;
-	display: flex;
+::ng-deep .ol-scale-text {
+	font-size: 14px;
 }
