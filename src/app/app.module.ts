@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { APP_INITIALIZER, NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 
 import { AppRoutingModule } from "./app-routing.module";
@@ -17,7 +17,23 @@ import { MapComponent } from "./components/map/map.component";
 import { ScaleBarComponent } from "./components/map-widgets/scale-bar/scale-bar.component";
 import { SliderComponent } from "./components/map-widgets/slider/slider.component";
 import { ControlsComponent } from "./components/map-widgets/controls/controls.component";
+import { KeycloakAngularModule, KeycloakService } from "keycloak-angular";
 
+function initializeKeycloak(keycloak: KeycloakService) {
+	return () =>
+		keycloak.init({
+			config: {
+				url: "https://gs-keycloak.neostk.com",
+				realm: "geo-solution",
+				clientId: "neoportal",
+			},
+			initOptions: {
+				onLoad: "check-sso",
+				silentCheckSsoRedirectUri:
+					window.location.origin + "/assets/silent-check-sso.html",
+			},
+		});
+}
 @NgModule({
 	declarations: [
 		AppComponent,
@@ -40,8 +56,16 @@ import { ControlsComponent } from "./components/map-widgets/controls/controls.co
 		MatSliderModule,
 		MatMenuModule,
 		CdkDrag,
+		KeycloakAngularModule,
 	],
-	providers: [],
+	providers: [
+		{
+			provide: APP_INITIALIZER,
+			useFactory: initializeKeycloak,
+			multi: true,
+			deps: [KeycloakService],
+		},
+	],
 	bootstrap: [AppComponent],
 })
 export class AppModule {}

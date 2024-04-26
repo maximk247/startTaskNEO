@@ -38,6 +38,8 @@
 		"@angular/platform-browser": "^16.1.0",
 		"@angular/platform-browser-dynamic": "^16.1.0",
 		"@angular/router": "^16.1.0",
+		"keycloak-angular": "^15.2.1",
+		"keycloak-js": "^24.0.3",
 		"ol": "^8.2.0",
 		"postcss-safe-parser": "^7.0.0",
 		"rxjs": "~7.8.0",
