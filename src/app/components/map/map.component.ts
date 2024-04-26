@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef } from "@angular/core";
+import { AfterViewInit, Component } from "@angular/core";
 import { Coordinate } from "ol/coordinate";
 
 import { MapService } from "./map.service";
