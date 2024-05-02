@@ -1,5 +1,4 @@
 @use "@angular/material" as mat;
-
 @include mat.core;
 
 $start-task-primary: mat.define-palette(mat.$indigo-palette);
@@ -16,7 +15,6 @@ $start-task-theme: mat.define-light-theme(
 );
 
 @include mat.all-component-themes($start-task-theme);
-
 
 html,
 body {
@@ -43,4 +41,26 @@ main {
 :root {
 	--ol-foreground-color: #000 !important;
 	--ol-subtle-foreground-color: #000 !important;
+	--primary-100: #fff;
+	--primary-200: #8c96b4;
+	--primary-300: #626f97;
+	--primary-400: #425384;
+	--primary-500: #203872;
+	--primary-600: #1a326a;
+	--primary-700: #2c3242;
+	--primary-800: #233250;
+	--primary-900: #01123d;
+	--primary-a100: #0041ff;
+	--primary-a200: #2770f7;
+	--accent-100: #fff;
+	--accent-200: #e5e6eb;
+	--accent-300: #c9c9c9;
+	--accent-400: #9b9b9b;
+	--accent-500: #8c8f97;
+	--accent-600: #d8d8d8;
+	--accent-700: #b4b4b4;
+	--accent-800: #949494;
+	--accent-900: rgb(0 0 0);
+	--text-shadow: -1.5px 0 rgb(255 255 255 / 75%), 0 1.5px rgb(255 255 255 / 75%),
+		1.5px 0 rgb(255 255 255 / 75%), 0 -1.5px rgb(255 255 255 / 75%);
 }

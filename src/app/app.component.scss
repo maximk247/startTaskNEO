@@ -9,26 +9,26 @@
 		flex-direction: column;
 		align-items: flex-start;
 		height: 100%;
-		background-color: #01123d;
+		background-color: var(--primary-900);
 		border-right: 0;
 	}
 
 	&__button {
 		width: 100%;
 		height: 45px;
-		color: white;
+		color: var(--primary-100);
 		cursor: pointer;
-		background-color: #01123d;
+		background-color: var(--primary-900);
 		border: none;
 		outline: none;
 	}
 
 	&__button:hover {
-		background-color: #0041ff;
+		background-color: var(--primary-a100);
 	}
 
 	&__button.active {
-		background-color: #0041ff;
+		background-color: var(--primary-a100);
 	}
 }
 
@@ -38,7 +38,7 @@
 		height: 47px;
 		padding: 10px;
 		cursor: pointer;
-		background-color: #01123d;
+		background-color: var(--primary-900);
 		border: none;
 		outline: none;
 

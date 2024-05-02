@@ -1,15 +1,8 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Output } from "@angular/core";
 import VectorLayer from "ol/layer/Vector";
 import Map from "ol/Map";
 import VectorSource from "ol/source/Vector";
 import { MapService } from "../../map/map.service";
-import {
-	Circle as CircleStyle,
-	Fill,
-	RegularShape,
-	Stroke,
-	Style,
-} from "ol/style";
 import Feature from "ol/Feature";
 import { DrawService } from "./draw.service";
 
@@ -20,7 +13,7 @@ import { DrawService } from "./draw.service";
 })
 export class DrawComponent implements OnInit {
 	map: Map;
-	pointStyle = "Circle";
+	@Output() pointStyle = "Cross";
 	vectorLayer: VectorLayer<VectorSource>;
 	source: VectorSource;
 	drawnFeatures: Array<Feature> = [];
@@ -35,40 +28,59 @@ export class DrawComponent implements OnInit {
 		const vectorLayer = this.drawService.initalizeLayer(this.source);
 		this.map.addLayer(vectorLayer);
 	}
-	setPointStyle(style: string) {
-		this.pointStyle = style;
-	}
-	drawPoint() {
-		const draw = this.drawService.initializePoint(this.map);
 
+	componentVisibility: { [key: string]: boolean } = {
+		drawPoint: false,
+		drawLine: false,
+		drawFreeLine: false,
+		drawPolygon: false,
+		drawFreePolygon: false,
+		drawCircle: false,
+	};
+	resetComponentVisibility() {
+		for (const key in this.componentVisibility) {
+			this.componentVisibility[key] = false;
+		}
+	}
+
+	drawPoint() {
+		this.resetComponentVisibility();
+		this.componentVisibility = {
+			...this.componentVisibility,
+			drawPoint: true,
+		};
+		const draw = this.drawService.initializePoint(this.map);
 		draw.on("drawend", (event) => {
 			this.drawnFeatures.push(event.feature);
 			event.feature.setStyle(this.drawService.getPointStyle(this.pointStyle));
 		});
 	}
 
+	drawCircle() {
+		const drawCicle = this.drawService.initializeCircle(this.map);
+		this.map.addInteraction(drawCicle);
+	}
+
 	drawLine() {
-		const draw = this.drawService.initializeLineString(this.map);
-		this.map.addInteraction(draw);
+		const drawLineString = this.drawService.initializeLineString(this.map);
+		this.map.addInteraction(drawLineString);
 	}
 
 	drawPolygon() {
-		const draw = this.drawService.initializePolygon(this.map);
-		this.map.addInteraction(draw);
+		const drawPolygon = this.drawService.initializePolygon(this.map);
+		this.map.addInteraction(drawPolygon);
 	}
 
 	drawFreeLine() {
-		const draw = this.drawService.initalizeFreeLineString(this.map);
-		this.map.addInteraction(draw);
+		const drawFreeLine = this.drawService.initalizeFreeLineString(this.map);
+		this.map.addInteraction(drawFreeLine);
 	}
 
 	drawFreePolygon() {
-		const draw = this.drawService.initalizeFreePolygon(this.map);
-		this.map.addInteraction(draw);
+		const drawFreePolygon = this.drawService.initalizeFreePolygon(this.map);
+		this.map.addInteraction(drawFreePolygon);
 	}
-
-	drawCircle() {
-		const draw = this.drawService.initializeCircle(this.map);
-		this.map.addInteraction(draw);
+	updatePointStyle(style: string) {
+		this.pointStyle = style;
 	}
 }

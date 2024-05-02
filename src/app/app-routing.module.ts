@@ -3,11 +3,11 @@ import { RouterModule, Routes } from "@angular/router";
 import { AuthGuard } from "./guards/auth.guard";
 
 const routes: Routes = [
-	// {
-	// 	path: "",
-	// 	children: [],
-	// 	canActivate: [AuthGuard],
-	// },
+	{
+		path: "",
+		children: [],
+		canActivate: [AuthGuard],
+	},
 ];
 
 @NgModule({

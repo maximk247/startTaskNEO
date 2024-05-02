@@ -18,9 +18,5 @@
 ::ng-deep .ol-mouse-position {
 	top: -1.5rem;
 	font-size: 14px;
-	text-shadow:
-		-1.5px 0 rgb(255 255 255 / 75%),
-		0 1.5px rgb(255 255 255 / 75%),
-		1.5px 0 rgb(255 255 255 / 75%),
-		0 -1.5px rgb(255 255 255 / 75%);
+	text-shadow: var(--text-shadow);
 }

@@ -42,7 +42,7 @@ export class DrawService {
 		return draw;
 	}
 
-  initializeCircle(map: Map) {
+	initializeCircle(map: Map) {
 		const source = new VectorSource();
 		const vector = this.initalizeLayer(source);
 		const draw = this.initializeDraw(map, vector, source, "Circle");

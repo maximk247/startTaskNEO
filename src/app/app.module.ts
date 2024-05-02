@@ -18,6 +18,9 @@ import { ScaleBarComponent } from "./components/map-widgets/scale-bar/scale-bar.
 import { SliderComponent } from "./components/map-widgets/slider/slider.component";
 import { ControlsComponent } from "./components/map-widgets/controls/controls.component";
 import { KeycloakAngularModule, KeycloakService } from "keycloak-angular";
+import { DrawPointComponent } from "./components/draw-point/draw-point.component";
+import { HttpClientModule } from "@angular/common/http";
+import { InlineSVGModule } from "ng-inline-svg-2";
 
 function initializeKeycloak(keycloak: KeycloakService) {
 	return () =>
@@ -46,6 +49,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
 		SliderComponent,
 		ControlsComponent,
 		ModalComponent,
+		DrawPointComponent,
 	],
 	imports: [
 		BrowserModule,
@@ -57,6 +61,10 @@ function initializeKeycloak(keycloak: KeycloakService) {
 		MatMenuModule,
 		CdkDrag,
 		KeycloakAngularModule,
+		HttpClientModule,
+		InlineSVGModule.forRoot({
+			baseUrl: "../../../assets/images/",
+		}),
 	],
 	providers: [
 		// {

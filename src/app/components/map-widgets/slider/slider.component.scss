@@ -3,7 +3,7 @@
 	align-items: center;
 	justify-content: center;
 	margin-left: 1.25rem;
-	background-color: #2c3242;
+	background-color: var(--primary-700);
 
 	&__slider {
 		box-sizing: border-box;
@@ -17,20 +17,22 @@
 	}
 
 	&__button-fixer {
-		left: 0;
 		z-index: 2;
-		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 
 		&--reverse {
-			right: 0;
-
-			svg {
+			div {
 				transform: rotate(180deg);
 			}
 		}
 	}
 
 	&__button-fixer > button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		background-color: inherit;
 		border: none;
 		outline: none;
