@@ -8,13 +8,9 @@ import { DrawService } from "../draw.service";
 })
 export class DrawPointComponent {
 	@Input() pointStyle: string;
-	@Input() pointColor: string;
 	@Input() pointSize: number;
 	@Output() pointStyleChange: EventEmitter<string> = new EventEmitter<string>();
 	@Output() pointSizeChange: EventEmitter<number> = new EventEmitter<number>();
-	@Output() pointColorChange: EventEmitter<string> = new EventEmitter<string>();
-
-	constructor(private drawService: DrawService) {}
 
 	setPointStyle(style: string) {
 		this.pointStyle = style;
@@ -23,10 +19,5 @@ export class DrawPointComponent {
 
 	updatePointSize() {
 		this.pointSizeChange.emit(this.pointSize);
-	}
-
-	updatePointColor(color: string) {
-		this.pointColor = color;
-		this.drawService.setColor(color);
 	}
 }

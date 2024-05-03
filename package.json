@@ -38,6 +38,7 @@
 		"@angular/platform-browser": "^16.1.0",
 		"@angular/platform-browser-dynamic": "^16.1.0",
 		"@angular/router": "^16.1.0",
+		"@ngneat/dialog": "^5.0.0",
 		"keycloak-angular": "^15.2.1",
 		"keycloak-js": "^24.0.3",
 		"ng-inline-svg-2": "^15.0.1",

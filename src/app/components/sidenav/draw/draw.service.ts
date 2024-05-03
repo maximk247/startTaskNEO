@@ -24,7 +24,6 @@ export class DrawService {
 
 	setColor(color: string) {
 		this.color = color;
-		console.log(this.color);
 	}
 
 	getColor(): string {

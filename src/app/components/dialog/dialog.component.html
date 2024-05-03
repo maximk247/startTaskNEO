@@ -1,1 +1,5 @@
-<p>dialog works!</p>
+<h2 mat-dialog-title>Выберите цвет</h2>
+<input [(colorPicker)]="color" [style.background]="color" />
+
+<button mat-button (click)="onClose('accept')">Принять</button>
+<button mat-button (click)="onClose('reject')">Отменить</button>

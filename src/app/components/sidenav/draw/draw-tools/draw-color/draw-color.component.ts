@@ -1,5 +1,7 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { DrawService } from "../../draw.service";
+import { Component, Input } from "@angular/core";
+
+import { MatDialog } from "@angular/material/dialog";
+import { DialogComponent } from "src/app/components/dialog/dialog.component";
 
 @Component({
 	selector: "app-draw-color",
@@ -8,11 +10,11 @@ import { DrawService } from "../../draw.service";
 })
 export class DrawColorComponent {
 	@Input() color: string;
-	@Output() colorChange: EventEmitter<string> = new EventEmitter<string>();
-	constructor(private drawService: DrawService) {}
-	onColorChange(color: string) {
-		this.color = color;
-		this.drawService.setColor(this.color);
-		this.colorChange.emit(this.color);
+	constructor(private dialog: MatDialog) {}
+
+	openColorDialog(): void {
+		this.dialog.open(DialogComponent, {
+			disableClose: true,
+		});
 	}
 }
