@@ -10,9 +10,10 @@
 		<app-draw-point
 			*ngIf="componentVisibility['drawPoint']"
 			[pointStyle]="pointStyle"
-            [pointSize]="pointSize"
+			[pointSize]="pointSize"
 			(pointStyleChange)="updatePointStyle($event)"
-            (pointSizeChange)="updatePointSize($event)"
+			(pointSizeChange)="updateSize($event)"
+			(pointColorChange)="updateColor($event)"
 		></app-draw-point>
 	</div>
 </div>

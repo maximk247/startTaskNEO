@@ -22,7 +22,10 @@ import { DrawPointComponent } from "./components/sidenav/draw/draw-point/draw-po
 import { HttpClientModule } from "@angular/common/http";
 import { InlineSVGModule } from "ng-inline-svg-2";
 import { FormsModule } from "@angular/forms";
-import { DrawSizeComponent } from './components/sidenav/draw/draw-tools/draw-size/draw-size.component';
+import { DrawSizeComponent } from "./components/sidenav/draw/draw-tools/draw-size/draw-size.component";
+import { ColorPickerModule } from "ngx-color-picker";
+import { DrawColorComponent } from "./components/sidenav/draw/draw-tools/draw-color/draw-color.component";
+import { DialogComponent } from './components/dialog/dialog.component';
 
 function initializeKeycloak(keycloak: KeycloakService) {
 	return () =>
@@ -52,7 +55,9 @@ function initializeKeycloak(keycloak: KeycloakService) {
 		ControlsComponent,
 		ModalComponent,
 		DrawPointComponent,
-  DrawSizeComponent,
+		DrawSizeComponent,
+		DrawColorComponent,
+  DialogComponent,
 	],
 	imports: [
 		BrowserModule,
@@ -64,6 +69,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
 		MatMenuModule,
 		CdkDrag,
 		KeycloakAngularModule,
+		ColorPickerModule,
 		FormsModule,
 		HttpClientModule,
 		InlineSVGModule.forRoot({

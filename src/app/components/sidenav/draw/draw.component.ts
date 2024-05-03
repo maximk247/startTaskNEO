@@ -15,6 +15,7 @@ export class DrawComponent implements OnInit {
 	map: Map;
 	@Output() pointStyle = "Cross";
 	pointSize = 10;
+	color: string;
 	vectorLayer: VectorLayer<VectorSource>;
 	source: VectorSource;
 	drawnFeatures: Array<Feature> = [];
@@ -28,6 +29,7 @@ export class DrawComponent implements OnInit {
 		this.map = this.mapService.getMap();
 		const vectorLayer = this.drawService.initalizeLayer(this.source);
 		this.map.addLayer(vectorLayer);
+		this.drawService.setColor(this.color);
 	}
 
 	componentVisibility: { [key: string]: boolean } = {
@@ -84,8 +86,13 @@ export class DrawComponent implements OnInit {
 	updatePointStyle(style: string) {
 		this.pointStyle = style;
 	}
-	updatePointSize(size: number) {
+	updateSize(size: number) {
 		this.pointSize = size;
-		this.drawService.setPointSize(size);
+		this.drawService.setSize(size);
+	}
+	updateColor(color: string) {
+		this.color = color;
+		console.log(this.color);
+		this.drawService.setColor(color);
 	}
 }

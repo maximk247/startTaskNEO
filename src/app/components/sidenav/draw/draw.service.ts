@@ -12,13 +12,23 @@ import CircleStyle from "ol/style/Circle";
 })
 export class DrawService {
 	private pointSize = 10;
+	private color: string;
 
-	setPointSize(size: number) {
+	setSize(size: number) {
 		this.pointSize = size;
 	}
 
-	getPointSize(): number {
+	getSize(): number {
 		return this.pointSize;
+	}
+
+	setColor(color: string) {
+		this.color = color;
+		console.log(this.color);
+	}
+
+	getColor(): string {
+		return this.color;
 	}
 	initializeDraw(
 		map: Map,
@@ -85,13 +95,14 @@ export class DrawService {
 		return draw;
 	}
 	getPointStyle(pointStyle: string) {
-		const size = this.getPointSize();
+		const size = this.getSize();
+		const color= this.getColor()
 		switch (pointStyle) {
 			case "Cross":
 				return new Style({
 					image: new RegularShape({
 						stroke: new Stroke({
-							color: "red",
+							color: color,
 							width: 2,
 						}),
 						points: 4,
@@ -104,10 +115,10 @@ export class DrawService {
 				return new Style({
 					image: new RegularShape({
 						fill: new Fill({
-							color: "yellow",
+							color: color,
 						}),
 						stroke: new Stroke({
-							color: "black",
+							color: color,
 							width: 2,
 						}),
 						points: 4,
@@ -120,7 +131,7 @@ export class DrawService {
 				return new Style({
 					image: new RegularShape({
 						stroke: new Stroke({
-							color: "red",
+							color: color,
 							width: 2,
 						}),
 						points: 4,
@@ -133,10 +144,10 @@ export class DrawService {
 				return new Style({
 					image: new RegularShape({
 						fill: new Fill({
-							color: "blue",
+							color: color,
 						}),
 						stroke: new Stroke({
-							color: "black",
+							color: color,
 							width: 2,
 						}),
 						points: 4,
@@ -150,10 +161,10 @@ export class DrawService {
 					image: new CircleStyle({
 						radius: size,
 						fill: new Fill({
-							color: "green",
+							color: color,
 						}),
 						stroke: new Stroke({
-							color: "black",
+							color: color,
 							width: 2,
 						}),
 					}),
