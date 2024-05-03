@@ -11,6 +11,15 @@ import CircleStyle from "ol/style/Circle";
 	providedIn: "root",
 })
 export class DrawService {
+	private pointSize = 10;
+
+	setPointSize(size: number) {
+		this.pointSize = size;
+	}
+
+	getPointSize(): number {
+		return this.pointSize;
+	}
 	initializeDraw(
 		map: Map,
 		vector: VectorLayer<VectorSource>,
@@ -76,6 +85,7 @@ export class DrawService {
 		return draw;
 	}
 	getPointStyle(pointStyle: string) {
+		const size = this.getPointSize();
 		switch (pointStyle) {
 			case "Cross":
 				return new Style({
@@ -85,7 +95,7 @@ export class DrawService {
 							width: 2,
 						}),
 						points: 4,
-						radius: 10,
+						radius: size,
 						radius2: 0,
 						angle: 0,
 					}),
@@ -101,8 +111,8 @@ export class DrawService {
 							width: 2,
 						}),
 						points: 4,
-						radius: 10,
-						radius2: 10 * Math.sqrt(2),
+						radius: size,
+						radius2: size * Math.sqrt(2),
 						angle: Math.PI / 4,
 					}),
 				});
@@ -114,7 +124,7 @@ export class DrawService {
 							width: 2,
 						}),
 						points: 4,
-						radius: 10,
+						radius: size,
 						radius2: 0,
 						angle: Math.PI / 4,
 					}),
@@ -130,7 +140,7 @@ export class DrawService {
 							width: 2,
 						}),
 						points: 4,
-						radius: 10,
+						radius: size,
 						angle: Math.PI / 4,
 					}),
 				});
@@ -138,7 +148,7 @@ export class DrawService {
 			default:
 				return new Style({
 					image: new CircleStyle({
-						radius: 10,
+						radius: size,
 						fill: new Fill({
 							color: "green",
 						}),

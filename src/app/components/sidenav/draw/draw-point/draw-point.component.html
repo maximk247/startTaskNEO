@@ -36,3 +36,9 @@
 		Cancel
 	</button>
 </div>
+
+<app-draw-size
+	[name]="'Размер'"
+	[(size)]="pointSize"
+	(sizeChange)="updatePointSize()"
+></app-draw-size>

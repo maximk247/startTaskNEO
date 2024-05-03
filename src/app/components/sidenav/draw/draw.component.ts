@@ -14,6 +14,7 @@ import { DrawService } from "./draw.service";
 export class DrawComponent implements OnInit {
 	map: Map;
 	@Output() pointStyle = "Cross";
+	pointSize = 10;
 	vectorLayer: VectorLayer<VectorSource>;
 	source: VectorSource;
 	drawnFeatures: Array<Feature> = [];
@@ -82,5 +83,9 @@ export class DrawComponent implements OnInit {
 	}
 	updatePointStyle(style: string) {
 		this.pointStyle = style;
+	}
+	updatePointSize(size: number) {
+		this.pointSize = size;
+		this.drawService.setPointSize(size);
 	}
 }

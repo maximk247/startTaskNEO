@@ -1,16 +1,18 @@
 <div class="tools">
 	<button (click)="drawPoint()" type="submit">Draw Point</button>
-	<div class="form">
-		<app-draw-point
-			*ngIf="componentVisibility['drawPoint']"
-			[pointStyle]="pointStyle"
-			(pointStyleChange)="updatePointStyle($event)"
-		></app-draw-point>
-	</div>
 
 	<button (click)="drawLine()" type="submit">Draw Line</button>
 	<button (click)="drawPolygon()" type="submit">Draw Polygon</button>
 	<button (click)="drawFreeLine()" type="submit">Draw Free Line</button>
 	<button (click)="drawFreePolygon()" type="submit">Draw Free Polygon</button>
 	<button (click)="drawCircle()" type="submit">Draw Circle</button>
+	<div class="form">
+		<app-draw-point
+			*ngIf="componentVisibility['drawPoint']"
+			[pointStyle]="pointStyle"
+            [pointSize]="pointSize"
+			(pointStyleChange)="updatePointStyle($event)"
+            (pointSizeChange)="updatePointSize($event)"
+		></app-draw-point>
+	</div>
 </div>
