@@ -1,0 +1,11 @@
+::ng-deep .ol-scale-bar {
+	position: relative;
+	top: 5px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+::ng-deep .ol-scale-text {
+	font-size: 14px;
+}

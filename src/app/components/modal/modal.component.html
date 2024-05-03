@@ -1,0 +1,29 @@
+<div class="box-boundary">
+	<div class="modal-container" cdkDragBoundary=".box-boundary" cdkDrag>
+		<header class="modal-container__header">
+			<div class="header__title" [ngSwitch]="mode">
+				<span *ngSwitchCase="'menu'">User Name</span>
+				<span *ngSwitchCase="'measurement'">Измерение</span>
+				<span *ngSwitchCase="'coordinates'">Переход по координатам</span>
+				<span *ngSwitchCase="'draw'">Рисование</span>
+			</div>
+			<div class="header__buttons" *ngIf="mode !== 'menu'; else profileIcon">
+				<button type="button">
+					<div [inlineSVG]="'turn.svg'"></div>
+				</button>
+				<button type="button">
+					<div [inlineSVG]="'cancel.svg'"></div>
+				</button>
+			</div>
+			<ng-template #profileIcon>
+				<div [inlineSVG]="'profile.svg'"></div>
+			</ng-template>
+		</header>
+		<div class="modal-container__content" [ngSwitch]="mode">
+			<app-draw *ngSwitchCase="'draw'"></app-draw>
+			<app-menu *ngSwitchCase="'menu'" class="menu"></app-menu>
+			<app-measurement *ngSwitchCase="'measurement'"></app-measurement>
+			<app-coordinates *ngSwitchCase="'coordinates'"></app-coordinates>
+		</div>
+	</div>
+</div>

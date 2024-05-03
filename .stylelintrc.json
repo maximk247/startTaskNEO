@@ -6,6 +6,10 @@
 	],
 	"rules": {
 		"selector-type-no-unknown": null,
-		"no-empty-source": null
+		"no-empty-source": null,
+		"selector-pseudo-element-no-unknown": [
+			true,
+			{ "ignorePseudoElements": ["ng-deep"] }
+		]
 	}
 }

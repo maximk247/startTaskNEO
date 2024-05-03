@@ -26,6 +26,12 @@
 						"prefix": "app",
 						"style": "kebab-case"
 					}
+				],
+				"@typescript-eslint/array-type": [
+					"error",
+					{
+						"default": "generic"
+					}
 				]
 			}
 		},
@@ -36,10 +42,10 @@
 				"plugin:@angular-eslint/template/accessibility"
 			],
 			"rules": {
-				"@typescript-eslint/array-type": [
+				"@angular-eslint/template/elements-content": [
 					"error",
 					{
-						"default": "generic"
+						"allowList": ["appTooltipLabel", "ariaLabel"]
 					}
 				]
 			}

@@ -1,0 +1,22 @@
+.controls-container {
+	position: absolute;
+	right: 1rem;
+	bottom: calc(46.5px + 0.8em);
+	z-index: 5;
+	display: flex;
+	flex-direction: row-reverse;
+	align-items: center;
+	justify-content: center;
+
+	&__view-controls {
+		display: flex;
+		flex-flow: row-reverse nowrap;
+		gap: 0.833rem;
+	}
+}
+
+::ng-deep .ol-mouse-position {
+	top: -1.5rem;
+	font-size: 14px;
+	text-shadow: var(--text-shadow);
+}
