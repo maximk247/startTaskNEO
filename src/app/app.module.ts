@@ -27,6 +27,10 @@ import { ColorPickerModule } from "ngx-color-picker";
 import { DrawColorComponent } from "./components/sidenav/draw/draw-tools/draw-color/draw-color.component";
 import { DialogComponent } from "./components/dialog/dialog.component";
 import { MatDialogModule } from "@angular/material/dialog";
+import { TransparencyComponent } from "./components/sidenav/draw/draw-tools/draw-transparency/draw-transparency.component";
+import { CoordinateInputComponent } from "./components/coordinate-input/coordinate-input.component";
+import { SpatialReferenceService } from "./components/spatial-reference.service";
+import { DrawLineComponent } from "./components/sidenav/draw/draw-line/draw-line.component";
 
 function initializeKeycloak(keycloak: KeycloakService) {
 	return () =>
@@ -59,6 +63,9 @@ function initializeKeycloak(keycloak: KeycloakService) {
 		DrawSizeComponent,
 		DrawColorComponent,
 		DialogComponent,
+		TransparencyComponent,
+		CoordinateInputComponent,
+		DrawLineComponent,
 	],
 	imports: [
 		BrowserModule,
@@ -73,6 +80,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
 		ColorPickerModule,
 		MatDialogModule,
 		FormsModule,
+
 		HttpClientModule,
 		InlineSVGModule.forRoot({
 			baseUrl: "../../../assets/images/",
@@ -85,6 +93,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
 		// 	multi: true,
 		// 	deps: [KeycloakService],
 		// },
+		SpatialReferenceService,
 	],
 	bootstrap: [AppComponent],
 })

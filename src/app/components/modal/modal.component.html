@@ -1,6 +1,6 @@
 <div class="box-boundary">
 	<div class="modal-container" cdkDragBoundary=".box-boundary" cdkDrag>
-		<header class="modal-container__header">
+		<header class="modal-container__header" cdkDragHandle>
 			<div class="header__title" [ngSwitch]="mode">
 				<span *ngSwitchCase="'menu'">User Name</span>
 				<span *ngSwitchCase="'measurement'">Измерение</span>

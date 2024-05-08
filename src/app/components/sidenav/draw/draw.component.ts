@@ -1,4 +1,4 @@
-import { Component, OnInit, Output } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import VectorLayer from "ol/layer/Vector";
 import Map from "ol/Map";
 import VectorSource from "ol/source/Vector";
@@ -12,9 +12,19 @@ import { DrawService } from "./draw.service";
 	styleUrls: ["./draw.component.scss"],
 })
 export class DrawComponent implements OnInit {
-	map: Map;
-	pointStyle = "Cross";
+	private map: Map;
+	tools = [
+		"drawPoint",
+		"drawLine",
+		"drawFreeLine",
+		"drawPolygon",
+		"drawFreePolygon",
+		"drawCircle",
+	];
 	pointSize = 10;
+	pointColor = "rgba(255,0,0,1)";
+	lineSize = 2;
+	lineColor = "rgba(255,0,0,1)";
 
 	vectorLayer: VectorLayer<VectorSource>;
 	source: VectorSource;
@@ -52,20 +62,22 @@ export class DrawComponent implements OnInit {
 			drawPoint: true,
 		};
 		const draw = this.drawService.initializePoint(this.map);
-		draw.on("drawend", (event) => {
-			this.drawnFeatures.push(event.feature);
-			event.feature.setStyle(this.drawService.getPointStyle(this.pointStyle));
-		});
+		this.map.addInteraction(draw);
 	}
 
 	drawCircle() {
-		const drawCicle = this.drawService.initializeCircle(this.map);
-		this.map.addInteraction(drawCicle);
+		const drawCircle = this.drawService.initializeCircle(this.map);
+		this.map.addInteraction(drawCircle);
 	}
 
 	drawLine() {
-		const drawLineString = this.drawService.initializeLineString(this.map);
-		this.map.addInteraction(drawLineString);
+		this.resetComponentVisibility();
+		this.componentVisibility = {
+			...this.componentVisibility,
+			drawLine: true,
+		};
+		const drawLine = this.drawService.initializeLine(this.map);
+		this.map.addInteraction(drawLine);
 	}
 
 	drawPolygon() {
@@ -74,7 +86,7 @@ export class DrawComponent implements OnInit {
 	}
 
 	drawFreeLine() {
-		const drawFreeLine = this.drawService.initalizeFreeLineString(this.map);
+		const drawFreeLine = this.drawService.initalizeFreeLine(this.map);
 		this.map.addInteraction(drawFreeLine);
 	}
 
@@ -82,11 +94,11 @@ export class DrawComponent implements OnInit {
 		const drawFreePolygon = this.drawService.initalizeFreePolygon(this.map);
 		this.map.addInteraction(drawFreePolygon);
 	}
-	updatePointStyle(style: string) {
-		this.pointStyle = style;
+
+	updatePointSize(size: number) {
+		this.drawService.setPointSize(size);
 	}
-	updateSize(size: number) {
-		this.pointSize = size;
-		this.drawService.setSize(size);
+	updateLineSize(size: number) {
+		this.drawService.setLineSize(size);
 	}
 }

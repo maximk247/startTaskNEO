@@ -1,5 +1,5 @@
-import { Component } from "@angular/core";
-import { MatDialogRef } from "@angular/material/dialog";
+import { Component, Inject } from "@angular/core";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { DrawService } from "../sidenav/draw/draw.service";
 
 @Component({
@@ -12,11 +12,16 @@ export class DialogComponent {
 	constructor(
 		private dialogRef: MatDialogRef<DialogComponent>,
 		private drawService: DrawService,
+		@Inject(MAT_DIALOG_DATA) public data: any,
 	) {}
 
 	onClose(status: string): void {
 		if (status === "accept") {
-			this.drawService.setColor(this.color);
+			if (this.color.indexOf("rgba") === -1) {
+				this.color = this.color.replace("rgb", "rgba").replace(")", ", 1)");
+			}
+			console.log(this.data.tool);
+			this.drawService.setColor(this.color, this.data.tool);
 		}
 		this.dialogRef.close(this.color);
 	}

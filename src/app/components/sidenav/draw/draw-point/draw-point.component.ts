@@ -7,14 +7,23 @@ import { DrawService } from "../draw.service";
 	styleUrls: ["./draw-point.component.scss"],
 })
 export class DrawPointComponent {
-	@Input() pointStyle: string;
 	@Input() pointSize: number;
-	@Output() pointStyleChange: EventEmitter<string> = new EventEmitter<string>();
+	@Input() pointColor: string;
+	@Input() tool: string;
 	@Output() pointSizeChange: EventEmitter<number> = new EventEmitter<number>();
 
+	pointStyles: Array<string> = [
+		"Circle",
+		"Cross",
+		"Square",
+		"Diamond",
+		"Cancel",
+	];
+	constructor(private drawService: DrawService) {}
+
+
 	setPointStyle(style: string) {
-		this.pointStyle = style;
-		this.pointStyleChange.emit(style);
+		this.drawService.setPointStyle(style);
 	}
 
 	updatePointSize() {

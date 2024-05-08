@@ -1,0 +1,15 @@
+<div>
+	<select (change)="setLineStyle($event)">
+		<option *ngFor="let style of lineStyles" [value]="style">
+			{{ style }}
+		</option>
+	</select>
+</div>
+
+<app-draw-size
+	[name]="'Размер'"
+	[(size)]="lineSize"
+	(sizeChange)="updatelineSize()"
+></app-draw-size>
+<app-draw-color [color]="lineColor" [tool]="tool"></app-draw-color>
+<app-draw-transparency [tool]="tool"></app-draw-transparency>

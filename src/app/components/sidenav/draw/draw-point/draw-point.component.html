@@ -1,45 +1,18 @@
 <h2>Форма</h2>
 <div class="choice">
 	<button
+		*ngFor="let style of pointStyles"
 		type="submit"
-		(click)="setPointStyle('Circle')"
-		[ngClass]="{ active: pointStyle === 'Circle' }"
+		(click)="setPointStyle(style)"
 	>
-		Circle
-	</button>
-	<button
-		type="submit"
-		(click)="setPointStyle('Cross')"
-		[ngClass]="{ active: pointStyle === 'Cross' }"
-	>
-		Cross
-	</button>
-	<button
-		type="submit"
-		(click)="setPointStyle('Square')"
-		[ngClass]="{ active: pointStyle === 'Square' }"
-	>
-		Square
-	</button>
-	<button
-		type="submit"
-		(click)="setPointStyle('Diamond')"
-		[ngClass]="{ active: pointStyle === 'Diamond' }"
-	>
-		Diamond
-	</button>
-	<button
-		type="submit"
-		(click)="setPointStyle('Cancel')"
-		[ngClass]="{ active: pointStyle === 'Cancel' }"
-	>
-		Cancel
+		{{ style }}
 	</button>
 </div>
-
 <app-draw-size
 	[name]="'Размер'"
 	[(size)]="pointSize"
 	(sizeChange)="updatePointSize()"
 ></app-draw-size>
-<app-draw-color></app-draw-color>
+<app-draw-color [color]="pointColor" [tool]="tool"></app-draw-color>
+<app-draw-transparency [tool]="tool"></app-draw-transparency>
+<app-coordinate-input></app-coordinate-input>

@@ -6,29 +6,74 @@ import Map from "ol/Map";
 import VectorSource from "ol/source/Vector";
 import { Style, RegularShape, Stroke, Fill } from "ol/style";
 import CircleStyle from "ol/style/Circle";
+import { Subject } from "rxjs";
 
 @Injectable({
 	providedIn: "root",
 })
 export class DrawService {
+	private lineStyle = "Solid";
+	private lineSize = 2;
 	private pointSize = 10;
-	private color: string;
+	private pointStyle = "Cross";
 
-	setSize(size: number) {
+	private pointColor = "rgba(0, 255, 0, 1)";
+	private lineColor = "rgba(255, 0, 0, 1)";
+	private color = "rgba(255, 0, 0, 1)";
+	colorChanged = new Subject<string>();
+
+	setPointSize(size: number) {
 		this.pointSize = size;
 	}
 
-	getSize(): number {
+	setColor(color: string, tool: string) {
+		console.log(color);
+		switch (tool) {
+			case "drawPoint":
+				this.pointColor = color;
+				this.colorChanged.next(color);
+				break;
+			case "drawLine":
+				this.lineColor = color;
+	
+				this.colorChanged.next(color);
+		}
+	}
+
+	getColor() {
+		return this.color;
+	}
+
+	getPointSize(): number {
 		return this.pointSize;
 	}
 
-	setColor(color: string) {
-		this.color = color;
+	setLineSize(size: number) {
+		this.lineSize = size;
 	}
 
-	getColor(): string {
-		return this.color;
+	getLineSize(): number {
+		return this.lineSize;
 	}
+
+	setPointColor(color: string) {
+		this.pointColor = color;
+		this.colorChanged.next(color);
+	}
+
+	getPointColor(): string {
+		return this.pointColor;
+	}
+
+	setLineColor(color: string) {
+		this.lineColor = color;
+		this.colorChanged.next(color);
+	}
+
+	getLineColor(): string {
+		return this.lineColor;
+	}
+
 	initializeDraw(
 		map: Map,
 		vector: VectorLayer<VectorSource>,
@@ -57,6 +102,9 @@ export class DrawService {
 		const source = new VectorSource();
 		const vector = this.initalizeLayer(source);
 		const draw = this.initializeDraw(map, vector, source, "Point");
+		draw.on("drawend", (event) => {
+			event.feature.setStyle(this.getPointStyle());
+		});
 		return draw;
 	}
 
@@ -67,10 +115,13 @@ export class DrawService {
 		return draw;
 	}
 
-	initializeLineString(map: Map) {
+	initializeLine(map: Map) {
 		const source = new VectorSource();
 		const vector = this.initalizeLayer(source);
 		const draw = this.initializeDraw(map, vector, source, "LineString");
+		draw.on("drawstart", (event) => {
+			event.feature.setStyle(this.getLineStyle());
+		});
 		return draw;
 	}
 
@@ -81,10 +132,13 @@ export class DrawService {
 		return draw;
 	}
 
-	initalizeFreeLineString(map: Map) {
+	initalizeFreeLine(map: Map) {
 		const source = new VectorSource();
 		const vector = this.initalizeLayer(source);
 		const draw = this.initializeDraw(map, vector, source, "LineString", true);
+		draw.on("drawstart", (event) => {
+			event.feature.setStyle(this.getLineStyle());
+		});
 		return draw;
 	}
 	initalizeFreePolygon(map: Map) {
@@ -93,10 +147,13 @@ export class DrawService {
 		const draw = this.initializeDraw(map, vector, source, "Polygon", true);
 		return draw;
 	}
-	getPointStyle(pointStyle: string) {
-		const size = this.getSize();
-		const color= this.getColor()
-		switch (pointStyle) {
+	setPointStyle(style: string) {
+		this.pointStyle = style;
+	}
+	getPointStyle() {
+		const size = this.getPointSize();
+		const color = this.getPointColor();
+		switch (this.pointStyle) {
 			case "Cross":
 				return new Style({
 					image: new RegularShape({
@@ -166,6 +223,55 @@ export class DrawService {
 							color: color,
 							width: 2,
 						}),
+					}),
+				});
+		}
+	}
+
+	setLineStyle(style: string) {
+		this.lineStyle = style;
+	}
+	getLineStyle() {
+		const size = this.getLineSize();
+		const color = this.getLineColor();
+		switch (this.lineStyle) {
+			case "Dashed":
+				return new Style({
+					stroke: new Stroke({
+						color: color,
+						width: size,
+						lineDash: [16, 8],
+					}),
+				});
+			case "DashDot":
+				return new Style({
+					stroke: new Stroke({
+						color: color,
+						width: size,
+						lineDash: [16, 16, 0, 16],
+					}),
+				});
+			case "Dotted":
+				return new Style({
+					stroke: new Stroke({
+						color: color,
+						width: size,
+						lineDash: [0, 8],
+					}),
+				});
+			case "DashDotDot":
+				return new Style({
+					stroke: new Stroke({
+						color: color,
+						width: size,
+						lineDash: [16, 16, 0, 16, 0, 16],
+					}),
+				});
+			case "Solid":
+				return new Style({
+					stroke: new Stroke({
+						color: color,
+						width: size,
 					}),
 				});
 		}

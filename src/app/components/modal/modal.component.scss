@@ -6,7 +6,6 @@
 	flex-direction: column;
 	min-width: 164px;
 	text-align: center;
-	cursor: move;
 	background: var(--primary-100);
 	box-shadow: 1px 0 10px var(--accent-400);
 	transition: box-shadow 200ms cubic-bezier(0, 0, 0.2, 1);
@@ -17,6 +16,7 @@
 		justify-content: space-between;
 		padding: 1rem 1.333rem;
 		color: var(--primary-100);
+		cursor: move;
 		background-color: var(--primary-700);
 	}
 

@@ -7,12 +7,21 @@
 	<button (click)="drawFreePolygon()" type="submit">Draw Free Polygon</button>
 	<button (click)="drawCircle()" type="submit">Draw Circle</button>
 	<div class="form">
-		<app-draw-point
-			*ngIf="componentVisibility['drawPoint']"
-			[pointStyle]="pointStyle"
-			[pointSize]="pointSize"
-			(pointStyleChange)="updatePointStyle($event)"
-			(pointSizeChange)="updateSize($event)"
-		></app-draw-point>
+		<ng-container *ngFor="let tool of tools">
+			<app-draw-point
+				*ngIf="componentVisibility[tool] && tool === 'drawPoint'"
+				[pointSize]="pointSize"
+				[pointColor]="pointColor"
+				[tool]="tool"
+				(pointSizeChange)="updatePointSize($event)"
+			></app-draw-point>
+			<app-draw-line
+				*ngIf="componentVisibility[tool] && tool === 'drawLine'"
+				[lineSize]="lineSize"
+				[lineColor]="lineColor"
+				[tool]="tool"
+				(lineSizeChange)="updateLineSize($event)"
+			></app-draw-line>
+		</ng-container>
 	</div>
 </div>
