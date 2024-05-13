@@ -12,7 +12,7 @@ export class DialogComponent {
 	constructor(
 		private dialogRef: MatDialogRef<DialogComponent>,
 		private drawService: DrawService,
-		@Inject(MAT_DIALOG_DATA) public data: any,
+		@Inject(MAT_DIALOG_DATA) public data: { tool: string; color: string, type?: string },
 	) {}
 
 	onClose(status: string): void {
@@ -20,7 +20,9 @@ export class DialogComponent {
 			if (this.color.indexOf("rgba") === -1) {
 				this.color = this.color.replace("rgb", "rgba").replace(")", ", 1)");
 			}
-			console.log(this.data.tool);
+			if(this.data.tool === "drawPolygon") {
+				this.drawService.setColor(this.color, this.data.tool, this.data.type)
+			}
 			this.drawService.setColor(this.color, this.data.tool);
 		}
 		this.dialogRef.close(this.color);

@@ -23,7 +23,7 @@ export class DrawPointComponent {
 
 
 	setPointStyle(style: string) {
-		this.drawService.setPointStyle(style);
+		this.drawService.setStyle( this.tool, style);
 	}
 
 	updatePointSize() {

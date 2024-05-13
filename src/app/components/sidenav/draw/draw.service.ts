@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-case-declarations */
 import { Injectable } from "@angular/core";
 import { Type } from "ol/geom/Geometry";
 import { Draw } from "ol/interaction";
@@ -12,67 +14,23 @@ import { Subject } from "rxjs";
 	providedIn: "root",
 })
 export class DrawService {
-	private lineStyle = "Solid";
+	private lineStyle: string | undefined;
 	private lineSize = 2;
-	private pointSize = 10;
-	private pointStyle = "Cross";
-
-	private pointColor = "rgba(0, 255, 0, 1)";
 	private lineColor = "rgba(255, 0, 0, 1)";
-	private color = "rgba(255, 0, 0, 1)";
+	private lineDash: Array<number> | undefined;
+
+	private pointSize = 10;
+	private pointStyle: string | undefined;
+	private pointColor = "rgba(0, 255, 0, 1)";
+
+	private polygonSize = 10;
+	private polygonColor = "rgba(255, 0, 0, 1)";
+	private polygonStrokeColor = "rgba(0, 0, 255, 1)";
+	private polygonFillColor = "rgba(255, 0, 0, 1)";
+	private polygonFillStyle: CanvasPattern | null | undefined;
+	private polygonStrokeStyle: string | undefined;
+
 	colorChanged = new Subject<string>();
-
-	setPointSize(size: number) {
-		this.pointSize = size;
-	}
-
-	setColor(color: string, tool: string) {
-		console.log(color);
-		switch (tool) {
-			case "drawPoint":
-				this.pointColor = color;
-				this.colorChanged.next(color);
-				break;
-			case "drawLine":
-				this.lineColor = color;
-	
-				this.colorChanged.next(color);
-		}
-	}
-
-	getColor() {
-		return this.color;
-	}
-
-	getPointSize(): number {
-		return this.pointSize;
-	}
-
-	setLineSize(size: number) {
-		this.lineSize = size;
-	}
-
-	getLineSize(): number {
-		return this.lineSize;
-	}
-
-	setPointColor(color: string) {
-		this.pointColor = color;
-		this.colorChanged.next(color);
-	}
-
-	getPointColor(): string {
-		return this.pointColor;
-	}
-
-	setLineColor(color: string) {
-		this.lineColor = color;
-		this.colorChanged.next(color);
-	}
-
-	getLineColor(): string {
-		return this.lineColor;
-	}
 
 	initializeDraw(
 		map: Map,
@@ -103,7 +61,7 @@ export class DrawService {
 		const vector = this.initalizeLayer(source);
 		const draw = this.initializeDraw(map, vector, source, "Point");
 		draw.on("drawend", (event) => {
-			event.feature.setStyle(this.getPointStyle());
+			event.feature.setStyle(this.getStyle("drawPoint"));
 		});
 		return draw;
 	}
@@ -120,15 +78,35 @@ export class DrawService {
 		const vector = this.initalizeLayer(source);
 		const draw = this.initializeDraw(map, vector, source, "LineString");
 		draw.on("drawstart", (event) => {
-			event.feature.setStyle(this.getLineStyle());
+			event.feature.setStyle(this.getStyle("drawLine"));
 		});
 		return draw;
 	}
 
+	async stylePatternSimplePoly(pattern: string): Promise<CanvasPattern | null> {
+		return new Promise((resolve, reject) => {
+			const ctx = document.createElement("canvas").getContext("2d");
+			const vectorImage = new Image();
+			vectorImage.onload = () => {
+				console.log("Function triggered!");
+				const createdPattern = ctx!.createPattern(vectorImage, "repeat");
+				resolve(createdPattern);
+			};
+			vectorImage.onerror = (error) => {
+				console.error("Error loading image:", error);
+				resolve(null);
+			};
+			vectorImage.src = "../../../assets/images/" + pattern;
+		});
+	}
 	initializePolygon(map: Map) {
 		const source = new VectorSource();
 		const vector = this.initalizeLayer(source);
 		const draw = this.initializeDraw(map, vector, source, "Polygon");
+		draw.on("drawstart", async (event) => {
+			event.feature.setStyle(this.getStyle("drawPolygon"));
+		});
+
 		return draw;
 	}
 
@@ -137,7 +115,7 @@ export class DrawService {
 		const vector = this.initalizeLayer(source);
 		const draw = this.initializeDraw(map, vector, source, "LineString", true);
 		draw.on("drawstart", (event) => {
-			event.feature.setStyle(this.getLineStyle());
+			event.feature.setStyle(this.getStyle("drawLine"));
 		});
 		return draw;
 	}
@@ -147,133 +125,320 @@ export class DrawService {
 		const draw = this.initializeDraw(map, vector, source, "Polygon", true);
 		return draw;
 	}
-	setPointStyle(style: string) {
-		this.pointStyle = style;
-	}
-	getPointStyle() {
-		const size = this.getPointSize();
-		const color = this.getPointColor();
-		switch (this.pointStyle) {
-			case "Cross":
-				return new Style({
-					image: new RegularShape({
-						stroke: new Stroke({
-							color: color,
-							width: 2,
-						}),
-						points: 4,
-						radius: size,
-						radius2: 0,
-						angle: 0,
-					}),
-				});
-			case "Diamond":
-				return new Style({
-					image: new RegularShape({
-						fill: new Fill({
-							color: color,
-						}),
-						stroke: new Stroke({
-							color: color,
-							width: 2,
-						}),
-						points: 4,
-						radius: size,
-						radius2: size * Math.sqrt(2),
-						angle: Math.PI / 4,
-					}),
-				});
-			case "Cancel":
-				return new Style({
-					image: new RegularShape({
-						stroke: new Stroke({
-							color: color,
-							width: 2,
-						}),
-						points: 4,
-						radius: size,
-						radius2: 0,
-						angle: Math.PI / 4,
-					}),
-				});
-			case "Square":
-				return new Style({
-					image: new RegularShape({
-						fill: new Fill({
-							color: color,
-						}),
-						stroke: new Stroke({
-							color: color,
-							width: 2,
-						}),
-						points: 4,
-						radius: size,
-						angle: Math.PI / 4,
-					}),
-				});
-			case "Circle":
-			default:
-				return new Style({
-					image: new CircleStyle({
-						radius: size,
-						fill: new Fill({
-							color: color,
-						}),
-						stroke: new Stroke({
-							color: color,
-							width: 2,
-						}),
-					}),
-				});
+
+	setSize(size: number, tool: string) {
+		switch (tool) {
+			case "drawPoint":
+				this.pointSize = size;
+				break;
+			case "drawLine":
+				this.lineSize = size;
+				break;
+			case "drawPolygon":
+				this.polygonSize = size;
 		}
 	}
 
-	setLineStyle(style: string) {
-		this.lineStyle = style;
+	getSize(tool: string): number | undefined {
+		switch (tool) {
+			case "drawPoint":
+				return this.pointSize;
+			case "drawLine":
+				return this.lineSize;
+			case "drawPolygon":
+				return this.polygonSize;
+		}
 	}
-	getLineStyle() {
-		const size = this.getLineSize();
-		const color = this.getLineColor();
-		switch (this.lineStyle) {
-			case "Dashed":
-				return new Style({
+
+	setColor(color: string, tool: string, type?: string) {
+		switch (tool) {
+			case "drawPoint":
+				this.pointColor = color;
+				this.colorChanged.next(color);
+				break;
+			case "drawLine":
+				this.lineColor = color;
+				this.colorChanged.next(color);
+				break;
+			case "drawPolygon":
+				if (type == "fill") {
+					this.polygonFillColor = color;
+					this.colorChanged.next(color);
+				}
+
+				if (type == "stroke") {
+					this.polygonStrokeColor = color;
+					this.colorChanged.next(color);
+				}
+
+				break;
+		}
+	}
+
+	getColor(tool: string): string | undefined {
+		switch (tool) {
+			case "drawPoint":
+				return this.pointColor;
+			case "drawLine":
+				return this.lineColor;
+			case "drawPolygon":
+				return this.polygonColor;
+		}
+	}
+
+	setStyle(tool: string, style: string, createdPattern?: CanvasPattern | null) {
+		switch (tool) {
+			case "drawPoint":
+				this.pointStyle = style;
+				break;
+			case "drawLine":
+				this.lineStyle = style;
+				break;
+			case "drawPolygon":
+				this.polygonStrokeStyle = style;
+				this.polygonFillStyle = createdPattern;
+				break;
+		}
+	}
+
+	getPolygonFill() {
+		return this.polygonFillStyle;
+	}
+
+	async setPolygonFill(style: string) {
+		switch (style) {
+			case "VerticalHatching":
+				this.polygonFillStyle =
+					await this.stylePatternSimplePoly("vertical.png");
+				break;
+			case "HorizontalHatching":
+				this.polygonFillStyle =
+					await this.stylePatternSimplePoly("horizontal.png");
+				break;
+			case "CrossHatching":
+				this.polygonFillStyle = await this.stylePatternSimplePoly("square.png");
+				break;
+			case "DiagonalHatching":
+				this.polygonFillStyle =
+					await this.stylePatternSimplePoly("diagonal.png");
+				break;
+			case "ReverseDiagonalHatching":
+				this.polygonFillStyle = await this.stylePatternSimplePoly(
+					"reverseDiagonal.png",
+				);
+				break;
+			case "DiagonalCrossHatching":
+				this.polygonFillStyle = await this.stylePatternSimplePoly("cross.png");
+				break;
+		}
+	}
+
+	getStyle(tool: string): Style | undefined {
+		let size: number | undefined;
+		let color;
+		let style;
+		let options: { stroke?: Stroke; fill?: Fill } = {};
+		switch (tool) {
+			case "drawPoint":
+				size = this.getSize(tool);
+				color = this.getColor(tool);
+				switch (this.pointStyle) {
+					case "Cross":
+						return new Style({
+							image: new RegularShape({
+								stroke: new Stroke({
+									color: color,
+									width: 2,
+								}),
+								points: 4,
+								radius: size!,
+								radius2: 0,
+								angle: 0,
+							}),
+						});
+					case "Diamond":
+						return new Style({
+							image: new RegularShape({
+								fill: new Fill({
+									color: color,
+								}),
+								stroke: new Stroke({
+									color: color,
+									width: 2,
+								}),
+								points: 4,
+								radius: size,
+								radius2: size! * Math.sqrt(2),
+								angle: Math.PI / 4,
+							}),
+						});
+					case "Cancel":
+						return new Style({
+							image: new RegularShape({
+								stroke: new Stroke({
+									color: color,
+									width: 2,
+								}),
+								points: 4,
+								radius: size!,
+								radius2: 0,
+								angle: Math.PI / 4,
+							}),
+						});
+					case "Square":
+						return new Style({
+							image: new RegularShape({
+								fill: new Fill({
+									color: color,
+								}),
+								stroke: new Stroke({
+									color: color,
+									width: 2,
+								}),
+								points: 4,
+								radius: size,
+								angle: Math.PI / 4,
+							}),
+						});
+					case "Circle":
+					default:
+						return new Style({
+							image: new CircleStyle({
+								radius: size!,
+								fill: new Fill({
+									color: color,
+								}),
+								stroke: new Stroke({
+									color: color,
+									width: 2,
+								}),
+							}),
+						});
+				}
+			case "drawLine":
+				size = this.getSize(tool);
+				color = this.getColor(tool);
+				switch (this.lineStyle) {
+					case "Dashed":
+						return new Style({
+							stroke: new Stroke({
+								color: color,
+								width: size,
+								lineDash: [16, 8],
+							}),
+						});
+					case "DashDot":
+						return new Style({
+							stroke: new Stroke({
+								color: color,
+								width: size,
+								lineDash: [16, 16, 0, 16],
+							}),
+						});
+					case "Dotted":
+						return new Style({
+							stroke: new Stroke({
+								color: color,
+								width: size,
+								lineDash: [0, 8],
+							}),
+						});
+					case "DashDotDot":
+						return new Style({
+							stroke: new Stroke({
+								color: color,
+								width: size,
+								lineDash: [16, 16, 0, 16, 0, 16],
+							}),
+						});
+					case "Solid":
+						return new Style({
+							stroke: new Stroke({
+								color: color,
+								width: size,
+							}),
+						});
+				}
+				break;
+			case "drawPolygon":
+				size = this.getSize(tool);
+
+				const fillColor = this.polygonFillColor;
+
+				const strokeColor = this.polygonStrokeColor;
+
+				options = {
 					stroke: new Stroke({
-						color: color,
+						color: strokeColor,
 						width: size,
-						lineDash: [16, 8],
+						lineDash: this.lineDash,
 					}),
-				});
-			case "DashDot":
-				return new Style({
-					stroke: new Stroke({
-						color: color,
-						width: size,
-						lineDash: [16, 16, 0, 16],
+					fill: new Fill({
+						color: this.polygonFillStyle,
 					}),
-				});
-			case "Dotted":
-				return new Style({
-					stroke: new Stroke({
-						color: color,
-						width: size,
-						lineDash: [0, 8],
-					}),
-				});
-			case "DashDotDot":
-				return new Style({
-					stroke: new Stroke({
-						color: color,
-						width: size,
-						lineDash: [16, 16, 0, 16, 0, 16],
-					}),
-				});
-			case "Solid":
-				return new Style({
-					stroke: new Stroke({
-						color: color,
-						width: size,
-					}),
-				});
+				};
+				console.log(options);
+				switch (this.polygonStrokeStyle) {
+					case "Dashed":
+						options.stroke = new Stroke({
+							color: strokeColor,
+							width: size,
+							lineDash: [16, 8],
+						});
+
+						this.lineDash = [16, 8];
+
+						options.fill = new Fill({
+							color: this.polygonFillStyle,
+						});
+
+						break;
+
+					case "DashDot":
+						options.stroke = new Stroke({
+							color: strokeColor,
+							width: size,
+							lineDash: [16, 16, 0, 16],
+						});
+						this.lineDash = [16, 16, 0, 16];
+						options.fill = new Fill({
+							color: this.polygonFillStyle,
+						});
+						break;
+					case "Dotted":
+						options.stroke = new Stroke({
+							color: strokeColor,
+							width: size,
+							lineDash: [0, 8],
+						});
+						this.lineDash = [0, 8];
+						options.fill = new Fill({
+							color: this.polygonFillStyle,
+						});
+						break;
+					case "DashDotDot":
+						options.stroke = new Stroke({
+							color: strokeColor,
+							width: size,
+							lineDash: [16, 16, 0, 16, 0, 16],
+						});
+						this.lineDash = [16, 16, 0, 16, 0, 16];
+						options.fill = new Fill({
+							color: this.polygonFillStyle,
+						});
+						break;
+					case "Solid":
+						options.stroke = new Stroke({
+							color: strokeColor,
+							width: size,
+						});
+						options.fill = new Fill({
+							color: fillColor,
+						});
+						this.lineDash = undefined;
+				}
+
+				return new Style(options);
 		}
 	}
 }

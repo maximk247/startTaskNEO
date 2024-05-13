@@ -13,15 +13,23 @@
 				[pointSize]="pointSize"
 				[pointColor]="pointColor"
 				[tool]="tool"
-				(pointSizeChange)="updatePointSize($event)"
+				(pointSizeChange)="updateSize($event, tool)"
 			></app-draw-point>
 			<app-draw-line
 				*ngIf="componentVisibility[tool] && tool === 'drawLine'"
 				[lineSize]="lineSize"
 				[lineColor]="lineColor"
 				[tool]="tool"
-				(lineSizeChange)="updateLineSize($event)"
+				(lineSizeChange)="updateSize($event, tool)"
 			></app-draw-line>
+			<app-draw-polygon
+				*ngIf="componentVisibility[tool] && tool === 'drawPolygon'"
+				[polygonSize]="polygonSize"
+				[polygonFillColor]="polygonFillColor"
+				[polygonStrokeColor]="polygonStrokeColor"
+				[tool]="tool"
+				(polygonSizeChange)="updateSize($event, tool)"
+			></app-draw-polygon>
 		</ng-container>
 	</div>
 </div>

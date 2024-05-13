@@ -31,6 +31,7 @@ import { TransparencyComponent } from "./components/sidenav/draw/draw-tools/draw
 import { CoordinateInputComponent } from "./components/coordinate-input/coordinate-input.component";
 import { SpatialReferenceService } from "./components/spatial-reference.service";
 import { DrawLineComponent } from "./components/sidenav/draw/draw-line/draw-line.component";
+import { DrawPolygonComponent } from './components/sidenav/draw/draw-polygon/draw-polygon.component';
 
 function initializeKeycloak(keycloak: KeycloakService) {
 	return () =>
@@ -66,6 +67,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
 		TransparencyComponent,
 		CoordinateInputComponent,
 		DrawLineComponent,
+  DrawPolygonComponent,
 	],
 	imports: [
 		BrowserModule,

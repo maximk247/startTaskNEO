@@ -10,13 +10,14 @@ import { DialogComponent } from "src/app/components/dialog/dialog.component";
 export class DrawColorComponent {
 	@Input() tool: string;
 	@Input() color: string;
+	@Input() type: string;
 	constructor(private dialog: MatDialog) {}
 
 	openColorDialog(): void {
 		console.log(this.color);
 		this.dialog.open(DialogComponent, {
 			disableClose: true,
-			data: { tool: this.tool, color: this.color },
+			data: { tool: this.tool, color: this.color, type: this.type },
 		});
 	}
 }

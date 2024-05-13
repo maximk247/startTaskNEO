@@ -5,6 +5,7 @@ import VectorSource from "ol/source/Vector";
 import { MapService } from "../../map/map.service";
 import Feature from "ol/Feature";
 import { DrawService } from "./draw.service";
+import { Draw } from "ol/interaction";
 
 @Component({
 	selector: "app-draw",
@@ -23,12 +24,18 @@ export class DrawComponent implements OnInit {
 	];
 	pointSize = 10;
 	pointColor = "rgba(255,0,0,1)";
+
 	lineSize = 2;
 	lineColor = "rgba(255,0,0,1)";
+
+	polygonSize = 10;
+	polygonFillColor = "rgba(255,0,0,1)";
+	polygonStrokeColor = "rgba(255,0,0,1)";
 
 	vectorLayer: VectorLayer<VectorSource>;
 	source: VectorSource;
 	drawnFeatures: Array<Feature> = [];
+	activeInteraction: Draw | null = null;
 
 	constructor(
 		private mapService: MapService,
@@ -55,13 +62,22 @@ export class DrawComponent implements OnInit {
 		}
 	}
 
+	removeActiveInteraction() {
+		if (this.activeInteraction) {
+			this.map.removeInteraction(this.activeInteraction);
+			this.activeInteraction = null;
+		}
+	}
+
 	drawPoint() {
 		this.resetComponentVisibility();
 		this.componentVisibility = {
 			...this.componentVisibility,
 			drawPoint: true,
 		};
+		this.removeActiveInteraction();
 		const draw = this.drawService.initializePoint(this.map);
+		this.activeInteraction = draw;
 		this.map.addInteraction(draw);
 	}
 
@@ -76,12 +92,21 @@ export class DrawComponent implements OnInit {
 			...this.componentVisibility,
 			drawLine: true,
 		};
+		this.removeActiveInteraction();
 		const drawLine = this.drawService.initializeLine(this.map);
+		this.activeInteraction = drawLine;
 		this.map.addInteraction(drawLine);
 	}
 
 	drawPolygon() {
+		this.resetComponentVisibility();
+		this.componentVisibility = {
+			...this.componentVisibility,
+			drawPolygon: true,
+		};
+		this.removeActiveInteraction();
 		const drawPolygon = this.drawService.initializePolygon(this.map);
+		this.activeInteraction = drawPolygon;
 		this.map.addInteraction(drawPolygon);
 	}
 
@@ -95,10 +120,7 @@ export class DrawComponent implements OnInit {
 		this.map.addInteraction(drawFreePolygon);
 	}
 
-	updatePointSize(size: number) {
-		this.drawService.setPointSize(size);
-	}
-	updateLineSize(size: number) {
-		this.drawService.setLineSize(size);
+	updateSize(size: number, tool: string) {
+		this.drawService.setSize(size, tool);
 	}
 }

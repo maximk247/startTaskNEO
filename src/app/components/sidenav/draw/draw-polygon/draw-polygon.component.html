@@ -1,0 +1,36 @@
+<div>
+	<h2>Заливка</h2>
+	<select (change)="setPolygonFillStyle($event)">
+		<option *ngFor="let style of polygonFillStyles" [value]="style">
+			{{ style }}
+		</option>
+	</select>
+</div>
+
+<div>
+	<h2>Контур</h2>
+	<select (change)="setLineStyle($event)">
+		<option *ngFor="let style of lineStyles" [value]="style">
+			{{ style }}
+		</option>
+	</select>
+</div>
+
+<app-draw-size
+	[name]="'Толщина контура'"
+	[(size)]="polygonSize"
+	(sizeChange)="updatePolygonSize()"
+></app-draw-size>
+<h2>Stroke</h2>
+<app-draw-color
+	[color]="polygonStrokeColor"
+	[tool]="tool"
+	[type]="'stroke'"
+></app-draw-color>
+<h2>Fill</h2>
+<app-draw-color
+	[color]="polygonFillColor"
+	[tool]="tool"
+	[type]="'fill'"
+></app-draw-color>
+<app-draw-transparency [tool]="tool"></app-draw-transparency>

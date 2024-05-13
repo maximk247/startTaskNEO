@@ -16,16 +16,8 @@ export class TransparencyComponent implements OnInit, OnDestroy {
 	constructor(private drawService: DrawService) {}
 
 	ngOnInit() {
-		let color = this.drawService.getColor();
-		switch (this.tool) {
-			case "drawPoint":
-				color = this.drawService.getPointColor();
-				break;
-			case "drawLine":
-				color = this.drawService.getLineColor();
-		}
-		console.log(color);
-		this.updateColorValues(color);
+		const color = this.drawService.getColor(this.tool);
+		this.updateColorValues(color!);
 		this.colorSubscription = this.drawService.colorChanged.subscribe(
 			(color) => {
 				this.updateColorValues(color);

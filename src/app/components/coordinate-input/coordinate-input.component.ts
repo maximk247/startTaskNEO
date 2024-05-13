@@ -13,7 +13,7 @@ import { DrawService } from "../sidenav/draw/draw.service";
 	styleUrls: ["./coordinate-input.component.scss"],
 })
 export class CoordinateInputComponent {
-	@Input() pointStyle: string
+	@Input() tool: string;
 	spatialReferences: Array<SpatialReference> = [];
 	selectedSpatialReference: SpatialReference | undefined;
 	x = 0;
@@ -26,7 +26,7 @@ export class CoordinateInputComponent {
 	) {}
 	getSpatialReferences() {
 		this.spatialReferenceService.getSpatialReferences().subscribe(
-			(data: any) => {
+			(data: { spatialReferences: Array<SpatialReference> }) => {
 				this.spatialReferences = data.spatialReferences;
 			},
 			(error) => {
@@ -39,7 +39,7 @@ export class CoordinateInputComponent {
 			const point = new Feature({
 				geometry: new Point(fromLonLat([this.x, this.y])),
 			});
-			const pointStyle = this.drawService.getPointStyle();
+			const pointStyle = this.drawService.getStyle(this.tool);
 			point.setStyle(pointStyle);
 			this.mapService.addFeatureToMap(point);
 		}

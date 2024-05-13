@@ -23,10 +23,12 @@ export class DrawLineComponent {
 	setLineStyle(event: Event) {
 		const target = event.target as HTMLSelectElement;
 		const style = target.value;
+		
+		this.drawService.setStyle( this.tool, style);
 
-		this.drawService.setLineStyle(style);
+		
 	}
-	updatelineSize() {
+	updateLineSize() {
 		this.lineSizeChange.emit(this.lineSize);
 	}
 	constructor(private drawService: DrawService) {}
