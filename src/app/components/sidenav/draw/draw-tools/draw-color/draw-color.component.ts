@@ -14,10 +14,13 @@ export class DrawColorComponent {
 	constructor(private dialog: MatDialog) {}
 
 	openColorDialog(): void {
-		console.log(this.color);
 		this.dialog.open(DialogComponent, {
 			disableClose: true,
-			data: { tool: this.tool, color: this.color, type: this.type },
+			data: {
+				tool: this.tool,
+				color: this.color,
+				type: this.type,
+			},
 		});
 	}
 }

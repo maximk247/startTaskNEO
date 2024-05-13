@@ -26,7 +26,7 @@ export class DrawService {
 	private polygonSize = 10;
 	private polygonColor = "rgba(255, 0, 0, 1)";
 	private polygonStrokeColor = "rgba(0, 0, 255, 1)";
-	private polygonFillColor = "rgba(255, 0, 0, 1)";
+	private polygonFillColor: string | undefined;
 	private polygonFillStyle: CanvasPattern | null | undefined;
 	private polygonStrokeStyle: string | undefined;
 
@@ -83,20 +83,38 @@ export class DrawService {
 		return draw;
 	}
 
-	async stylePatternSimplePoly(pattern: string): Promise<CanvasPattern | null> {
+	async stylePatternSimplePoly(
+		pattern: string,
+		fillColor: string | undefined,
+	): Promise<CanvasPattern | null> {
 		return new Promise((resolve, reject) => {
-			const ctx = document.createElement("canvas").getContext("2d");
 			const vectorImage = new Image();
+			vectorImage.crossOrigin = "anonymous"; // Enable CORS for the image
+			vectorImage.src = "../../../assets/images/" + pattern;
 			vectorImage.onload = () => {
-				console.log("Function triggered!");
-				const createdPattern = ctx!.createPattern(vectorImage, "repeat");
+				const canvas = document.createElement("canvas");
+				const ctx = canvas.getContext("2d");
+				if (!ctx) {
+					reject("Could not create canvas context");
+					return;
+				}
+				canvas.width = vectorImage.width;
+				canvas.height = vectorImage.height;
+				ctx.drawImage(vectorImage, 0, 0);
+				console.log(fillColor);
+				ctx.globalCompositeOperation = "source-in";
+				if (fillColor) {
+					ctx.fillStyle = fillColor;
+					ctx.fillRect(0, 0, canvas.width, canvas.height);
+				}
+
+				const createdPattern = ctx.createPattern(canvas, "repeat");
 				resolve(createdPattern);
 			};
 			vectorImage.onerror = (error) => {
 				console.error("Error loading image:", error);
 				resolve(null);
 			};
-			vectorImage.src = "../../../assets/images/" + pattern;
 		});
 	}
 	initializePolygon(map: Map) {
@@ -106,7 +124,6 @@ export class DrawService {
 		draw.on("drawstart", async (event) => {
 			event.feature.setStyle(this.getStyle("drawPolygon"));
 		});
-
 		return draw;
 	}
 
@@ -150,7 +167,7 @@ export class DrawService {
 		}
 	}
 
-	setColor(color: string, tool: string, type?: string) {
+	setColor(color: string, tool: string, type?: string, fillColor?: string) {
 		switch (tool) {
 			case "drawPoint":
 				this.pointColor = color;
@@ -162,7 +179,8 @@ export class DrawService {
 				break;
 			case "drawPolygon":
 				if (type == "fill") {
-					this.polygonFillColor = color;
+					console.log(fillColor);
+					this.polygonFillColor = fillColor;
 					this.colorChanged.next(color);
 				}
 
@@ -208,27 +226,40 @@ export class DrawService {
 	async setPolygonFill(style: string) {
 		switch (style) {
 			case "VerticalHatching":
-				this.polygonFillStyle =
-					await this.stylePatternSimplePoly("vertical.png");
+				this.polygonFillStyle = await this.stylePatternSimplePoly(
+					"vertical.png",
+					this.polygonFillColor,
+				);
 				break;
 			case "HorizontalHatching":
-				this.polygonFillStyle =
-					await this.stylePatternSimplePoly("horizontal.png");
+				this.polygonFillStyle = await this.stylePatternSimplePoly(
+					"horizontal.png",
+					this.polygonFillColor,
+				);
 				break;
 			case "CrossHatching":
-				this.polygonFillStyle = await this.stylePatternSimplePoly("square.png");
+				this.polygonFillStyle = await this.stylePatternSimplePoly(
+					"square.png",
+					this.polygonFillColor,
+				);
 				break;
 			case "DiagonalHatching":
-				this.polygonFillStyle =
-					await this.stylePatternSimplePoly("diagonal.png");
+				this.polygonFillStyle = await this.stylePatternSimplePoly(
+					"diagonal.png",
+					this.polygonFillColor,
+				);
 				break;
 			case "ReverseDiagonalHatching":
 				this.polygonFillStyle = await this.stylePatternSimplePoly(
 					"reverseDiagonal.png",
+					this.polygonFillColor,
 				);
 				break;
 			case "DiagonalCrossHatching":
-				this.polygonFillStyle = await this.stylePatternSimplePoly("cross.png");
+				this.polygonFillStyle = await this.stylePatternSimplePoly(
+					"cross.png",
+					this.polygonFillColor,
+				);
 				break;
 		}
 	}
@@ -236,7 +267,6 @@ export class DrawService {
 	getStyle(tool: string): Style | undefined {
 		let size: number | undefined;
 		let color;
-		let style;
 		let options: { stroke?: Stroke; fill?: Fill } = {};
 		switch (tool) {
 			case "drawPoint":
@@ -377,7 +407,6 @@ export class DrawService {
 						color: this.polygonFillStyle,
 					}),
 				};
-				console.log(options);
 				switch (this.polygonStrokeStyle) {
 					case "Dashed":
 						options.stroke = new Stroke({

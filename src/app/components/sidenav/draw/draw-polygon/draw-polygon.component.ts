@@ -32,7 +32,10 @@ export class DrawPolygonComponent {
 	];
 
 	async getPolygonFillStyle() {
-		const pattern = await this.drawService.stylePatternSimplePoly("cross.png");
+		const pattern = await this.drawService.stylePatternSimplePoly(
+			"cross.png",
+			this.polygonFillColor,
+		);
 		return pattern;
 	}
 
