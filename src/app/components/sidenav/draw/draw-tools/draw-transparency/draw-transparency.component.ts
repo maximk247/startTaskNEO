@@ -8,6 +8,7 @@ import { Subscription } from "rxjs";
 })
 export class TransparencyComponent implements OnInit, OnDestroy {
 	@Input() tool: string;
+	@Input() type: string;
 	alphaValue: number;
 	redValue: number;
 	greenValue: number;
@@ -27,9 +28,13 @@ export class TransparencyComponent implements OnInit, OnDestroy {
 
 	updateColorValues(colorString: string) {
 		if (colorString) {
-			const rgbaValues = colorString
-				.replace("rgba(", "")
-				.replace(")", "")
+			const regex = /rgba\((.*?)\)/g;
+			const colors = [];
+			let match;
+			while ((match = regex.exec(colorString)) !== null) {
+				colors.push(match[1]);
+			}
+			const rgbaValues = colors[0]
 				.split(",")
 				.map((value) => parseFloat(value.trim()));
 			this.redValue = +rgbaValues[0]?.toFixed(2) || 0;
@@ -40,8 +45,11 @@ export class TransparencyComponent implements OnInit, OnDestroy {
 	}
 	updateColorWithAlpha() {
 		const rgbaColor = `rgba(${this.redValue}, ${this.greenValue}, ${this.blueValue}, ${this.alphaValue})`;
-		console.log(rgbaColor, this.tool);
-		this.drawService.setColor(rgbaColor, this.tool);
+		if (this.type === "polygon") {
+			this.drawService.setColor(`${this.alphaValue}`, this.tool, this.type);
+		} else {
+			this.drawService.setColor(rgbaColor, this.tool, this.type);
+		}
 	}
 
 	formatSliderValue(value: number) {

@@ -26,15 +26,8 @@ export class DialogComponent {
 				this.color = this.color.replace("rgb", "rgba").replace(")", ", 1)");
 			}
 			if (this.data.tool === "drawPolygon") {
-				const fillColor = this.color;
-				this.drawService.setColor(
-					this.color,
-					this.data.tool,
-					this.data.type,
-					fillColor
-				);
-			}
-			this.drawService.setColor(this.color, this.data.tool);
+				this.drawService.setColor(this.color, this.data.tool, this.data.type);
+			} else this.drawService.setColor(this.color, this.data.tool);
 		}
 		this.dialogRef.close(this.color);
 	}

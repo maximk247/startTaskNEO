@@ -13,6 +13,7 @@ export class DrawPolygonComponent {
 	@Input() tool: string;
 	@Output() polygonSizeChange: EventEmitter<number> =
 		new EventEmitter<number>();
+	allType = "polygon";
 	lineStyles: Array<string> = [
 		"Solid",
 		"Dotted",
@@ -31,27 +32,16 @@ export class DrawPolygonComponent {
 		"DiagonalCrossHatching",
 	];
 
-	async getPolygonFillStyle() {
-		const pattern = await this.drawService.stylePatternSimplePoly(
-			"cross.png",
-			this.polygonFillColor,
-		);
-		return pattern;
-	}
-
 	async setPolygonFillStyle(event: Event) {
 		const target = event.target as HTMLSelectElement;
 		const style = target.value;
 		await this.drawService.setPolygonFill(style);
-		const pattern = this.drawService.getPolygonFill();
-		this.drawService.setStyle(this.tool, style, pattern);
 	}
 
 	async setLineStyle(event: Event) {
 		const target = event.target as HTMLSelectElement;
 		const style = target.value;
-		const pattern = this.drawService.getPolygonFill();
-		this.drawService.setStyle(this.tool, style, pattern);
+		this.drawService.setStyle(this.tool, style);
 	}
 
 	updatePolygonSize() {

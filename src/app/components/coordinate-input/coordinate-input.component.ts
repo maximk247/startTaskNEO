@@ -34,12 +34,12 @@ export class CoordinateInputComponent {
 			},
 		);
 	}
-	addPointToMap() {
+	async addPointToMap() {
 		if (this.x !== undefined && this.y !== undefined) {
 			const point = new Feature({
 				geometry: new Point(fromLonLat([this.x, this.y])),
 			});
-			const pointStyle = this.drawService.getStyle(this.tool);
+			const pointStyle = await this.drawService.getStyle(this.tool);
 			point.setStyle(pointStyle);
 			this.mapService.addFeatureToMap(point);
 		}
