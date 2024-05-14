@@ -1,0 +1,16 @@
+<div>
+	<h2>Контур</h2>
+	<select (change)="setLineStyle($event)">
+		<option *ngFor="let style of lineStyles" [value]="style">
+			{{ style }}
+		</option>
+	</select>
+</div>
+
+<app-draw-size
+	[name]="'Толщина линии'"
+	[(size)]="freeLineSize"
+	(sizeChange)="updateLineSize()"
+></app-draw-size>
+<app-draw-color [color]="freeLineColor" [tool]="tool"></app-draw-color>
+<app-draw-transparency [tool]="tool"></app-draw-transparency>

@@ -25,7 +25,10 @@ export class DialogComponent {
 			if (this.color.indexOf("rgba") === -1) {
 				this.color = this.color.replace("rgb", "rgba").replace(")", ", 1)");
 			}
-			if (this.data.tool === "drawPolygon") {
+			if (
+				this.data.tool === "drawPolygon" ||
+				this.data.tool === "drawFreePolygon"
+			) {
 				this.drawService.setColor(this.color, this.data.tool, this.data.type);
 			} else this.drawService.setColor(this.color, this.data.tool);
 		}

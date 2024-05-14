@@ -20,17 +20,28 @@ export class DrawComponent implements OnInit {
 		"drawFreeLine",
 		"drawPolygon",
 		"drawFreePolygon",
-		"drawCircle",
+		"drawFigure",
 	];
 	pointSize = 10;
-	pointColor = "rgba(255,0,0,1)";
+	pointColor: string;
 
 	lineSize = 2;
-	lineColor = "rgba(255,0,0,1)";
+	lineColor: string;
+
+	freeLineSize = 2;
+	freeLineColor: string;
 
 	polygonSize = 10;
-	polygonFillColor = "rgba(255,0,0,1)";
-	polygonStrokeColor = "rgba(255,0,0,1)";
+	polygonFillColor: string;
+	polygonStrokeColor: string;
+
+	freePolygonSize = 10;
+	freePolygonFillColor: string;
+	freePolygonStrokeColor: string;
+
+	figureSize = 10;
+	figureFillColor: string;
+	figureStrokeColor: string;
 
 	vectorLayer: VectorLayer<VectorSource>;
 	source: VectorSource;
@@ -54,8 +65,12 @@ export class DrawComponent implements OnInit {
 		drawFreeLine: false,
 		drawPolygon: false,
 		drawFreePolygon: false,
-		drawCircle: false,
+		drawFigure: false,
 	};
+
+	updateSize(size: number, tool: string) {
+		this.drawService.setSize(size, tool);
+	}
 	resetComponentVisibility() {
 		for (const key in this.componentVisibility) {
 			this.componentVisibility[key] = false;
@@ -79,11 +94,6 @@ export class DrawComponent implements OnInit {
 		const draw = this.drawService.initializePoint(this.map);
 		this.activeInteraction = draw;
 		this.map.addInteraction(draw);
-	}
-
-	drawCircle() {
-		const drawCircle = this.drawService.initializeCircle(this.map);
-		this.map.addInteraction(drawCircle);
 	}
 
 	drawLine() {
@@ -111,16 +121,37 @@ export class DrawComponent implements OnInit {
 	}
 
 	drawFreeLine() {
+		this.resetComponentVisibility();
+		this.componentVisibility = {
+			...this.componentVisibility,
+			drawFreeLine: true,
+		};
+		this.removeActiveInteraction();
 		const drawFreeLine = this.drawService.initalizeFreeLine(this.map);
+		this.activeInteraction = drawFreeLine;
 		this.map.addInteraction(drawFreeLine);
 	}
 
 	drawFreePolygon() {
+		this.resetComponentVisibility();
+		this.componentVisibility = {
+			...this.componentVisibility,
+			drawFreePolygon: true,
+		};
+		this.removeActiveInteraction();
 		const drawFreePolygon = this.drawService.initalizeFreePolygon(this.map);
+		this.activeInteraction = drawFreePolygon;
 		this.map.addInteraction(drawFreePolygon);
 	}
 
-	updateSize(size: number, tool: string) {
-		this.drawService.setSize(size, tool);
+	drawFigure() {
+		this.resetComponentVisibility();
+		this.componentVisibility = {
+			...this.componentVisibility,
+			drawFigure: true,
+		};
+		this.removeActiveInteraction();
+		const drawFigure = this.drawService.initializeFigure(this.map);
+		this.map.addInteraction(drawFigure);
 	}
 }
