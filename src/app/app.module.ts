@@ -35,6 +35,7 @@ import { DrawPolygonComponent } from "./components/sidenav/draw/draw-polygon/dra
 import { DrawFreeLineComponent } from "./components/sidenav/draw/draw-free-line/draw-free-line.component";
 import { DrawFreePolygonComponent } from "./components/sidenav/draw/draw-free-polygon/draw-free-polygon.component";
 import { DrawFigureComponent } from "./components/sidenav/draw/draw-figure/draw-figure.component";
+import { DrawShapeComponent } from './components/sidenav/draw/draw-tools/draw-shape/draw-shape.component';
 
 function initializeKeycloak(keycloak: KeycloakService) {
 	return () =>
@@ -74,6 +75,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
 		DrawFreeLineComponent,
 		DrawFreePolygonComponent,
 		DrawFigureComponent,
+  DrawShapeComponent,
 	],
 	imports: [
 		BrowserModule,

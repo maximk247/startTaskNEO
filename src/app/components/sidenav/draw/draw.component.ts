@@ -71,16 +71,10 @@ export class DrawComponent implements OnInit {
 	updateSize(size: number, tool: string) {
 		this.drawService.setSize(size, tool);
 	}
+
 	resetComponentVisibility() {
 		for (const key in this.componentVisibility) {
 			this.componentVisibility[key] = false;
-		}
-	}
-
-	removeActiveInteraction() {
-		if (this.activeInteraction) {
-			this.map.removeInteraction(this.activeInteraction);
-			this.activeInteraction = null;
 		}
 	}
 
@@ -90,10 +84,10 @@ export class DrawComponent implements OnInit {
 			...this.componentVisibility,
 			drawPoint: true,
 		};
-		this.removeActiveInteraction();
-		const draw = this.drawService.initializePoint(this.map);
-		this.activeInteraction = draw;
-		this.map.addInteraction(draw);
+		this.drawService.removeGlobalInteraction(this.map, this.activeInteraction);
+		const drawPoint = this.drawService.initializePoint(this.map);
+		this.activeInteraction = drawPoint;
+		this.drawService.addGlobalInteraction(this.map, drawPoint);
 	}
 
 	drawLine() {
@@ -102,10 +96,10 @@ export class DrawComponent implements OnInit {
 			...this.componentVisibility,
 			drawLine: true,
 		};
-		this.removeActiveInteraction();
+		this.drawService.removeGlobalInteraction(this.map, this.activeInteraction);
 		const drawLine = this.drawService.initializeLine(this.map);
 		this.activeInteraction = drawLine;
-		this.map.addInteraction(drawLine);
+		this.drawService.addGlobalInteraction(this.map, drawLine);
 	}
 
 	drawPolygon() {
@@ -114,10 +108,10 @@ export class DrawComponent implements OnInit {
 			...this.componentVisibility,
 			drawPolygon: true,
 		};
-		this.removeActiveInteraction();
+		this.drawService.removeGlobalInteraction(this.map, this.activeInteraction);
 		const drawPolygon = this.drawService.initializePolygon(this.map);
 		this.activeInteraction = drawPolygon;
-		this.map.addInteraction(drawPolygon);
+		this.drawService.addGlobalInteraction(this.map, drawPolygon);
 	}
 
 	drawFreeLine() {
@@ -126,10 +120,10 @@ export class DrawComponent implements OnInit {
 			...this.componentVisibility,
 			drawFreeLine: true,
 		};
-		this.removeActiveInteraction();
+		this.drawService.removeGlobalInteraction(this.map, this.activeInteraction);
 		const drawFreeLine = this.drawService.initalizeFreeLine(this.map);
 		this.activeInteraction = drawFreeLine;
-		this.map.addInteraction(drawFreeLine);
+		this.drawService.addGlobalInteraction(this.map, drawFreeLine);
 	}
 
 	drawFreePolygon() {
@@ -138,10 +132,10 @@ export class DrawComponent implements OnInit {
 			...this.componentVisibility,
 			drawFreePolygon: true,
 		};
-		this.removeActiveInteraction();
+		this.drawService.removeGlobalInteraction(this.map, this.activeInteraction);
 		const drawFreePolygon = this.drawService.initalizeFreePolygon(this.map);
 		this.activeInteraction = drawFreePolygon;
-		this.map.addInteraction(drawFreePolygon);
+		this.drawService.addGlobalInteraction(this.map, drawFreePolygon);
 	}
 
 	drawFigure() {
@@ -150,8 +144,9 @@ export class DrawComponent implements OnInit {
 			...this.componentVisibility,
 			drawFigure: true,
 		};
-		this.removeActiveInteraction();
-		const drawFigure = this.drawService.initializeFigure(this.map);
-		this.map.addInteraction(drawFigure);
+		this.drawService.removeGlobalInteraction(this.map, this.activeInteraction);
+		const drawFigure = this.drawService.initializeFigure(this.map, "Circle");
+		this.activeInteraction = drawFigure;
+		this.drawService.addGlobalInteraction(this.map, drawFigure);
 	}
 }

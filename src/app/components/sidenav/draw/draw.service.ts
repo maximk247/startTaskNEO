@@ -2,16 +2,15 @@
 /* eslint-disable no-case-declarations */
 import { Injectable } from "@angular/core";
 import { Type } from "ol/geom/Geometry";
-import { Draw } from "ol/interaction";
+import { Draw, Interaction } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
 import Map from "ol/Map";
 import VectorSource from "ol/source/Vector";
 import { Style, RegularShape, Stroke, Fill } from "ol/style";
 import CircleStyle from "ol/style/Circle";
-import { createBox, createRegularPolygon } from "ol/interaction/Draw.js";
+import { GeometryFunction } from "ol/interaction/Draw.js";
 import ImageStyle from "ol/style/Image";
 import { Subject } from "rxjs";
-import { GeometryFunction } from "ol/style/Style";
 
 @Injectable({
 	providedIn: "root",
@@ -57,11 +56,59 @@ export class DrawService {
 
 	colorChanged = new Subject<string>();
 
+	async stylePatternSimplePoly(
+		pattern: string,
+		fillColor: string | undefined,
+	): Promise<CanvasPattern | null> {
+		return new Promise((resolve, reject) => {
+			const vectorImage = new Image();
+			vectorImage.crossOrigin = "anonymous";
+			vectorImage.src = "../../../assets/images/" + pattern;
+			this.polygonPattern = pattern;
+			this.freePolygonPattern = pattern;
+			this.figurePattern = pattern;
+
+			vectorImage.onload = () => {
+				const canvas = document.createElement("canvas");
+				const ctx = canvas.getContext("2d");
+				if (!ctx) {
+					reject("Could not create canvas context");
+					return;
+				}
+				canvas.width = vectorImage.width;
+				canvas.height = vectorImage.height;
+				ctx.drawImage(vectorImage, 0, 0);
+				ctx.globalCompositeOperation = "source-in";
+				if (fillColor) {
+					ctx.fillStyle = fillColor;
+					ctx.fillRect(0, 0, canvas.width, canvas.height);
+				}
+
+				const createdPattern = ctx.createPattern(canvas, "repeat");
+				resolve(createdPattern);
+			};
+			vectorImage.onerror = () => {
+				resolve(null);
+			};
+		});
+	}
+
 	replaceAlpha(rgbaString: string, newAlpha: string) {
 		return rgbaString.replace(
 			/(rgba\(\d+,\s*\d+,\s*\d+,\s*)\d*\.?\d+(\))/,
 			`$1${newAlpha}$2`,
 		);
+	}
+
+	removeGlobalInteraction(map: Map, interaction: Interaction | null = null) {
+		if (interaction) {
+			map.removeInteraction(interaction);
+			interaction = null;
+		}
+	}
+
+	addGlobalInteraction(map: Map, interaction: Interaction) {
+		map.addInteraction(interaction);
 	}
 
 	initializeDraw(
@@ -70,7 +117,7 @@ export class DrawService {
 		source: VectorSource,
 		type: Type,
 		freehand?: boolean,
-		geometryFunction?: any
+		geometryFunction?: GeometryFunction | undefined,
 	) {
 		map.addLayer(vector);
 		const draw = new Draw({
@@ -119,42 +166,6 @@ export class DrawService {
 		});
 		return draw;
 	}
-
-	async stylePatternSimplePoly(
-		pattern: string,
-		fillColor: string | undefined,
-	): Promise<CanvasPattern | null> {
-		return new Promise((resolve, reject) => {
-			const vectorImage = new Image();
-			vectorImage.crossOrigin = "anonymous";
-			vectorImage.src = "../../../assets/images/" + pattern;
-			this.polygonPattern = pattern;
-			this.freePolygonPattern = pattern;
-
-			vectorImage.onload = () => {
-				const canvas = document.createElement("canvas");
-				const ctx = canvas.getContext("2d");
-				if (!ctx) {
-					reject("Could not create canvas context");
-					return;
-				}
-				canvas.width = vectorImage.width;
-				canvas.height = vectorImage.height;
-				ctx.drawImage(vectorImage, 0, 0);
-				ctx.globalCompositeOperation = "source-in";
-				if (fillColor) {
-					ctx.fillStyle = fillColor;
-					ctx.fillRect(0, 0, canvas.width, canvas.height);
-				}
-
-				const createdPattern = ctx.createPattern(canvas, "repeat");
-				resolve(createdPattern);
-			};
-			vectorImage.onerror = () => {
-				resolve(null);
-			};
-		});
-	}
 	initializePolygon(map: Map) {
 		const source = new VectorSource();
 		const vector = this.initalizeLayer(source);
@@ -174,10 +185,12 @@ export class DrawService {
 		return draw;
 	}
 
-	initializeFigure(map: Map) {
+	initializeFigure(map: Map, type: Type, figure?: GeometryFunction) {
 		const source = new VectorSource();
 		const vector = this.initalizeLayer(source);
-		const draw = this.initializeDraw(map, vector, source, "Circle",false, createBox());
+
+		const draw = this.initializeDraw(map, vector, source, type, false, figure);
+		draw.set("drawType", "figure");
 		draw.on("drawstart", async (event) => {
 			event.feature.setStyle(await this.getStyle("drawFigure"));
 		});
@@ -201,7 +214,7 @@ export class DrawService {
 			case "drawFreePolygon":
 				this.freePolygonSize = size;
 				break;
-			case "drawFigurePolygon":
+			case "drawFigure":
 				this.figureSize = size;
 				break;
 		}
@@ -282,7 +295,7 @@ export class DrawService {
 					this.freePolygonFillColor + this.freePolygonStrokeColor;
 				break;
 			case "drawFigure":
-				if (type == "polygon") {
+				if (type == "polygon" || type == "figure") {
 					const oldFillColor = this.figureFillColor;
 					this.figureFillColor = this.replaceAlpha(oldFillColor, color);
 
@@ -845,8 +858,6 @@ export class DrawService {
 
 				fillColor = this.figureFillColor;
 
-				console.log(fillColor, this.figureFillStyle);
-
 				strokeColor = this.figureStrokeColor;
 				this.figureFillStyle = await this.getFigureFill();
 
@@ -873,14 +884,6 @@ export class DrawService {
 
 						options.fill = new Fill({
 							color: this.figureFillStyle,
-						});
-						options.image = new RegularShape({
-							points: 3,
-							radius: 10,
-							rotation: 0,
-							angle: 0,
-							stroke: options.stroke,
-							fill: options.fill,
 						});
 						break;
 					case "DashDot":
@@ -931,7 +934,7 @@ export class DrawService {
 						color: this.figureFillColor,
 					});
 				}
-				console.log(options);
+
 				this.figureColor = fillColor + strokeColor;
 				return new Style(options);
 		}

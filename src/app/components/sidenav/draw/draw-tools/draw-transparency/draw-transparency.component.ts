@@ -45,7 +45,7 @@ export class TransparencyComponent implements OnInit, OnDestroy {
 	}
 	updateColorWithAlpha() {
 		const rgbaColor = `rgba(${this.redValue}, ${this.greenValue}, ${this.blueValue}, ${this.alphaValue})`;
-		if (this.type === "polygon") {
+		if (this.type === "polygon" || this.type === "figure") {
 			this.drawService.setColor(`${this.alphaValue}`, this.tool, this.type);
 		} else {
 			this.drawService.setColor(rgbaColor, this.tool, this.type);

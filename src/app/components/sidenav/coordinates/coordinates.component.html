@@ -1,1 +1,13 @@
-<div>Я работаю с координатами</div>
+<div>
+	<label>Широта:</label>
+	<input type="number" [(ngModel)]="latitudeDegrees" placeholder="Градусы" />
+	<input type="number" [(ngModel)]="latitudeMinutes" placeholder="Минуты" />
+	<input type="number" [(ngModel)]="latitudeSeconds" placeholder="Секунды" />
+</div>
+<div>
+	<label>Долгота:</label>
+	<input type="number" [(ngModel)]="longitudeDegrees" placeholder="Градусы" />
+	<input type="number" [(ngModel)]="longitudeMinutes" placeholder="Минуты" />
+	<input type="number" [(ngModel)]="longitudeSeconds" placeholder="Секунды" />
+</div>
+<button (click)="goToCoordinates()">Перейти к координатам</button>

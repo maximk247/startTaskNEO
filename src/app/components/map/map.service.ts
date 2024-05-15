@@ -11,8 +11,8 @@ import { Feature } from "ol";
 
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { easeOut } from "ol/easing";
 import { ZoomSlider } from "ol/control";
+import { useGeographic } from "ol/proj";
 
 @Injectable({
 	providedIn: "root",
@@ -28,6 +28,7 @@ export class MapService {
 	}
 
 	initMap(target: string) {
+		useGeographic();
 		this.map = new Map({
 			target: target,
 

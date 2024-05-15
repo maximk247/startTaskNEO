@@ -27,7 +27,8 @@ export class DialogComponent {
 			}
 			if (
 				this.data.tool === "drawPolygon" ||
-				this.data.tool === "drawFreePolygon"
+				this.data.tool === "drawFreePolygon" ||
+				this.data.tool === "drawFigure"
 			) {
 				this.drawService.setColor(this.color, this.data.tool, this.data.type);
 			} else this.drawService.setColor(this.color, this.data.tool);
