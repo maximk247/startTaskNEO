@@ -1,1 +1,6 @@
-<div>Я измерение</div>
+<div>
+	<select [(ngModel)]="mode" (change)="changeMode(mode)">
+		<option value="point">Измерить точку</option>
+		<option value="line">Измерить линию</option>
+	</select>
+</div>
