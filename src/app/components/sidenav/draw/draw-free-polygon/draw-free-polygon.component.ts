@@ -1,5 +1,9 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { DrawService } from "../draw.service";
+import {
+	DrawLineStyles,
+	DrawPolygonFillStyles,
+} from "../interfaces/draw.interface";
 
 @Component({
 	selector: "app-draw-free-polygon",
@@ -14,7 +18,7 @@ export class DrawFreePolygonComponent {
 	@Output() freePolygonSizeChange: EventEmitter<number> =
 		new EventEmitter<number>();
 	allType = "polygon";
-	lineStyles: Array<string> = [
+	lineStyles: DrawLineStyles = [
 		"Solid",
 		"Dotted",
 		"Dashed",
@@ -22,7 +26,7 @@ export class DrawFreePolygonComponent {
 		"DashDotDot",
 	];
 
-	polygonFillStyles: Array<string> = [
+	polygonFillStyles: DrawPolygonFillStyles = [
 		"Solid",
 		"VerticalHatching",
 		"HorizontalHatching",
@@ -35,7 +39,6 @@ export class DrawFreePolygonComponent {
 	async setFreePolygonFillStyle(event: Event) {
 		const target = event.target as HTMLSelectElement;
 		const style = target.value;
-    console.log(style, 'style')
 		await this.drawService.setFreePolygonFill(style);
 	}
 

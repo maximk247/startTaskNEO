@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { DrawService } from "../draw.service";
+import { DrawLineStyles } from "../interfaces/draw.interface";
 
 @Component({
 	selector: "app-draw-line",
@@ -12,7 +13,7 @@ export class DrawLineComponent {
 	@Input() tool: string;
 	@Output() lineSizeChange: EventEmitter<number> =
 		new EventEmitter<number>();
-	lineStyles: Array<string> = [
+	lineStyles: DrawLineStyles = [
 		"Solid",
 		"Dotted",
 		"Dashed",

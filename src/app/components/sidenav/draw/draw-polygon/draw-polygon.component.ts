@@ -1,5 +1,11 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { DrawService } from "../draw.service";
+import {
+	DrawFillStyle,
+	DrawLineStyles,
+	DrawPolygonFillStyle,
+	DrawPolygonFillStyles,
+} from "../interfaces/draw.interface";
 
 @Component({
 	selector: "app-draw-polygon",
@@ -14,7 +20,7 @@ export class DrawPolygonComponent {
 	@Output() polygonSizeChange: EventEmitter<number> =
 		new EventEmitter<number>();
 	allType = "polygon";
-	lineStyles: Array<string> = [
+	lineStyles: DrawLineStyles = [
 		"Solid",
 		"Dotted",
 		"Dashed",
@@ -22,7 +28,7 @@ export class DrawPolygonComponent {
 		"DashDotDot",
 	];
 
-	polygonFillStyles: Array<string> = [
+	polygonFillStyles: DrawPolygonFillStyles = [
 		"Solid",
 		"VerticalHatching",
 		"HorizontalHatching",

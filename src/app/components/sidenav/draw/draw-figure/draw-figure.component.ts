@@ -1,5 +1,9 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { DrawService } from "../draw.service";
+import {
+	DrawLineStyles,
+	DrawPolygonFillStyles,
+} from "../interfaces/draw.interface";
 
 @Component({
 	selector: "app-draw-figure",
@@ -11,10 +15,9 @@ export class DrawFigureComponent {
 	@Input() figureFillColor: string;
 	@Input() figureStrokeColor: string;
 	@Input() tool: string;
-	@Output() figureSizeChange: EventEmitter<number> =
-		new EventEmitter<number>();
+	@Output() figureSizeChange: EventEmitter<number> = new EventEmitter<number>();
 	allType = "figure";
-	lineStyles: Array<string> = [
+	lineStyles: DrawLineStyles = [
 		"Solid",
 		"Dotted",
 		"Dashed",
@@ -22,7 +25,7 @@ export class DrawFigureComponent {
 		"DashDotDot",
 	];
 
-	figureFillStyles: Array<string> = [
+	figureFillStyles: DrawPolygonFillStyles = [
 		"Solid",
 		"VerticalHatching",
 		"HorizontalHatching",

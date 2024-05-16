@@ -11,54 +11,111 @@ import CircleStyle from "ol/style/Circle";
 import { GeometryFunction } from "ol/interaction/Draw.js";
 import ImageStyle from "ol/style/Image";
 import { Subject } from "rxjs";
+import {
+	DrawToolKey,
+	DrawStyle,
+	DrawStrokeStyle,
+	DrawFillStyle,
+	DrawLineDash,
+	DrawFillColor,
+	DrawOptions,
+	DrawPoint,
+	DrawLine,
+	DrawPolygon,
+	DrawFigure,
+} from "./interfaces/draw.interface";
 
 @Injectable({
 	providedIn: "root",
 })
 export class DrawService {
+	private point: DrawPoint = {
+		size: 10,
+		style: "Circle",
+		color: "rgba(0, 255, 0, 1)",
+	};
 	private pointSize = 10;
-	private pointStyle: string | undefined;
+	private pointStyle: DrawStyle;
 	private pointColor = "rgba(0, 255, 0, 1)";
 
-	private lineStyle: string | undefined;
+	private line: DrawLine = {
+		size: 2,
+		style: "Dashed",
+		color: "rgba(255, 0, 0, 1)",
+		dash: [5, 5],
+	};
+	private lineStyle: DrawStyle;
 	private lineSize = 2;
 	private lineColor = "rgba(255, 0, 0, 1)";
-	private lineDash: Array<number> | undefined;
+	private lineDash: DrawLineDash = [5, 5];
 
-	private freeLineStyle: string | undefined;
+	private freeLine: DrawLine = {
+		size: 2,
+		style: "Dashed",
+		color: "rgba(255, 0, 0, 1)",
+		dash: [5, 5],
+	}
+	private freeLineStyle: DrawStyle;
 	private freeLineSize: number;
 	private freeLineColor = "rgba(255, 0, 0, 1)";
 
+	private polygon: DrawPolygon = {
+		size: 10,
+		fillStyle: null,
+		strokeStyle: null,
+		color: "rgba(0, 0, 255, 1)",
+		fillColor: "rgba(255, 0, 0, 1)",
+		strokeColor: "rgba(0, 0, 255, 1)",
+		pattern: "none",
+	}
 	private polygonSize = 10;
 	private polygonStrokeColor = "rgba(0, 0, 255, 1)";
 	private polygonFillColor = "rgba(255, 0, 0, 1)";
 	private polygonColor = this.polygonFillColor + this.polygonStrokeColor;
-	private polygonFillStyle: CanvasPattern | null | undefined;
-	private polygonStrokeStyle: string | undefined;
+	private polygonFillStyle: DrawFillStyle;
+	private polygonStrokeStyle: DrawStrokeStyle;
 	private polygonPattern: string;
 
+	private freePolygon: DrawPolygon = {
+		size: 10,
+		fillStyle: null,
+		strokeStyle: null,
+		color: "rgba(0, 0, 255, 1)",
+		fillColor: "rgba(255, 0, 0, 1)",
+		strokeColor: "rgba(0, 0, 255, 1)",
+		pattern: "none",
+	}
 	private freePolygonSize = 10;
 	private freePolygonStrokeColor = "rgba(0, 0, 255, 1)";
 	private freePolygonFillColor = "rgba(255, 0, 0, 1)";
 	private freePolygonColor =
 		this.freePolygonFillColor + this.freePolygonStrokeColor;
-	private freePolygonFillStyle: CanvasPattern | null | undefined;
-	private freePolygonStrokeStyle: string | undefined;
+	private freePolygonFillStyle: DrawFillStyle;
+	private freePolygonStrokeStyle: DrawStrokeStyle;
 	private freePolygonPattern: string;
 
+	private figure: DrawFigure = {
+		size: 10,
+		fillStyle: null,
+		strokeStyle: null,
+		color: "rgba(0, 0, 255, 1)",
+		fillColor: "rgba(255, 0, 0, 1)",
+		strokeColor: "rgba(0, 0, 255, 1)",
+		pattern: "none",
+	}
 	private figureSize = 10;
 	private figureStrokeColor = "rgba(0, 0, 255, 1)";
 	private figureFillColor = "rgba(255, 0, 0, 1)";
 	private figureColor = this.figureFillColor + this.figureStrokeColor;
-	private figureFillStyle: CanvasPattern | null | undefined;
-	private figureStrokeStyle: string | undefined;
+	private figureFillStyle: DrawFillStyle;
+	private figureStrokeStyle: DrawStrokeStyle;
 	private figurePattern: string;
 
 	colorChanged = new Subject<string>();
 
 	async stylePatternSimplePoly(
 		pattern: string,
-		fillColor: string | undefined,
+		fillColor: DrawFillColor,
 	): Promise<CanvasPattern | null> {
 		return new Promise((resolve, reject) => {
 			const vectorImage = new Image();
@@ -197,7 +254,7 @@ export class DrawService {
 		return draw;
 	}
 
-	setSize(size: number, tool: string) {
+	setSize(size: number, tool: DrawToolKey) {
 		switch (tool) {
 			case "drawPoint":
 				this.pointSize = size;
@@ -220,7 +277,7 @@ export class DrawService {
 		}
 	}
 
-	getSize(tool: string): number | undefined {
+	getSize(tool: DrawToolKey): number | undefined {
 		switch (tool) {
 			case "drawPoint":
 				return this.pointSize;
@@ -237,7 +294,7 @@ export class DrawService {
 		}
 	}
 
-	setColor(color: string, tool: string, type?: string) {
+	setColor(color: string, tool: DrawToolKey, type?: string) {
 		switch (tool) {
 			case "drawPoint":
 				this.pointColor = color;
@@ -316,7 +373,7 @@ export class DrawService {
 		}
 	}
 
-	getColor(tool: string): string | undefined {
+	getColor(tool: DrawToolKey): string | undefined {
 		switch (tool) {
 			case "drawPoint":
 				return this.pointColor;
@@ -333,7 +390,7 @@ export class DrawService {
 		}
 	}
 
-	setStyle(tool: string, style: string) {
+	setStyle(tool: DrawToolKey, style: string) {
 		switch (tool) {
 			case "drawPoint":
 				this.pointStyle = style;
@@ -500,10 +557,10 @@ export class DrawService {
 		);
 	}
 
-	async getStyle(tool: string): Promise<Style | undefined> {
+	async getStyle(tool: DrawToolKey): Promise<Style | undefined> {
 		let size: number | undefined;
 		let color;
-		let options: { stroke?: Stroke; fill?: Fill; image?: ImageStyle } = {};
+		let options: DrawOptions = {};
 		let fillColor: string;
 		let strokeColor: string;
 		switch (tool) {

@@ -1,5 +1,6 @@
 import { Component, HostListener, Input, OnInit } from "@angular/core";
 import { ModalService } from "./modal.service";
+import { ModalMode } from "./interfaces/modal.interface";
 
 @Component({
 	selector: "app-modal",
@@ -7,7 +8,7 @@ import { ModalService } from "./modal.service";
 	styleUrls: ["./modal.component.scss"],
 })
 export class ModalComponent implements OnInit {
-	@Input() mode: "menu" | "draw" | "coordinates" | "measurement";
+	@Input() mode: ModalMode;
 
 	constructor(private modalService: ModalService) {}
 

@@ -1,6 +1,7 @@
 import { Component, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { DrawService } from "../sidenav/draw/draw.service";
+import { DialogData } from "./interfaces/dialog.interface";
 
 @Component({
 	selector: "app-dialog",
@@ -13,11 +14,7 @@ export class DialogComponent {
 		private dialogRef: MatDialogRef<DialogComponent>,
 		private drawService: DrawService,
 		@Inject(MAT_DIALOG_DATA)
-		public data: {
-			tool: string;
-			color: string;
-			type?: string;
-		},
+		public data: DialogData
 	) {}
 
 	onClose(status: string): void {

@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { MapService } from "../../map/map.service";
 import Map from "ol/Map";
 @Component({
@@ -6,7 +6,7 @@ import Map from "ol/Map";
 	templateUrl: "./coordinates.component.html",
 	styleUrls: ["./coordinates.component.scss"],
 })
-export class CoordinatesComponent {
+export class CoordinatesComponent implements OnInit{
 	latitudeDegrees: number;
 	latitudeMinutes: number;
 	latitudeSeconds: number;

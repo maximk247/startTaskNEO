@@ -6,6 +6,7 @@ import { MapService } from "../../map/map.service";
 import Feature from "ol/Feature";
 import { DrawService } from "./draw.service";
 import { Draw } from "ol/interaction";
+import { DrawTools, DrawToolKey } from "./interfaces/draw.interface";
 
 @Component({
 	selector: "app-draw",
@@ -14,7 +15,7 @@ import { Draw } from "ol/interaction";
 })
 export class DrawComponent implements OnInit {
 	private map: Map;
-	tools = [
+	tools: Array<DrawToolKey> = [
 		"drawPoint",
 		"drawLine",
 		"drawFreeLine",
@@ -59,7 +60,7 @@ export class DrawComponent implements OnInit {
 		this.map.addLayer(vectorLayer);
 	}
 
-	componentVisibility: { [key: string]: boolean } = {
+	componentVisibility: DrawTools = {
 		drawPoint: false,
 		drawLine: false,
 		drawFreeLine: false,
@@ -68,7 +69,7 @@ export class DrawComponent implements OnInit {
 		drawFigure: false,
 	};
 
-	updateSize(size: number, tool: string) {
+	updateSize(size: number, tool: DrawToolKey) {
 		this.drawService.setSize(size, tool);
 	}
 

@@ -4,9 +4,18 @@ import { Overlay } from "ol";
 import { Draw } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { LineString, Point } from "ol/geom";
+import { Circle, LineString, Point, Polygon } from "ol/geom";
+import {
+	MeasurementCircle,
+	MeasurementLine,
+	MeasurementPolygon,
+	MeasurementPoint,
+	MeasurementMode,
+} from "./interfaces/measurement.interface";
+
 import Feature from "ol/Feature";
 import { MapService } from "../../map/map.service";
+import { getArea, getLength } from "ol/sphere";
 
 @Component({
 	selector: "app-measurement",
@@ -17,8 +26,16 @@ export class MeasurementComponent {
 	map: MapOpen;
 	vectorSource: VectorSource;
 	draw: Draw;
-	measureTooltips: Map<Feature<LineString | Point>, Overlay> = new Map();
-	mode: "point" | "line";
+	measureTooltips: Map<number, Overlay> = new Map();
+	points: Array<MeasurementPoint> = [];
+	lines: Array<MeasurementLine> = [];
+	polygons: Array<MeasurementPolygon> = [];
+	circles: Array<MeasurementCircle> = [];
+	pointCounter = 1;
+	lineCounter = 1;
+	polygonCounter = 1;
+	circleCounter = 1;
+	mode: MeasurementMode;
 
 	constructor(private mapService: MapService) {
 		this.vectorSource = new VectorSource();
@@ -30,34 +47,29 @@ export class MeasurementComponent {
 				source: this.vectorSource,
 			}),
 		);
-
-		this.addDrawInteraction();
 	}
 
-	changeMode(mode: "point" | "line") {
-		if (mode === "point") {
-			this.map.removeInteraction(this.draw);
-			this.addPointInteraction();
-		} else if (mode === "line") {
-			this.map.removeInteraction(this.draw);
-			this.addDrawInteraction();
+	changeMode(mode: MeasurementMode) {
+		switch (mode) {
+			case "point":
+				this.map.removeInteraction(this.draw);
+				this.addPointInteraction();
+				break;
+
+			case "line":
+				this.map.removeInteraction(this.draw);
+				this.addLineInteraction();
+				break;
+
+			case "polygon":
+				this.map.removeInteraction(this.draw);
+				this.addPolygonInteraction();
+				break;
+
+			case "circle":
+				this.map.removeInteraction(this.draw);
+				this.addCircleInteraction();
 		}
-	}
-
-	addDrawInteraction() {
-		this.draw = new Draw({
-			source: this.vectorSource,
-			type: "LineString",
-		});
-
-		this.map.addInteraction(this.draw);
-
-		this.draw.on("drawend", (evt) => {
-			const geometry = evt.feature.getGeometry() as LineString;
-			const length = this.calculateLength(geometry.getCoordinates());
-			const lineCenter = this.calculateLineCenter(geometry.getCoordinates());
-			this.createMeasureTooltip(geometry, length, lineCenter);
-		});
 	}
 
 	addPointInteraction() {
@@ -69,21 +81,93 @@ export class MeasurementComponent {
 		this.map.addInteraction(this.draw);
 
 		this.draw.on("drawend", (evt) => {
+			const feature = evt.feature as Feature<Point>;
 			const geometry = evt.feature.getGeometry() as Point;
 			const coordinates = geometry.getCoordinates();
-			this.createPointTooltip(coordinates);
+			const pointId = this.pointCounter++;
+			this.points.push({ id: pointId, feature });
+			this.createPointTooltip(pointId, coordinates);
 		});
 	}
 
-	calculateLength(coordinates: Array<Array<number>>) {
-		let length = 0;
-		for (let i = 0; i < coordinates.length - 1; i++) {
-			length += Math.sqrt(
-				Math.pow(coordinates[i + 1][0] - coordinates[i][0], 2) +
-					Math.pow(coordinates[i + 1][1] - coordinates[i][1], 2),
-			);
-		}
-		return length;
+	addLineInteraction() {
+		this.draw = new Draw({
+			source: this.vectorSource,
+			type: "LineString",
+		});
+
+		this.map.addInteraction(this.draw);
+
+		this.draw.on("drawend", (evt) => {
+			const feature = evt.feature as Feature<LineString>;
+			const geometry = evt.feature.getGeometry() as LineString;
+			const length = this.calculateLength(geometry);
+			const lineId = this.lineCounter++;
+			this.lines.push({ id: lineId, feature, length });
+		});
+	}
+	addPolygonInteraction() {
+		this.draw = new Draw({
+			source: this.vectorSource,
+			type: "Polygon",
+		});
+
+		this.map.addInteraction(this.draw);
+
+		this.draw.on("drawend", (evt) => {
+			const feature = evt.feature as Feature<Polygon>;
+			const geometry = evt.feature.getGeometry() as Polygon;
+			const area = this.calculateArea(geometry);
+			const perimeter = this.calculatePerimeter(geometry);
+			const polygonId = this.polygonCounter++;
+			this.polygons.push({ id: polygonId, feature, area, perimeter });
+		});
+	}
+
+	addCircleInteraction() {
+		this.draw = new Draw({
+			source: this.vectorSource,
+			type: "Circle",
+		});
+
+		this.map.addInteraction(this.draw);
+
+		this.draw.on("drawend", (evt) => {
+			const feature = evt.feature as Feature<Circle>;
+			const geometry = evt.feature.getGeometry() as Circle;
+			const radius = this.calculateRadius(geometry);
+			const circleId = this.circleCounter++;
+			this.circles.push({ id: circleId, feature, radius });
+		});
+	}
+
+	calculateLength(geometry: LineString) {
+		const transformedGeometry = geometry
+			.clone()
+			.transform("EPSG:4326", "EPSG:3857");
+
+		const length = getLength(transformedGeometry);
+
+		const output = Math.round(length * 100) / 100 + "m";
+		return output;
+	}
+
+	calculateArea(geometry: Polygon) {
+		const transformedGeometry = geometry
+			.clone()
+			.transform("EPSG:4326", "EPSG:3857");
+		const area = getArea(transformedGeometry);
+		const output = Math.round((area / 1000000) * 100) / 100 + " km\xB2";
+		return output;
+	}
+
+	calculatePerimeter(geometry: Polygon) {
+		const transformedGeometry = geometry
+			.clone()
+			.transform("EPSG:4326", "EPSG:3857");
+		const perimeter = getLength(transformedGeometry);
+		const output = Math.round(perimeter * 100) / 100;
+		return output;
 	}
 
 	calculateLineCenter(coordinates: Array<Array<number>>) {
@@ -91,26 +175,24 @@ export class MeasurementComponent {
 		return coordinates[midIndex];
 	}
 
-	createMeasureTooltip(
-		geometry: LineString,
-		length: number,
-		position: Array<number>,
-	) {
-		const tooltipElement = document.createElement("div");
-		tooltipElement.innerHTML = length.toFixed(2) + " meters";
+	calculateRadius(geometry: Circle) {
+		const centerCoords = geometry.getCenter();
 
-		const measureTooltip = new Overlay({
-			element: tooltipElement,
-			offset: [0, -15],
-			positioning: "bottom-center",
-		});
+		const circleBoundary = new LineString([
+			centerCoords,
+			[centerCoords[0] + geometry.getRadius(), centerCoords[1]],
+		]);
 
-		measureTooltip.setPosition(position);
-		this.map.addOverlay(measureTooltip);
-		this.measureTooltips.set(new Feature({ geometry }), measureTooltip);
+		const transformedCircleBoundary = circleBoundary
+			.clone()
+			.transform("EPSG:4326", "EPSG:3857");
+		const radius = getLength(transformedCircleBoundary);
+
+		const output = Math.round(radius * 100) / 100 + "m";
+		return output;
 	}
 
-	createPointTooltip(coordinates: Array<number>) {
+	createPointTooltip(id: number, coordinates: Array<number>) {
 		const tooltipElement = document.createElement("div");
 		tooltipElement.innerHTML =
 			"Point: " + coordinates[0] + ", " + coordinates[1];
@@ -123,9 +205,72 @@ export class MeasurementComponent {
 
 		measureTooltip.setPosition(coordinates);
 		this.map.addOverlay(measureTooltip);
-		this.measureTooltips.set(
-			new Feature({ geometry: new Point(coordinates) }),
-			measureTooltip,
-		);
+		this.measureTooltips.set(id, measureTooltip);
+	}
+	removePoint(id: number) {
+		const point = this.points.find((point) => point.id === id);
+		if (point) {
+			this.vectorSource.removeFeature(point.feature);
+			this.points = this.points.filter((p) => p.id !== id);
+		}
+
+		const tooltip = this.measureTooltips.get(id);
+		if (tooltip) {
+			this.map.removeOverlay(tooltip);
+			this.measureTooltips.delete(id);
+		}
+		if (this.points.length === 0) {
+			this.pointCounter = 1;
+		}
+	}
+	removeLine(id: number) {
+		const line = this.lines.find((line) => line.id === id);
+		if (line) {
+			this.vectorSource.removeFeature(line.feature);
+			this.lines = this.lines.filter((l) => l.id !== id);
+		}
+
+		const tooltip = this.measureTooltips.get(id);
+		if (tooltip) {
+			this.map.removeOverlay(tooltip);
+			this.measureTooltips.delete(id);
+		}
+		if (this.lines.length === 0) {
+			this.lineCounter = 1;
+		}
+	}
+
+	removePolygon(id: number) {
+		const polygon = this.polygons.find((polygon) => polygon.id === id);
+		if (polygon) {
+			this.vectorSource.removeFeature(polygon.feature);
+			this.polygons = this.polygons.filter((p) => p.id !== id);
+		}
+
+		const tooltip = this.measureTooltips.get(id);
+		if (tooltip) {
+			this.map.removeOverlay(tooltip);
+			this.measureTooltips.delete(id);
+		}
+		if (this.polygons.length === 0) {
+			this.polygonCounter = 1;
+		}
+	}
+
+	removeCircle(id: number) {
+		const circle = this.circles.find((circle) => circle.id === id);
+		if (circle) {
+			this.vectorSource.removeFeature(circle.feature);
+			this.circles = this.circles.filter((c) => c.id !== id);
+		}
+
+		const tooltip = this.measureTooltips.get(id);
+		if (tooltip) {
+			this.map.removeOverlay(tooltip);
+			this.measureTooltips.delete(id);
+		}
+		if (this.circles.length === 0) {
+			this.circleCounter = 1;
+		}
 	}
 }
