@@ -18,24 +18,25 @@ import { ScaleBarComponent } from "./components/map-widgets/scale-bar/scale-bar.
 import { SliderComponent } from "./components/map-widgets/slider/slider.component";
 import { ControlsComponent } from "./components/map-widgets/controls/controls.component";
 import { KeycloakAngularModule, KeycloakService } from "keycloak-angular";
-import { DrawPointComponent } from "./components/sidenav/draw/draw-point/draw-point.component";
+import { DrawPointComponent } from "./components/sidenav/draw/draw-tools/draw-point/draw-point.component";
 import { HttpClientModule } from "@angular/common/http";
 import { InlineSVGModule } from "ng-inline-svg-2";
 import { FormsModule } from "@angular/forms";
-import { DrawSizeComponent } from "./components/sidenav/draw/draw-tools/draw-size/draw-size.component";
+import { DrawSizeComponent } from "./components/sidenav/draw/draw-options/draw-size/draw-size.component";
 import { ColorPickerModule } from "ngx-color-picker";
-import { DrawColorComponent } from "./components/sidenav/draw/draw-tools/draw-color/draw-color.component";
+import { DrawColorComponent } from "./components/sidenav/draw/draw-options/draw-color/draw-color.component";
 import { DialogComponent } from "./components/dialog/dialog.component";
 import { MatDialogModule } from "@angular/material/dialog";
-import { TransparencyComponent } from "./components/sidenav/draw/draw-tools/draw-transparency/draw-transparency.component";
+import { TransparencyComponent } from "./components/sidenav/draw/draw-options/draw-transparency/draw-transparency.component";
 import { CoordinateInputComponent } from "./components/coordinate-input/coordinate-input.component";
 import { SpatialReferenceService } from "./components/spatial-reference.service";
-import { DrawLineComponent } from "./components/sidenav/draw/draw-line/draw-line.component";
-import { DrawPolygonComponent } from "./components/sidenav/draw/draw-polygon/draw-polygon.component";
-import { DrawFreeLineComponent } from "./components/sidenav/draw/draw-free-line/draw-free-line.component";
-import { DrawFreePolygonComponent } from "./components/sidenav/draw/draw-free-polygon/draw-free-polygon.component";
-import { DrawFigureComponent } from "./components/sidenav/draw/draw-figure/draw-figure.component";
-import { DrawShapeComponent } from './components/sidenav/draw/draw-tools/draw-shape/draw-shape.component';
+import { DrawLineComponent } from "./components/sidenav/draw/draw-tools/draw-line/draw-line.component";
+import { DrawPolygonComponent } from "./components/sidenav/draw/draw-tools/draw-polygon/draw-polygon.component";
+import { DrawFreeLineComponent } from "./components/sidenav/draw/draw-tools/draw-free-line/draw-free-line.component";
+import { DrawFreePolygonComponent } from "./components/sidenav/draw/draw-tools/draw-free-polygon/draw-free-polygon.component";
+import { DrawFigureComponent } from "./components/sidenav/draw/draw-tools/draw-figure/draw-figure.component";
+import { DrawShapeComponent } from "./components/sidenav/draw/draw-options/draw-shape/draw-shape.component";
+import { DrawDeleteComponent } from './components/sidenav/draw/draw-editing/draw-delete/draw-delete.component';
 
 function initializeKeycloak(keycloak: KeycloakService) {
 	return () =>
@@ -75,7 +76,8 @@ function initializeKeycloak(keycloak: KeycloakService) {
 		DrawFreeLineComponent,
 		DrawFreePolygonComponent,
 		DrawFigureComponent,
-  DrawShapeComponent,
+		DrawShapeComponent,
+  DrawDeleteComponent,
 	],
 	imports: [
 		BrowserModule,

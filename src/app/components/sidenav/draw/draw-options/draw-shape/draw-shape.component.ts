@@ -1,9 +1,14 @@
 import { Component, OnInit } from "@angular/core";
 import { Polygon } from "ol/geom";
 import Map from "ol/Map";
-import Draw, { createRegularPolygon, createBox } from "ol/interaction/Draw";
+import Draw, {
+	createRegularPolygon,
+	createBox,
+	GeometryFunction,
+} from "ol/interaction/Draw";
 import { DrawService } from "../../draw.service";
 import { MapService } from "src/app/components/map/map.service";
+import { Coordinate } from "ol/coordinate";
 
 @Component({
 	selector: "app-draw-shape",
@@ -42,10 +47,14 @@ export class DrawShapeComponent implements OnInit {
 				break;
 			case "Arrow":
 				this.drawService.removeGlobalInteraction(this.map);
-				geometryFunction = function (coordinates: any, geometry: any) {
+				geometryFunction = function (
+					coordinates: Array<Coordinate>,
+					geometry?: Polygon,
+				) {
 					if (!geometry) {
 						geometry = new Polygon([]);
 					}
+
 					const start = coordinates[0];
 					const end = coordinates[1];
 					const dx = end[0] - start[0];
@@ -55,27 +64,42 @@ export class DrawShapeComponent implements OnInit {
 					const cos = dx / len;
 
 					const arrowHeadLen = len / 3;
+					const arrowWidth = len / 10;
+					const halfArrowWidth = arrowWidth / 2;
 
 					const arrowCoords = [
-						start,
+						[start[0] - halfArrowWidth * sin, start[1] + halfArrowWidth * cos],
+						[start[0] + halfArrowWidth * sin, start[1] - halfArrowWidth * cos],
 						[
-							start[0] + cos * (len - arrowHeadLen),
-							start[1] + sin * (len - arrowHeadLen),
+							start[0] + halfArrowWidth * sin + cos * (len - arrowHeadLen),
+							start[1] - halfArrowWidth * cos + sin * (len - arrowHeadLen),
 						],
 						[
-							start[0] + cos * (len - arrowHeadLen) - (sin * arrowHeadLen) / 2,
-							start[1] + sin * (len - arrowHeadLen) + (cos * arrowHeadLen) / 2,
+							start[0] +
+								halfArrowWidth * sin +
+								cos * (len - arrowHeadLen) -
+								(sin * arrowHeadLen) / 2,
+							start[1] -
+								halfArrowWidth * cos +
+								sin * (len - arrowHeadLen) +
+								(cos * arrowHeadLen) / 2,
 						],
-						end,
+						[end[0], end[1]],
 						[
-							start[0] + cos * (len - arrowHeadLen) + (sin * arrowHeadLen) / 2,
-							start[1] + sin * (len - arrowHeadLen) - (cos * arrowHeadLen) / 2,
+							start[0] -
+								halfArrowWidth * sin +
+								cos * (len - arrowHeadLen) +
+								(sin * arrowHeadLen) / 2,
+							start[1] +
+								halfArrowWidth * cos +
+								sin * (len - arrowHeadLen) -
+								(cos * arrowHeadLen) / 2,
 						],
 						[
-							start[0] + cos * (len - arrowHeadLen),
-							start[1] + sin * (len - arrowHeadLen),
+							start[0] - halfArrowWidth * sin + cos * (len - arrowHeadLen),
+							start[1] + halfArrowWidth * cos + sin * (len - arrowHeadLen),
 						],
-						start,
+						[start[0] - halfArrowWidth * sin, start[1] + halfArrowWidth * cos],
 					];
 
 					geometry.setCoordinates([arrowCoords]);
@@ -93,7 +117,7 @@ export class DrawShapeComponent implements OnInit {
 		const drawFigure = this.drawService.initializeFigure(
 			this.map,
 			"Circle",
-			geometryFunction,
+			geometryFunction as GeometryFunction | undefined,
 		);
 		this.activeInteraction = drawFigure;
 		this.map.addInteraction(drawFigure);

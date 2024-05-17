@@ -6,7 +6,7 @@ import { Component, EventEmitter, Input, Output } from "@angular/core";
 	styleUrls: ["./draw-size.component.scss"],
 })
 export class DrawSizeComponent {
-	@Input() size: number;
+	@Input() size: number | undefined;
 	@Input() name: string;
 	@Output() sizeChange: EventEmitter<number> = new EventEmitter<number>();
 
@@ -15,14 +15,20 @@ export class DrawSizeComponent {
 	}
 
 	decreaseSize() {
-		if (this.size > 1) {
-			this.size--;
-			this.updateSize();
+		if(this.size){
+			if (this.size > 1) {
+				this.size--;
+				this.updateSize();
+			}
 		}
+		
 	}
 
 	increaseSize() {
-		this.size++;
-		this.updateSize();
+		if(this.size) {
+			this.size++;
+			this.updateSize();
+		}
+		
 	}
 }

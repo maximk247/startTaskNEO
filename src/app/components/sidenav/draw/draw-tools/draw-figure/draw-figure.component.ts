@@ -1,19 +1,19 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { DrawService } from "../draw.service";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { DrawService } from "../../draw.service";
 import {
+	DrawFillStyles,
 	DrawLineStyles,
-	DrawPolygonFillStyles,
-} from "../interfaces/draw.interface";
+} from "../../interfaces/draw.interface";
 
 @Component({
 	selector: "app-draw-figure",
 	templateUrl: "./draw-figure.component.html",
 	styleUrls: ["./draw-figure.component.scss"],
 })
-export class DrawFigureComponent {
-	@Input() figureSize: number;
-	@Input() figureFillColor: string;
-	@Input() figureStrokeColor: string;
+export class DrawFigureComponent implements OnInit {
+	figureSize: number | undefined;
+	figureFillColor: string;
+	figureStrokeColor: string;
 	@Input() tool: string;
 	@Output() figureSizeChange: EventEmitter<number> = new EventEmitter<number>();
 	allType = "figure";
@@ -25,7 +25,7 @@ export class DrawFigureComponent {
 		"DashDotDot",
 	];
 
-	figureFillStyles: DrawPolygonFillStyles = [
+	figureFillStyles: DrawFillStyles = [
 		"Solid",
 		"VerticalHatching",
 		"HorizontalHatching",
@@ -34,6 +34,12 @@ export class DrawFigureComponent {
 		"ReverseDiagonalHatching",
 		"DiagonalCrossHatching",
 	];
+
+	constructor(private drawService: DrawService) {}
+
+	ngOnInit() {
+		this.figureSize = this.drawService.getSize(this.tool);
+	}
 
 	async setFigureFillStyle(event: Event) {
 		const target = event.target as HTMLSelectElement;
@@ -50,6 +56,4 @@ export class DrawFigureComponent {
 	updateFigureSize() {
 		this.figureSizeChange.emit(this.figureSize);
 	}
-
-	constructor(private drawService: DrawService) {}
 }

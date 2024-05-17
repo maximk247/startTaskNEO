@@ -1,15 +1,15 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { DrawService } from "../draw.service";
-import { DrawLineStyles } from "../interfaces/draw.interface";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { DrawService } from "../../draw.service";
+import { DrawLineStyles } from "../../interfaces/draw.interface";
 
 @Component({
 	selector: "app-draw-free-line",
 	templateUrl: "./draw-free-line.component.html",
 	styleUrls: ["./draw-free-line.component.scss"],
 })
-export class DrawFreeLineComponent {
-	@Input() freeLineSize: number;
-	@Input() freeLineColor: string;
+export class DrawFreeLineComponent implements OnInit {
+	freeLineSize: number | undefined;
+	freeLineColor: string;
 	@Input() tool: string;
 	@Output() freeLineSizeChange: EventEmitter<number> =
 		new EventEmitter<number>();
@@ -31,4 +31,7 @@ export class DrawFreeLineComponent {
 		this.freeLineSizeChange.emit(this.freeLineSize);
 	}
 	constructor(private drawService: DrawService) {}
+	ngOnInit() {
+		this.freeLineSize = this.drawService.getSize(this.tool);
+	}
 }

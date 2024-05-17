@@ -1,19 +1,19 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { DrawService } from "../draw.service";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { DrawService } from "../../draw.service";
 import {
+	DrawFillStyles,
 	DrawLineStyles,
-	DrawPolygonFillStyles,
-} from "../interfaces/draw.interface";
+} from "../../interfaces/draw.interface";
 
 @Component({
 	selector: "app-draw-free-polygon",
 	templateUrl: "./draw-free-polygon.component.html",
 	styleUrls: ["./draw-free-polygon.component.scss"],
 })
-export class DrawFreePolygonComponent {
-	@Input() freePolygonSize: number;
-	@Input() freePolygonFillColor: string;
-	@Input() freePolygonStrokeColor: string;
+export class DrawFreePolygonComponent implements OnInit {
+	freePolygonSize: number | undefined;
+	freePolygonFillColor: string;
+	freePolygonStrokeColor: string;
 	@Input() tool: string;
 	@Output() freePolygonSizeChange: EventEmitter<number> =
 		new EventEmitter<number>();
@@ -26,7 +26,7 @@ export class DrawFreePolygonComponent {
 		"DashDotDot",
 	];
 
-	polygonFillStyles: DrawPolygonFillStyles = [
+	polygonFillStyles: DrawFillStyles = [
 		"Solid",
 		"VerticalHatching",
 		"HorizontalHatching",
@@ -53,4 +53,8 @@ export class DrawFreePolygonComponent {
 	}
 
 	constructor(private drawService: DrawService) {}
+
+	ngOnInit() {
+		this.freePolygonSize = this.drawService.getSize(this.tool);
+	}
 }

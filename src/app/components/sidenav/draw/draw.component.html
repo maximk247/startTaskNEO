@@ -10,49 +10,40 @@
 		<ng-container *ngFor="let tool of tools">
 			<app-draw-point
 				*ngIf="componentVisibility[tool] && tool === 'drawPoint'"
-				[pointSize]="pointSize"
-				[pointColor]="pointColor"
+
 				[tool]="tool"
 				(pointSizeChange)="updateSize($event, tool)"
 			></app-draw-point>
 			<app-draw-line
 				*ngIf="componentVisibility[tool] && tool === 'drawLine'"
-				[lineSize]="lineSize"
-				[lineColor]="lineColor"
+
 				[tool]="tool"
 				(lineSizeChange)="updateSize($event, tool)"
 			></app-draw-line>
 			<app-draw-polygon
 				*ngIf="componentVisibility[tool] && tool === 'drawPolygon'"
-				[polygonSize]="polygonSize"
-				[polygonFillColor]="polygonFillColor"
-				[polygonStrokeColor]="polygonStrokeColor"
+
 				[tool]="tool"
 				(polygonSizeChange)="updateSize($event, tool)"
 			></app-draw-polygon>
 			<app-draw-free-line
 				*ngIf="componentVisibility[tool] && tool === 'drawFreeLine'"
-				[freeLineSize]="freeLineSize"
-				[freeLineColor]="freeLineColor"
+
 				[tool]="tool"
 				(freeLineSizeChange)="updateSize($event, tool)"
 			></app-draw-free-line>
 			<app-draw-free-polygon
 				*ngIf="componentVisibility[tool] && tool === 'drawFreePolygon'"
-				[freePolygonSize]="freePolygonSize"
-				[freePolygonFillColor]="freePolygonFillColor"
-				[freePolygonStrokeColor]="freePolygonStrokeColor"
+
 				[tool]="tool"
 				(freePolygonSizeChange)="updateSize($event, tool)"
 			></app-draw-free-polygon>
 			<app-draw-figure
 				*ngIf="componentVisibility[tool] && tool === 'drawFigure'"
-				[figureSize]="figureSize"
-				[figureFillColor]="figureFillColor"
-				[figureStrokeColor]="figureStrokeColor"
 				[tool]="tool"
 				(figureSizeChange)="updateSize($event, tool)"
 			></app-draw-figure>
 		</ng-container>
 	</div>
+	<app-draw-delete (interactionDeleted)="deleteActiveInteraction()"></app-draw-delete>
 </div>

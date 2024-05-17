@@ -15,8 +15,9 @@ export type DrawToolKey = keyof DrawTools;
 export type DrawStyle = string | undefined;
 export type DrawStrokeStyle = string | null | undefined;
 export type DrawFillStyle = CanvasPattern | null | undefined;
-export type DrawLineDash = Array<number> | undefined;
 export type DrawFillColor = string | undefined;
+export type DrawLineDash = Array<number> | undefined;
+
 export interface DrawOptions {
 	stroke?: Stroke;
 	fill?: Fill;
@@ -44,6 +45,7 @@ export interface DrawPolygon {
 	fillColor: string;
 	strokeColor: string;
 	pattern: string;
+	dash: DrawLineDash;
 }
 
 export interface DrawFigure {
@@ -54,6 +56,7 @@ export interface DrawFigure {
 	fillColor: string;
 	strokeColor: string;
 	pattern: string;
+	dash: DrawLineDash;
 }
 
 export type DrawLineStyle = string;
@@ -61,4 +64,4 @@ export type DrawLineStyle = string;
 export type DrawPolygonFillStyle = string;
 
 export type DrawLineStyles = Array<DrawLineStyle>;
-export type DrawPolygonFillStyles = Array<DrawPolygonFillStyle>;
+export type DrawFillStyles = Array<DrawPolygonFillStyle>;

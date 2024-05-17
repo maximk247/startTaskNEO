@@ -1,21 +1,19 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { DrawService } from "../draw.service";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { DrawService } from "../../draw.service";
 import {
-	DrawFillStyle,
+	DrawFillStyles,
 	DrawLineStyles,
-	DrawPolygonFillStyle,
-	DrawPolygonFillStyles,
-} from "../interfaces/draw.interface";
+} from "../../interfaces/draw.interface";
 
 @Component({
 	selector: "app-draw-polygon",
 	templateUrl: "./draw-polygon.component.html",
 	styleUrls: ["./draw-polygon.component.scss"],
 })
-export class DrawPolygonComponent {
-	@Input() polygonSize: number;
-	@Input() polygonFillColor: string;
-	@Input() polygonStrokeColor: string;
+export class DrawPolygonComponent implements OnInit {
+	polygonSize: number | undefined;
+	polygonFillColor: string;
+	polygonStrokeColor: string;
 	@Input() tool: string;
 	@Output() polygonSizeChange: EventEmitter<number> =
 		new EventEmitter<number>();
@@ -28,7 +26,7 @@ export class DrawPolygonComponent {
 		"DashDotDot",
 	];
 
-	polygonFillStyles: DrawPolygonFillStyles = [
+	polygonFillStyles: DrawFillStyles = [
 		"Solid",
 		"VerticalHatching",
 		"HorizontalHatching",
@@ -55,4 +53,8 @@ export class DrawPolygonComponent {
 	}
 
 	constructor(private drawService: DrawService) {}
+
+	ngOnInit() {
+		this.polygonSize = this.drawService.getSize(this.tool);
+	}
 }
