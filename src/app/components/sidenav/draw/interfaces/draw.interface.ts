@@ -12,11 +12,11 @@ export interface DrawTools {
 
 export type DrawToolKey = keyof DrawTools;
 
-export type DrawStyle = string | undefined;
-export type DrawStrokeStyle = string | null | undefined;
-export type DrawFillStyle = CanvasPattern | null | undefined;
-export type DrawFillColor = string | undefined;
-export type DrawLineDash = Array<number> | undefined;
+export type style = string | undefined;
+export type strokeStyle = string | null | undefined;
+export type fillStyle = CanvasPattern | null | undefined;
+export type fillColor = string | undefined;
+export type lineDash = Array<number> | undefined;
 
 export interface DrawOptions {
 	stroke?: Stroke;
@@ -26,42 +26,54 @@ export interface DrawOptions {
 
 export interface DrawPoint {
 	size: number;
-	style: DrawStyle;
+	style: style;
 	color: string;
 }
 
 export interface DrawLine {
 	size: number;
-	style: DrawStyle;
+	style: style;
 	color: string;
-	dash: DrawLineDash;
+	dash: lineDash;
 }
 
 export interface DrawPolygon {
 	size: number;
-	fillStyle: DrawFillStyle;
-	strokeStyle: DrawStrokeStyle;
+	fillStyle: fillStyle;
+	strokeStyle: strokeStyle;
 	color: string;
 	fillColor: string;
 	strokeColor: string;
 	pattern: string;
-	dash: DrawLineDash;
+	dash: lineDash;
 }
 
 export interface DrawFigure {
 	size: number;
-	fillStyle: DrawFillStyle;
-	strokeStyle: DrawStrokeStyle;
+	fillStyle: fillStyle;
+	strokeStyle: strokeStyle;
 	color: string;
 	fillColor: string;
 	strokeColor: string;
 	pattern: string;
-	dash: DrawLineDash;
+	dash: lineDash;
 }
 
-export type DrawLineStyle = string;
+export type lineStyles =
+	| "Solid"
+	| "Dotted"
+	| "Dashed"
+	| "DashDot"
+	| "DashDotDot";
 
-export type DrawPolygonFillStyle = string;
+export type fillStyles =
+	| "Solid"
+	| "VerticalHatching"
+	| "HorizontalHatching"
+	| "CrossHatching"
+	| "DiagonalHatching"
+	| "ReverseDiagonalHatching"
+	| "DiagonalCrossHatching";
 
-export type DrawLineStyles = Array<DrawLineStyle>;
-export type DrawFillStyles = Array<DrawPolygonFillStyle>;
+export type DrawLineStyles = Array<lineStyles>;
+export type DrawFillStyles = Array<fillStyles>;

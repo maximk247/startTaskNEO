@@ -2,8 +2,9 @@
 	<select [(ngModel)]="mode" (change)="changeMode(mode)">
 		<option value="point">Кординаты точки</option>
 		<option value="line">Измерение длины</option>
-		<option value="polygon">Измерение периметра и площади</option>\
-        <option value="circle">Измерение радиуса</option>
+		<option value="polygon">Измерение периметра и площади</option>
+		\
+		<option value="circle">Измерение радиуса</option>
 	</select>
 </div>
 
@@ -32,8 +33,6 @@
 </div>
 
 <div *ngFor="let circle of circles">
-	<p>
-		Полигон {{ circle.id }}: Площадь: {{ circle.radius }} метров,
-	</p>
+	<p>Круг {{ circle.id }}: Радиус: {{ circle.radius }} метров,</p>
 	<button (click)="removeCircle(circle.id)">Удалить</button>
 </div>

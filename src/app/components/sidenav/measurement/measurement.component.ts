@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import MapOpen from "ol/Map";
 import { Overlay } from "ol";
 import { Draw } from "ol/interaction";
@@ -16,15 +16,17 @@ import {
 import Feature from "ol/Feature";
 import { MapService } from "../../map/map.service";
 import { getArea, getLength } from "ol/sphere";
+import { DrawService } from "../draw/draw.service";
 
 @Component({
 	selector: "app-measurement",
 	templateUrl: "./measurement.component.html",
 	styleUrls: ["./measurement.component.scss"],
 })
-export class MeasurementComponent {
+export class MeasurementComponent implements OnInit {
 	map: MapOpen;
 	vectorSource: VectorSource;
+	vectorLayer: VectorLayer<VectorSource>;
 	draw: Draw;
 	measureTooltips: Map<number, Overlay> = new Map();
 	points: Array<MeasurementPoint> = [];
@@ -37,7 +39,12 @@ export class MeasurementComponent {
 	circleCounter = 1;
 	mode: MeasurementMode;
 
-	constructor(private mapService: MapService) {
+	constructor(
+		private mapService: MapService,
+		private drawService: DrawService,
+	) {}
+
+	ngOnInit() {
 		this.vectorSource = new VectorSource();
 
 		this.map = this.mapService.getMap();
@@ -47,6 +54,12 @@ export class MeasurementComponent {
 				source: this.vectorSource,
 			}),
 		);
+		const interactions = this.map.getInteractions().getArray();
+		interactions.forEach((interaction) => {
+			if (interaction.get("drawType")) {
+				this.drawService.removeGlobalInteraction(this.map, interaction);
+			}
+		});
 	}
 
 	changeMode(mode: MeasurementMode) {

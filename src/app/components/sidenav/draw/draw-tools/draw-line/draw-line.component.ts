@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { DrawService } from "../../draw.service";
-import { DrawLineStyles } from "../../interfaces/draw.interface";
+import {
+	DrawLineStyles,
+} from "../../interfaces/draw.interface";
 
 @Component({
 	selector: "app-draw-line",

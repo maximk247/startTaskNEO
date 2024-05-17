@@ -32,7 +32,7 @@ export class DrawDeleteComponent implements OnInit {
 			}
 		});
 		const vectorLayer = this.drawService.getVectorLayer();
-		const source = this.drawService.getSource();
+		const source = this.drawService.getVectorSource();
 		if (vectorLayer && source) {
 			this.drawService.removeDrawingOnMouseClick(this.map, vectorLayer);
 		}

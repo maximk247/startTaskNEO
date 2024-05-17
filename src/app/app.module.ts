@@ -14,9 +14,9 @@ import { CoordinatesComponent } from "./components/sidenav/coordinates/coordinat
 import { DrawComponent } from "./components/sidenav/draw/draw.component";
 import { MenuComponent } from "./components/sidenav/menu/menu.component";
 import { MapComponent } from "./components/map/map.component";
-import { ScaleBarComponent } from "./components/map-widgets/scale-bar/scale-bar.component";
-import { SliderComponent } from "./components/map-widgets/slider/slider.component";
-import { ControlsComponent } from "./components/map-widgets/controls/controls.component";
+import { ScaleBarComponent } from "./components/map/map-widgets/scale-bar/scale-bar.component";
+import { SliderComponent } from "./components/map/map-widgets/slider/slider.component";
+import { ControlsComponent } from "./components/map/map-widgets/controls/controls.component";
 import { KeycloakAngularModule, KeycloakService } from "keycloak-angular";
 import { DrawPointComponent } from "./components/sidenav/draw/draw-tools/draw-point/draw-point.component";
 import { HttpClientModule } from "@angular/common/http";

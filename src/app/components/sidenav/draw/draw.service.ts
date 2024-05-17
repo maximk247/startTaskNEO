@@ -12,7 +12,7 @@ import { GeometryFunction } from "ol/interaction/Draw.js";
 import { Subject } from "rxjs";
 import {
 	DrawToolKey,
-	DrawFillColor,
+	fillColor,
 	DrawOptions,
 	DrawPoint,
 	DrawLine,
@@ -20,7 +20,6 @@ import {
 	DrawFigure,
 } from "./interfaces/draw.interface";
 import { Feature } from "ol";
-
 
 @Injectable({
 	providedIn: "root",
@@ -80,17 +79,12 @@ export class DrawService {
 	};
 
 	private vectorLayer: VectorLayer<VectorSource>;
-	private source: VectorSource;
+	private vectorSource: VectorSource;
 	private lastClickedFeature: Feature | null = null;
 
 	colorChanged = new Subject<string>();
-	getVectorLayer() {
-		return this.vectorLayer;
-	}
+	
 
-	getSource() {
-		return this.source;
-	}
 	removeAllDrawings(map: Map) {
 		map.getLayers().forEach((layer) => {
 			if (layer instanceof VectorLayer) {
@@ -102,16 +96,13 @@ export class DrawService {
 		});
 	}
 
-
 	removeDrawingOnMouseClick(map: Map, vectorLayer: VectorLayer<VectorSource>) {
 		map.on("click", (event) => {
 			const pixel = event.pixel;
 			const features = map.getFeaturesAtPixel(pixel, {
-				hitTolerance: 5, 
+				hitTolerance: 5,
 				layerFilter: (layer) => layer === vectorLayer,
 			}) as Array<Feature<Geometry>> | undefined;
-
-			
 
 			const clickedFeature =
 				features?.find((feature) => feature instanceof Feature) || null;
@@ -133,7 +124,7 @@ export class DrawService {
 	}
 	async stylePatternSimplePoly(
 		pattern: string,
-		fillColor: DrawFillColor,
+		fillColor: fillColor,
 	): Promise<CanvasPattern | null> {
 		return new Promise((resolve, reject) => {
 			const vectorImage = new Image();
@@ -206,10 +197,18 @@ export class DrawService {
 	}
 
 	initalizeLayer() {
-		this.source = new VectorSource();
+		this.vectorSource = new VectorSource();
 		this.vectorLayer = new VectorLayer({
-			source: this.source,
+			source: this.vectorSource,
 		});
+	}
+
+	getVectorLayer() {
+		return this.vectorLayer;
+	}
+
+	getVectorSource() {
+		return this.vectorSource;
 	}
 
 	initializePoint(map: Map) {
@@ -217,9 +216,10 @@ export class DrawService {
 		const draw = this.initializeDraw(
 			map,
 			this.vectorLayer,
-			this.source,
+			this.vectorSource,
 			"Point",
 		);
+		draw.set("drawType", "point");
 		draw.on("drawend", async (event) => {
 			event.feature.setStyle(await this.getStyle("drawPoint"));
 		});
@@ -231,9 +231,10 @@ export class DrawService {
 		const draw = this.initializeDraw(
 			map,
 			this.vectorLayer,
-			this.source,
+			this.vectorSource,
 			"LineString",
 		);
+		draw.set("drawType", "line");
 		draw.on("drawstart", async (event) => {
 			event.feature.setStyle(await this.getStyle("drawLine"));
 		});
@@ -245,10 +246,11 @@ export class DrawService {
 		const draw = this.initializeDraw(
 			map,
 			this.vectorLayer,
-			this.source,
+			this.vectorSource,
 			"LineString",
 			true,
 		);
+		draw.set("drawType", "freeLine");
 		draw.on("drawstart", async (event) => {
 			event.feature.setStyle(await this.getStyle("drawFreeLine"));
 		});
@@ -259,9 +261,10 @@ export class DrawService {
 		const draw = this.initializeDraw(
 			map,
 			this.vectorLayer,
-			this.source,
+			this.vectorSource,
 			"Polygon",
 		);
+		draw.set("drawType", "polygon");
 		draw.on("drawstart", async (event) => {
 			event.feature.setStyle(await this.getStyle("drawPolygon"));
 		});
@@ -272,10 +275,11 @@ export class DrawService {
 		const draw = this.initializeDraw(
 			map,
 			this.vectorLayer,
-			this.source,
+			this.vectorSource,
 			"Polygon",
 			true,
 		);
+		draw.set("drawType", "freePolygon");
 		draw.on("drawstart", async (event) => {
 			event.feature.setStyle(await this.getStyle("drawFreePolygon"));
 		});
@@ -287,7 +291,7 @@ export class DrawService {
 		const draw = this.initializeDraw(
 			map,
 			this.vectorLayer,
-			this.source,
+			this.vectorSource,
 			type,
 			false,
 			figure,
