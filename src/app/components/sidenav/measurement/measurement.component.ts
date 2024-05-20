@@ -24,27 +24,26 @@ import { DrawService } from "../draw/draw.service";
 	styleUrls: ["./measurement.component.scss"],
 })
 export class MeasurementComponent implements OnInit {
-	map: MapOpen;
-	vectorSource: VectorSource;
-	vectorLayer: VectorLayer<VectorSource>;
-	draw: Draw;
-	measureTooltips: Map<number, Overlay> = new Map();
-	points: Array<MeasurementPoint> = [];
-	lines: Array<MeasurementLine> = [];
-	polygons: Array<MeasurementPolygon> = [];
-	circles: Array<MeasurementCircle> = [];
-	pointCounter = 1;
-	lineCounter = 1;
-	polygonCounter = 1;
-	circleCounter = 1;
-	mode: MeasurementMode;
+	private map: MapOpen;
+	private vectorSource: VectorSource;
+	private draw: Draw;
+	private measureTooltips: Map<number, Overlay> = new Map();
+	public points: Array<MeasurementPoint> = [];
+	public lines: Array<MeasurementLine> = [];
+	public polygons: Array<MeasurementPolygon> = [];
+	public circles: Array<MeasurementCircle> = [];
+	public pointCounter = 1;
+	public lineCounter = 1;
+	public polygonCounter = 1;
+	public circleCounter = 1;
+	public mode: MeasurementMode;
 
-	constructor(
+	public constructor(
 		private mapService: MapService,
 		private drawService: DrawService,
 	) {}
 
-	ngOnInit() {
+	public ngOnInit() {
 		this.vectorSource = new VectorSource();
 
 		this.map = this.mapService.getMap();
@@ -62,7 +61,7 @@ export class MeasurementComponent implements OnInit {
 		});
 	}
 
-	changeMode(mode: MeasurementMode) {
+	public changeMode(mode: MeasurementMode) {
 		switch (mode) {
 			case "point":
 				this.map.removeInteraction(this.draw);
@@ -85,7 +84,7 @@ export class MeasurementComponent implements OnInit {
 		}
 	}
 
-	addPointInteraction() {
+	public addPointInteraction() {
 		this.draw = new Draw({
 			source: this.vectorSource,
 			type: "Point",
@@ -103,7 +102,7 @@ export class MeasurementComponent implements OnInit {
 		});
 	}
 
-	addLineInteraction() {
+	public addLineInteraction() {
 		this.draw = new Draw({
 			source: this.vectorSource,
 			type: "LineString",
@@ -119,7 +118,7 @@ export class MeasurementComponent implements OnInit {
 			this.lines.push({ id: lineId, feature, length });
 		});
 	}
-	addPolygonInteraction() {
+	public 	addPolygonInteraction() {
 		this.draw = new Draw({
 			source: this.vectorSource,
 			type: "Polygon",
@@ -137,7 +136,7 @@ export class MeasurementComponent implements OnInit {
 		});
 	}
 
-	addCircleInteraction() {
+	public addCircleInteraction() {
 		this.draw = new Draw({
 			source: this.vectorSource,
 			type: "Circle",
@@ -154,7 +153,7 @@ export class MeasurementComponent implements OnInit {
 		});
 	}
 
-	calculateLength(geometry: LineString) {
+	private calculateLength(geometry: LineString) {
 		const transformedGeometry = geometry
 			.clone()
 			.transform("EPSG:4326", "EPSG:3857");
@@ -165,7 +164,7 @@ export class MeasurementComponent implements OnInit {
 		return output;
 	}
 
-	calculateArea(geometry: Polygon) {
+	private calculateArea(geometry: Polygon) {
 		const transformedGeometry = geometry
 			.clone()
 			.transform("EPSG:4326", "EPSG:3857");
@@ -174,7 +173,7 @@ export class MeasurementComponent implements OnInit {
 		return output;
 	}
 
-	calculatePerimeter(geometry: Polygon) {
+	private calculatePerimeter(geometry: Polygon) {
 		const transformedGeometry = geometry
 			.clone()
 			.transform("EPSG:4326", "EPSG:3857");
@@ -183,12 +182,7 @@ export class MeasurementComponent implements OnInit {
 		return output;
 	}
 
-	calculateLineCenter(coordinates: Array<Array<number>>) {
-		const midIndex = Math.floor(coordinates.length / 2);
-		return coordinates[midIndex];
-	}
-
-	calculateRadius(geometry: Circle) {
+	private calculateRadius(geometry: Circle) {
 		const centerCoords = geometry.getCenter();
 
 		const circleBoundary = new LineString([
@@ -205,7 +199,7 @@ export class MeasurementComponent implements OnInit {
 		return output;
 	}
 
-	createPointTooltip(id: number, coordinates: Array<number>) {
+	private createPointTooltip(id: number, coordinates: Array<number>) {
 		const tooltipElement = document.createElement("div");
 		tooltipElement.innerHTML =
 			"Point: " + coordinates[0] + ", " + coordinates[1];
@@ -220,7 +214,7 @@ export class MeasurementComponent implements OnInit {
 		this.map.addOverlay(measureTooltip);
 		this.measureTooltips.set(id, measureTooltip);
 	}
-	removePoint(id: number) {
+	public removePoint(id: number) {
 		const point = this.points.find((point) => point.id === id);
 		if (point) {
 			this.vectorSource.removeFeature(point.feature);
@@ -236,7 +230,7 @@ export class MeasurementComponent implements OnInit {
 			this.pointCounter = 1;
 		}
 	}
-	removeLine(id: number) {
+	public removeLine(id: number) {
 		const line = this.lines.find((line) => line.id === id);
 		if (line) {
 			this.vectorSource.removeFeature(line.feature);
@@ -253,7 +247,7 @@ export class MeasurementComponent implements OnInit {
 		}
 	}
 
-	removePolygon(id: number) {
+	public removePolygon(id: number) {
 		const polygon = this.polygons.find((polygon) => polygon.id === id);
 		if (polygon) {
 			this.vectorSource.removeFeature(polygon.feature);
@@ -270,7 +264,7 @@ export class MeasurementComponent implements OnInit {
 		}
 	}
 
-	removeCircle(id: number) {
+	public removeCircle(id: number) {
 		const circle = this.circles.find((circle) => circle.id === id);
 		if (circle) {
 			this.vectorSource.removeFeature(circle.feature);

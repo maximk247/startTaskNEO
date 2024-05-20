@@ -10,20 +10,19 @@ import { Draw } from "ol/interaction";
 	styleUrls: ["./draw-delete.component.scss"],
 })
 export class DrawDeleteComponent implements OnInit {
-	map: Map;
-	drawInteraction: Draw;
-	@Output() interactionDeleted: EventEmitter<void> = new EventEmitter<void>();
-	constructor(
+	private map: Map;
+	@Output() public interactionDeleted: EventEmitter<void> = new EventEmitter<void>();
+	public constructor(
 		private mapService: MapService,
 		private drawService: DrawService,
 	) {}
 
-	ngOnInit() {
+	public ngOnInit() {
 		this.map = this.mapService.getMap();
 		this.drawService.initalizeLayer();
 		this.map.addLayer(this.drawService.getVectorLayer());
 	}
-	deleteOnMouseClick() {
+	public deleteOnMouseClick() {
 		this.drawService.removeGlobalInteraction(this.map);
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
@@ -39,7 +38,7 @@ export class DrawDeleteComponent implements OnInit {
 		this.interactionDeleted.emit();
 	}
 
-	deleteAll() {
+	public deleteAll() {
 		this.drawService.removeAllDrawings(this.map);
 		this.interactionDeleted.emit();
 	}

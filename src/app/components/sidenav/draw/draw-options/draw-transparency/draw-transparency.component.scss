@@ -2,6 +2,7 @@
 	width: 100%;
 }
 
-::ng-deep .mat-mdc-slider {
-	width: 100% !important;
+::ng-deep .slider.mat-mdc-slider {
+	width: 100%;
+	margin-left: 0;
 }

@@ -1,10 +1,10 @@
 import { Component, OnInit } from "@angular/core";
 import Map from "ol/Map";
 import { MapService } from "../../map/map.service";
-import Feature from "ol/Feature";
 import { DrawService } from "./draw.service";
 import { Draw } from "ol/interaction";
 import { DrawToolKey, DrawTools } from "./interfaces/draw.interface";
+import { TOOLS } from "./consts/draw-consts.consts";
 
 @Component({
 	selector: "app-draw",
@@ -13,31 +13,22 @@ import { DrawToolKey, DrawTools } from "./interfaces/draw.interface";
 })
 export class DrawComponent implements OnInit {
 	private map: Map;
-	tools: Array<DrawToolKey> = [
-		"drawPoint",
-		"drawLine",
-		"drawFreeLine",
-		"drawPolygon",
-		"drawFreePolygon",
-		"drawFigure",
-	];
-	
-	drawnFeatures: Array<Feature> = [];
-	activeInteraction: Draw | null = null;
+	public tools = TOOLS;
 
-	constructor(
+	private activeInteraction: Draw | null = null;
+
+	public constructor(
 		private mapService: MapService,
 		private drawService: DrawService,
 	) {}
 
-	ngOnInit() {
+	public ngOnInit() {
 		this.map = this.mapService.getMap();
-		this.drawService.initalizeLayer(); 
+		this.drawService.initalizeLayer();
 		this.map.addLayer(this.drawService.getVectorLayer());
 	}
 
-
-	componentVisibility: DrawTools = {
+	public componentVisibility: DrawTools = {
 		drawPoint: false,
 		drawLine: false,
 		drawFreeLine: false,
@@ -46,19 +37,19 @@ export class DrawComponent implements OnInit {
 		drawFigure: false,
 	};
 
-	updateSize(size: number, tool: DrawToolKey) {
+	public updateSize(size: number, tool: DrawToolKey) {
 		this.drawService.setSize(size, tool);
 	}
-	deleteActiveInteraction() {
+	public deleteActiveInteraction() {
 		this.drawService.removeGlobalInteraction(this.map, this.activeInteraction);
 	}
-	resetComponentVisibility() {
+	private resetComponentVisibility() {
 		for (const key in this.componentVisibility) {
 			this.componentVisibility[key] = false;
 		}
 	}
 
-	drawPoint() {
+	public drawPoint() {
 		this.resetComponentVisibility();
 		this.componentVisibility = {
 			...this.componentVisibility,
@@ -76,7 +67,7 @@ export class DrawComponent implements OnInit {
 		this.drawService.addGlobalInteraction(this.map, drawPoint);
 	}
 
-	drawLine() {
+	public drawLine() {
 		this.resetComponentVisibility();
 		this.componentVisibility = {
 			...this.componentVisibility,
@@ -94,7 +85,7 @@ export class DrawComponent implements OnInit {
 		this.drawService.addGlobalInteraction(this.map, drawLine);
 	}
 
-	drawPolygon() {
+	public drawPolygon() {
 		this.resetComponentVisibility();
 		this.componentVisibility = {
 			...this.componentVisibility,
@@ -112,7 +103,7 @@ export class DrawComponent implements OnInit {
 		this.drawService.addGlobalInteraction(this.map, drawPolygon);
 	}
 
-	drawFreeLine() {
+	public drawFreeLine() {
 		this.resetComponentVisibility();
 		this.componentVisibility = {
 			...this.componentVisibility,
@@ -130,7 +121,7 @@ export class DrawComponent implements OnInit {
 		this.drawService.addGlobalInteraction(this.map, drawFreeLine);
 	}
 
-	drawFreePolygon() {
+	public drawFreePolygon() {
 		this.resetComponentVisibility();
 		this.componentVisibility = {
 			...this.componentVisibility,
@@ -148,7 +139,7 @@ export class DrawComponent implements OnInit {
 		this.drawService.addGlobalInteraction(this.map, drawFreePolygon);
 	}
 
-	drawFigure() {
+	public drawFigure() {
 		this.resetComponentVisibility();
 		this.componentVisibility = {
 			...this.componentVisibility,

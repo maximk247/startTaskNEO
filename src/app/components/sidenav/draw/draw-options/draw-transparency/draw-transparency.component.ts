@@ -1,4 +1,10 @@
-import { Component, Input, OnDestroy, OnInit } from "@angular/core";
+import {
+	Component,
+	Input,
+	OnDestroy,
+	OnInit,
+
+} from "@angular/core";
 import { DrawService } from "../../draw.service";
 import { Subscription } from "rxjs";
 @Component({
@@ -7,16 +13,16 @@ import { Subscription } from "rxjs";
 	styleUrls: ["./draw-transparency.component.scss"],
 })
 export class TransparencyComponent implements OnInit, OnDestroy {
-	@Input() tool: string;
-	@Input() type: string;
-	alphaValue: number;
-	redValue: number;
-	greenValue: number;
-	blueValue: number;
-	colorSubscription: Subscription;
-	constructor(private drawService: DrawService) {}
+	@Input() public tool: string;
+	@Input() public type: string;
+	public alphaValue: number;
+	private redValue: number;
+	private greenValue: number;
+	private blueValue: number;
+	private colorSubscription: Subscription;
+	public constructor(private drawService: DrawService) {}
 
-	ngOnInit() {
+	public ngOnInit() {
 		const color = this.drawService.getColor(this.tool);
 		this.updateColorValues(color!);
 		this.colorSubscription = this.drawService.colorChanged.subscribe(
@@ -26,7 +32,7 @@ export class TransparencyComponent implements OnInit, OnDestroy {
 		);
 	}
 
-	updateColorValues(colorString: string) {
+	public updateColorValues(colorString: string) {
 		if (colorString) {
 			const regex = /rgba\((.*?)\)/g;
 			const colors = [];
@@ -43,7 +49,7 @@ export class TransparencyComponent implements OnInit, OnDestroy {
 			this.alphaValue = +rgbaValues[3]?.toFixed(2) || 0;
 		}
 	}
-	updateColorWithAlpha() {
+	public updateColorWithAlpha() {
 		const rgbaColor = `rgba(${this.redValue}, ${this.greenValue}, ${this.blueValue}, ${this.alphaValue})`;
 		if (this.type === "polygon" || this.type === "figure") {
 			this.drawService.setColor(`${this.alphaValue}`, this.tool, this.type);
@@ -52,11 +58,11 @@ export class TransparencyComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	formatSliderValue(value: number) {
+	public formatSliderValue(value: number) {
 		return (value * 100).toFixed(0) + "%";
 	}
 
-	ngOnDestroy() {
+	public ngOnDestroy() {
 		this.colorSubscription.unsubscribe();
 	}
 }

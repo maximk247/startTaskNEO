@@ -1,9 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { DrawService } from "../../draw.service";
-import {
-	DrawFillStyles,
-	DrawLineStyles,
-} from "../../interfaces/draw.interface";
+import { FILL_STYLES, LINE_STYLES } from "../../consts/draw-consts.consts";
 
 @Component({
 	selector: "app-draw-polygon",
@@ -11,50 +8,36 @@ import {
 	styleUrls: ["./draw-polygon.component.scss"],
 })
 export class DrawPolygonComponent implements OnInit {
-	polygonSize: number | undefined;
-	polygonFillColor: string;
-	polygonStrokeColor: string;
-	@Input() tool: string;
-	@Output() polygonSizeChange: EventEmitter<number> =
+	public polygonSize: number | undefined;
+	public polygonFillColor: string;
+	public polygonStrokeColor: string;
+	@Input() public tool: string;
+	@Output() public polygonSizeChange: EventEmitter<number> =
 		new EventEmitter<number>();
-	allType = "polygon";
-	lineStyles: DrawLineStyles = [
-		"Solid",
-		"Dotted",
-		"Dashed",
-		"DashDot",
-		"DashDotDot",
-	];
+	public allType = "polygon";
+	public lineStyles = LINE_STYLES;
 
-	polygonFillStyles: DrawFillStyles = [
-		"Solid",
-		"VerticalHatching",
-		"HorizontalHatching",
-		"CrossHatching",
-		"DiagonalHatching",
-		"ReverseDiagonalHatching",
-		"DiagonalCrossHatching",
-	];
+	public polygonFillStyles = FILL_STYLES;
 
-	async setPolygonFillStyle(event: Event) {
+	public async setPolygonFillStyle(event: Event) {
 		const target = event.target as HTMLSelectElement;
 		const style = target.value;
-		await this.drawService.setPolygonFill(style);
+		await this.drawService.setFill(this.tool, style);
 	}
 
-	async setLineStyle(event: Event) {
+	public async setLineStyle(event: Event) {
 		const target = event.target as HTMLSelectElement;
 		const style = target.value;
 		this.drawService.setStyle(this.tool, style);
 	}
 
-	updatePolygonSize() {
+	public updatePolygonSize() {
 		this.polygonSizeChange.emit(this.polygonSize);
 	}
 
-	constructor(private drawService: DrawService) {}
+	public constructor(private drawService: DrawService) {}
 
-	ngOnInit() {
+	public ngOnInit() {
 		this.polygonSize = this.drawService.getSize(this.tool);
 	}
 }

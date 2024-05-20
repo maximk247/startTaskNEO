@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { DrawService } from "../../draw.service";
+import { POINT_STYLES } from "../../consts/draw-consts.consts";
 
 @Component({
 	selector: "app-draw-point",
@@ -7,29 +8,24 @@ import { DrawService } from "../../draw.service";
 	styleUrls: ["./draw-point.component.scss"],
 })
 export class DrawPointComponent implements OnInit {
-	pointSize: number | undefined;
-	pointColor: string;
-	@Input() tool: string;
-	@Output() pointSizeChange: EventEmitter<number> = new EventEmitter<number>();
+	public pointSize: number | undefined;
+	public pointColor: string;
+	@Input() public tool: string;
+	@Output() public pointSizeChange: EventEmitter<number> =
+		new EventEmitter<number>();
 
-	pointStyles: Array<string> = [
-		"Circle",
-		"Cross",
-		"Square",
-		"Diamond",
-		"Cancel",
-	];
-	constructor(private drawService: DrawService) {}
+	public pointStyles = POINT_STYLES
+	public constructor(private drawService: DrawService) {}
 
-	ngOnInit() {
+	public ngOnInit() {
 		this.pointSize = this.drawService.getSize(this.tool);
 	}
 
-	setPointStyle(style: string) {
+	public setPointStyle(style: string) {
 		this.drawService.setStyle(this.tool, style);
 	}
 
-	updatePointSize() {
+	public updatePointSize() {
 		this.pointSizeChange.emit(this.pointSize);
 	}
 }

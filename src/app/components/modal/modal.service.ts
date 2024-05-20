@@ -5,7 +5,7 @@ import { ModalMode } from "./interfaces/modal.interface";
 	providedIn: "root",
 })
 export class ModalService {
-	updateBoundarySize(
+	public updateBoundarySize(
 		mode: ModalMode,
 	): void {
 		if (mode !== "menu") {

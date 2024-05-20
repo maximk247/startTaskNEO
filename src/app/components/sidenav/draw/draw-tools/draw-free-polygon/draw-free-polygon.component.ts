@@ -1,9 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { DrawService } from "../../draw.service";
-import {
-	DrawFillStyles,
-	DrawLineStyles,
-} from "../../interfaces/draw.interface";
+
+import { FILL_STYLES, LINE_STYLES } from "../../consts/draw-consts.consts";
 
 @Component({
 	selector: "app-draw-free-polygon",
@@ -11,50 +9,36 @@ import {
 	styleUrls: ["./draw-free-polygon.component.scss"],
 })
 export class DrawFreePolygonComponent implements OnInit {
-	freePolygonSize: number | undefined;
-	freePolygonFillColor: string;
-	freePolygonStrokeColor: string;
-	@Input() tool: string;
-	@Output() freePolygonSizeChange: EventEmitter<number> =
+	public freePolygonSize: number | undefined;
+	public freePolygonFillColor: string;
+	public freePolygonStrokeColor: string;
+	@Input() public tool: string;
+	@Output() public freePolygonSizeChange: EventEmitter<number> =
 		new EventEmitter<number>();
-	allType = "polygon";
-	lineStyles: DrawLineStyles = [
-		"Solid",
-		"Dotted",
-		"Dashed",
-		"DashDot",
-		"DashDotDot",
-	];
+	public allType = "polygon";
+	public lineStyles = LINE_STYLES;
 
-	polygonFillStyles: DrawFillStyles = [
-		"Solid",
-		"VerticalHatching",
-		"HorizontalHatching",
-		"CrossHatching",
-		"DiagonalHatching",
-		"ReverseDiagonalHatching",
-		"DiagonalCrossHatching",
-	];
+	public polygonFillStyles = FILL_STYLES;
 
-	async setFreePolygonFillStyle(event: Event) {
+	public async setFreePolygonFillStyle(event: Event) {
 		const target = event.target as HTMLSelectElement;
 		const style = target.value;
-		await this.drawService.setFreePolygonFill(style);
+		await this.drawService.setFill(this.tool,style);
 	}
 
-	async setLineStyle(event: Event) {
+	public async setLineStyle(event: Event) {
 		const target = event.target as HTMLSelectElement;
 		const style = target.value;
 		this.drawService.setStyle(this.tool, style);
 	}
 
-	updateFreePolygonSize() {
+	public updateFreePolygonSize() {
 		this.freePolygonSizeChange.emit(this.freePolygonSize);
 	}
 
-	constructor(private drawService: DrawService) {}
+	public constructor(private drawService: DrawService) {}
 
-	ngOnInit() {
+	public ngOnInit() {
 		this.freePolygonSize = this.drawService.getSize(this.tool);
 	}
 }

@@ -17,15 +17,15 @@ import { Coordinate } from "ol/coordinate";
 })
 export class DrawShapeComponent implements OnInit {
 	private map: Map;
-	activeInteraction: Draw | null = null;
-	constructor(
+	public activeInteraction: Draw | null = null;
+	public constructor(
 		private drawService: DrawService,
 		private mapService: MapService,
 	) {}
-	ngOnInit() {
+	public ngOnInit() {
 		this.map = this.mapService.getMap();
 	}
-	addDrawInteraction(shape: string) {
+	public addDrawInteraction(shape: string) {
 		let geometryFunction;
 		switch (shape) {
 			case "Circle":

@@ -1,13 +1,48 @@
 <div>
-	<h2>Широта:</h2>
-	<input type="number" [(ngModel)]="latitudeDegrees" placeholder="Градусы" />
-	<input type="number" [(ngModel)]="latitudeMinutes" placeholder="Минуты" />
-	<input type="number" [(ngModel)]="latitudeSeconds" placeholder="Секунды" />
+	<h2>{{ 'latitude' | transloco }}:</h2>
+	<h2>{{ 'Кнопка'}}:</h2>
+	<input
+		type="number"
+		[(ngModel)]="latitudeDegrees"
+
+		placeholder="Градусы"
+	/>
+	<input
+		type="number"
+		[(ngModel)]="latitudeMinutes"
+
+		placeholder="Минуты"
+	/>
+	<input
+		type="number"
+		[(ngModel)]="latitudeSeconds"
+
+		placeholder="Секунды"
+	/>
 </div>
 <div>
 	<h2>Долгота:</h2>
-	<input type="number" [(ngModel)]="longitudeDegrees" placeholder="Градусы" />
-	<input type="number" [(ngModel)]="longitudeMinutes" placeholder="Минуты" />
-	<input type="number" [(ngModel)]="longitudeSeconds" placeholder="Секунды" />
+	<input
+		type="number"
+		[(ngModel)]="longitudeDegrees"
+		
+		placeholder="Градусы"
+	/>
+	<input
+		type="number"
+		[(ngModel)]="longitudeMinutes"
+	
+		placeholder="Минуты"
+	/>
+	<input
+		type="number"
+		[(ngModel)]="longitudeSeconds"
+
+		placeholder="Секунды"
+	/>
 </div>
 <button (click)="goToCoordinates()">Перейти к координатам</button>
+<div>
+    <h2>Нанести точку на карту:</h2>
+    <input type="checkbox" [(ngModel)]="showPoint" />
+</div>

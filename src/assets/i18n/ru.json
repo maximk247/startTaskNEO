@@ -1,0 +1,9 @@
+{
+	"latitude": "Широта",
+	"longitude": "Долгота",
+	"degrees": "Градусы",
+	"minutes": "Минуты",
+	"seconds": "Секунды",
+	"goToCoordinates": "Перейти к координатам",
+	"showPoint": "Нанести точку на карту"
+}

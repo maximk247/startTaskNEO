@@ -9,12 +9,12 @@ import { MapService } from "./map.service";
 	styleUrls: ["./map.component.scss"],
 })
 export class MapComponent implements AfterViewInit {
-	coordinates: Coordinate;
-	formattedCoordinates: string;
+	public coordinates: Coordinate;
+	public formattedCoordinates: string;
 
-	constructor(private mapService: MapService) {}
+	public constructor(private mapService: MapService) {}
 
-	ngAfterViewInit() {
+	public ngAfterViewInit() {
 		this.mapService.initMap("map");
 	}
 }

@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, NgModule } from "@angular/core";
+import { APP_INITIALIZER, NgModule, isDevMode } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 
 import { AppRoutingModule } from "./app-routing.module";
@@ -36,7 +36,9 @@ import { DrawFreeLineComponent } from "./components/sidenav/draw/draw-tools/draw
 import { DrawFreePolygonComponent } from "./components/sidenav/draw/draw-tools/draw-free-polygon/draw-free-polygon.component";
 import { DrawFigureComponent } from "./components/sidenav/draw/draw-tools/draw-figure/draw-figure.component";
 import { DrawShapeComponent } from "./components/sidenav/draw/draw-options/draw-shape/draw-shape.component";
-import { DrawDeleteComponent } from './components/sidenav/draw/draw-editing/draw-delete/draw-delete.component';
+import { DrawDeleteComponent } from "./components/sidenav/draw/draw-editing/draw-delete/draw-delete.component";
+import { TranslocoModule, provideTransloco } from "@ngneat/transloco";
+import { TranslocoHttpLoader } from "./transloco.service";
 
 function initializeKeycloak(keycloak: KeycloakService) {
 	return () =>
@@ -77,8 +79,9 @@ function initializeKeycloak(keycloak: KeycloakService) {
 		DrawFreePolygonComponent,
 		DrawFigureComponent,
 		DrawShapeComponent,
-  DrawDeleteComponent,
+		DrawDeleteComponent,
 	],
+	exports: [],
 	imports: [
 		BrowserModule,
 		AppRoutingModule,
@@ -92,7 +95,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
 		ColorPickerModule,
 		MatDialogModule,
 		FormsModule,
-
+		TranslocoModule,
 		HttpClientModule,
 		InlineSVGModule.forRoot({
 			baseUrl: "../../../assets/images/",
@@ -106,6 +109,16 @@ function initializeKeycloak(keycloak: KeycloakService) {
 		// 	deps: [KeycloakService],
 		// },
 		SpatialReferenceService,
+		provideTransloco({
+			config: {
+				availableLangs: ["en", "ru"],
+				defaultLang: "ru",
+				// Remove this option if your application doesn't support changing language in runtime.
+				reRenderOnLangChange: true,
+				prodMode: !isDevMode(),
+			},
+			loader: TranslocoHttpLoader,
+		}),
 	],
 	bootstrap: [AppComponent],
 })

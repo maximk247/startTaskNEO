@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { DrawService } from "../../draw.service";
-import { DrawLineStyles } from "../../interfaces/draw.interface";
+import { LINE_STYLES } from "../../consts/draw-consts.consts";
 
 @Component({
 	selector: "app-draw-free-line",
@@ -8,30 +8,24 @@ import { DrawLineStyles } from "../../interfaces/draw.interface";
 	styleUrls: ["./draw-free-line.component.scss"],
 })
 export class DrawFreeLineComponent implements OnInit {
-	freeLineSize: number | undefined;
-	freeLineColor: string;
-	@Input() tool: string;
-	@Output() freeLineSizeChange: EventEmitter<number> =
+	public freeLineSize: number | undefined;
+	public freeLineColor: string;
+	@Input() public tool: string;
+	@Output() public freeLineSizeChange: EventEmitter<number> =
 		new EventEmitter<number>();
-	lineStyles: DrawLineStyles = [
-		"Solid",
-		"Dotted",
-		"Dashed",
-		"DashDot",
-		"DashDotDot",
-	];
+	public lineStyles = LINE_STYLES;
 
-	setLineStyle(event: Event) {
+	public setLineStyle(event: Event) {
 		const target = event.target as HTMLSelectElement;
 		const style = target.value;
 
 		this.drawService.setStyle(this.tool, style);
 	}
-	updateLineSize() {
+	public updateLineSize() {
 		this.freeLineSizeChange.emit(this.freeLineSize);
 	}
-	constructor(private drawService: DrawService) {}
-	ngOnInit() {
+	public constructor(private drawService: DrawService) {}
+	public ngOnInit() {
 		this.freeLineSize = this.drawService.getSize(this.tool);
 	}
 }

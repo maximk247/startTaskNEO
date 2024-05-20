@@ -18,16 +18,14 @@ import { useGeographic } from "ol/proj";
 	providedIn: "root",
 })
 export class MapService {
-	map: Map;
-	vectorLayer: VectorLayer<VectorSource<Feature>>;
+	private map: Map;
+	private vectorLayer: VectorLayer<VectorSource<Feature>>;
 
-	mousePositionControl: MousePosition;
-
-	getMap(): Map {
+	public getMap(): Map {
 		return this.map;
 	}
 
-	initMap(target: string) {
+	public initMap(target: string) {
 		useGeographic();
 		this.map = new Map({
 			target: target,
@@ -69,7 +67,7 @@ export class MapService {
 		this.map.addLayer(this.vectorLayer);
 	}
 
-	addFeatureToMap(feature: Feature) {
+	public addFeatureToMap(feature: Feature) {
 		const source = this.vectorLayer.getSource();
 		source?.addFeature(feature);
 	}

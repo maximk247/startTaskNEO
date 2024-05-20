@@ -9,15 +9,15 @@ import { DialogData } from "./interfaces/dialog.interface";
 	styleUrls: ["./dialog.component.scss"],
 })
 export class DialogComponent {
-	color: string;
-	constructor(
+	public color: string;
+	public constructor(
 		private dialogRef: MatDialogRef<DialogComponent>,
 		private drawService: DrawService,
 		@Inject(MAT_DIALOG_DATA)
 		public data: DialogData
 	) {}
 
-	onClose(status: string): void {
+	public onClose(status: string): void {
 		if (status === "accept") {
 			if (this.color.indexOf("rgba") === -1) {
 				this.color = this.color.replace("rgb", "rgba").replace(")", ", 1)");

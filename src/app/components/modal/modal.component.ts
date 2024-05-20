@@ -8,16 +8,16 @@ import { ModalMode } from "./interfaces/modal.interface";
 	styleUrls: ["./modal.component.scss"],
 })
 export class ModalComponent implements OnInit {
-	@Input() mode: ModalMode;
+	@Input() public mode: ModalMode;
 
-	constructor(private modalService: ModalService) {}
+	public constructor(private modalService: ModalService) {}
 
-	ngOnInit(): void {
+	public ngOnInit(): void {
 		this.modalService.updateBoundarySize(this.mode);
 	}
 
 	@HostListener("window:resize", ["$event"])
-	onResize(): void {
+	public onResize(): void {
 		this.modalService.updateBoundarySize(this.mode);
 	}
 }

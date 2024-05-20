@@ -1,8 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { DrawService } from "../../draw.service";
-import {
-	DrawLineStyles,
-} from "../../interfaces/draw.interface";
+
+import { LINE_STYLES } from "../../consts/draw-consts.consts";
 
 @Component({
 	selector: "app-draw-line",
@@ -10,29 +9,24 @@ import {
 	styleUrls: ["./draw-line.component.scss"],
 })
 export class DrawLineComponent implements OnInit {
-	lineSize: number | undefined;
-	lineColor: string;
-	@Input() tool: string;
-	@Output() lineSizeChange: EventEmitter<number> = new EventEmitter<number>();
-	lineStyles: DrawLineStyles = [
-		"Solid",
-		"Dotted",
-		"Dashed",
-		"DashDot",
-		"DashDotDot",
-	];
+	public lineSize: number | undefined;
+	public lineColor: string;
+	@Input() public tool: string;
+	@Output() public lineSizeChange: EventEmitter<number> =
+		new EventEmitter<number>();
+	public lineStyles = LINE_STYLES;
 
-	setLineStyle(event: Event) {
+	public setLineStyle(event: Event) {
 		const target = event.target as HTMLSelectElement;
 		const style = target.value;
 
 		this.drawService.setStyle(this.tool, style);
 	}
-	updateLineSize() {
+	public updateLineSize() {
 		this.lineSizeChange.emit(this.lineSize);
 	}
-	constructor(private drawService: DrawService) {}
-	ngOnInit() {
+	public constructor(private drawService: DrawService) {}
+	public ngOnInit() {
 		this.lineSize = this.drawService.getSize(this.tool);
 	}
 }

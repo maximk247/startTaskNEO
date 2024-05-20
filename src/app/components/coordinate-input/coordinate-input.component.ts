@@ -13,18 +13,18 @@ import { DrawService } from "../sidenav/draw/draw.service";
 	styleUrls: ["./coordinate-input.component.scss"],
 })
 export class CoordinateInputComponent {
-	@Input() tool: string;
-	spatialReferences: Array<SpatialReference> = [];
-	selectedSpatialReference: SpatialReference | undefined;
-	x = 0;
-	y = 0;
+	@Input() public tool: string;
+	public spatialReferences: Array<SpatialReference> = [];
+	public selectedSpatialReference: SpatialReference | undefined;
+	public x = 0;
+	public y = 0;
 
-	constructor(
+	public constructor(
 		private mapService: MapService,
 		private drawService: DrawService,
 		private spatialReferenceService: SpatialReferenceService,
 	) {}
-	getSpatialReferences() {
+	public getSpatialReferences() {
 		this.spatialReferenceService.getSpatialReferences().subscribe(
 			(data: { spatialReferences: Array<SpatialReference> }) => {
 				this.spatialReferences = data.spatialReferences;
@@ -34,7 +34,7 @@ export class CoordinateInputComponent {
 			},
 		);
 	}
-	async addPointToMap() {
+	public async addPointToMap() {
 		if (this.x !== undefined && this.y !== undefined) {
 			const point = new Feature({
 				geometry: new Point(fromLonLat([this.x, this.y])),

@@ -31,17 +31,17 @@
 		position: relative;
 		display: flex;
 		align-items: center;
-		height: 20px; /* Высота слайдера */
+		height: 2rem;
 	}
 }
 
 ::ng-deep .ol-control {
 	position: static;
 	width: 200px;
-	height: 15px;
+	height: 1rem;
 }
 
 ::ng-deep .ol-zoomslider button {
 	width: 15px;
-	height: 15px;
+	height: 1rem;
 }

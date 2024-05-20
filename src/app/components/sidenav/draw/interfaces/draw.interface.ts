@@ -75,5 +75,8 @@ export type fillStyles =
 	| "ReverseDiagonalHatching"
 	| "DiagonalCrossHatching";
 
+export type pointStyle = "Circle" | "Cross" | "Square" | "Diamond" | "Cancel";
+
 export type DrawLineStyles = Array<lineStyles>;
 export type DrawFillStyles = Array<fillStyles>;
+export type DrawPointStyles = Array<pointStyle>

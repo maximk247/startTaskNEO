@@ -1,9 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { DrawService } from "../../draw.service";
-import {
-	DrawFillStyles,
-	DrawLineStyles,
-} from "../../interfaces/draw.interface";
+import { FILL_STYLES, LINE_STYLES } from "../../consts/draw-consts.consts";
 
 @Component({
 	selector: "app-draw-figure",
@@ -11,49 +8,36 @@ import {
 	styleUrls: ["./draw-figure.component.scss"],
 })
 export class DrawFigureComponent implements OnInit {
-	figureSize: number | undefined;
-	figureFillColor: string;
-	figureStrokeColor: string;
-	@Input() tool: string;
-	@Output() figureSizeChange: EventEmitter<number> = new EventEmitter<number>();
-	allType = "figure";
-	lineStyles: DrawLineStyles = [
-		"Solid",
-		"Dotted",
-		"Dashed",
-		"DashDot",
-		"DashDotDot",
-	];
+	public figureSize: number | undefined;
+	public figureFillColor: string;
+	public figureStrokeColor: string;
+	@Input() public tool: string;
+	@Output() public figureSizeChange: EventEmitter<number> =
+		new EventEmitter<number>();
+	public allType = "figure";
+	public lineStyles = LINE_STYLES;
 
-	figureFillStyles: DrawFillStyles = [
-		"Solid",
-		"VerticalHatching",
-		"HorizontalHatching",
-		"CrossHatching",
-		"DiagonalHatching",
-		"ReverseDiagonalHatching",
-		"DiagonalCrossHatching",
-	];
+	public figureFillStyles = FILL_STYLES;
 
-	constructor(private drawService: DrawService) {}
+	public constructor(private drawService: DrawService) {}
 
-	ngOnInit() {
+	public ngOnInit() {
 		this.figureSize = this.drawService.getSize(this.tool);
 	}
 
-	async setFigureFillStyle(event: Event) {
+	public async setFigureFillStyle(event: Event) {
 		const target = event.target as HTMLSelectElement;
 		const style = target.value;
-		await this.drawService.setFigureFill(style);
+		await this.drawService.setFill(this.tool,style);
 	}
 
-	async setLineStyle(event: Event) {
+	public async setLineStyle(event: Event) {
 		const target = event.target as HTMLSelectElement;
 		const style = target.value;
 		this.drawService.setStyle(this.tool, style);
 	}
 
-	updateFigureSize() {
+	public updateFigureSize() {
 		this.figureSizeChange.emit(this.figureSize);
 	}
 }

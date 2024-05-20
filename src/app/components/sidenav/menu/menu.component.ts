@@ -7,7 +7,7 @@ import { KeycloakService } from "keycloak-angular";
 	styleUrls: ["./menu.component.scss"],
 })
 export class MenuComponent {
-	constructor(public atest: KeycloakService) {}
+	public constructor(public atest: KeycloakService) {}
 	public onLogout(): void {
 		this.atest.logout();
 	}
