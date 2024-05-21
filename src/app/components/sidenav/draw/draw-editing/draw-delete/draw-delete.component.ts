@@ -2,7 +2,6 @@ import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { MapService } from "src/app/components/map/map.service";
 import { DrawService } from "../../draw.service";
 import { Map } from "ol";
-import { Draw } from "ol/interaction";
 
 @Component({
 	selector: "app-draw-delete",

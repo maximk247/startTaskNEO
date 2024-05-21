@@ -12,7 +12,7 @@ import { Subscription } from "rxjs";
 	templateUrl: "./draw-transparency.component.html",
 	styleUrls: ["./draw-transparency.component.scss"],
 })
-export class TransparencyComponent implements OnInit, OnDestroy {
+export class DrawTransparencyComponent implements OnInit, OnDestroy {
 	@Input() public tool: string;
 	@Input() public type: string;
 	public alphaValue: number;

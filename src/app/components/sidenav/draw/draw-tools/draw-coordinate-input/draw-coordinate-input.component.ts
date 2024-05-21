@@ -2,17 +2,17 @@ import { Component, Input } from "@angular/core";
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
 import { fromLonLat } from "ol/proj";
-import { MapService } from "../map/map.service";
-import { SpatialReference } from "../../spatial-reference.model";
-import { SpatialReferenceService } from "../spatial-reference.service";
-import { DrawService } from "../sidenav/draw/draw.service";
+import { MapService } from "../../../../map/map.service";
+import { SpatialReference } from "../../../../../spatial-reference.model";
+import { SpatialReferenceService } from "../../../../spatial-reference.service";
+import { DrawService } from "../../draw.service";
 
 @Component({
 	selector: "app-coordinate-input",
-	templateUrl: "./coordinate-input.component.html",
-	styleUrls: ["./coordinate-input.component.scss"],
+	templateUrl: "./draw-coordinate-input.component.html",
+	styleUrls: ["./draw-coordinate-input.component.scss"],
 })
-export class CoordinateInputComponent {
+export class DrawCoordinateInputComponent {
 	@Input() public tool: string;
 	public spatialReferences: Array<SpatialReference> = [];
 	public selectedSpatialReference: SpatialReference | undefined;

@@ -7,7 +7,6 @@ import VectorSource from "ol/source/Vector";
 
 import { Feature } from "ol";
 import { fromLonLat } from "ol/proj";
-import { TranslocoHttpLoader } from "src/app/transloco.service";
 
 @Component({
 	selector: "app-coordinates",
@@ -25,7 +24,7 @@ export class CoordinatesComponent implements OnInit {
 	public showPoint = false;
 	private pointLayer: VectorLayer<VectorSource>;
 
-	public constructor(private mapService: MapService, private transloco: TranslocoHttpLoader) {}
+	public constructor(private mapService: MapService) {}
 	public ngOnInit() {
 		this.map = this.mapService.getMap();
 		this.pointLayer = new VectorLayer({
