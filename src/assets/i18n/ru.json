@@ -5,5 +5,21 @@
 	"minutes": "Минуты",
 	"seconds": "Секунды",
 	"goToCoordinates": "Перейти к координатам",
-	"showPoint": "Нанести точку на карту"
+	"showPoint": "Нанести точку на карту",
+	"addPoint": "Добавить точку на карту",
+	"selectColor": "Выберите цвет",
+	"accept": "Принять",
+	"reject": "Отменить",
+	"deleteOnClick": "Удалить по клику",
+	"deleteAll": "Удалить все",
+	"fillColor": "Цвет заливки",
+	"outlineColor": "Цвет контура",
+	"strokeColor": "Цвет линии",
+	"pointSize": "Размер",
+	"forms": "Формы",
+	"transparency": "Прозрачность",
+	"outline": "Контур",
+	"fill": "Заливка",
+	"outlineThickness": "Толщина контура",
+	"strokeThickness": "Толщина линии"
 }

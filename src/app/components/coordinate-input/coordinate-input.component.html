@@ -13,5 +13,5 @@
 	<label for="yInput">Y:</label>
 	<input type="number" [(ngModel)]="y" id="yInput" placeholder="Y" />
 	<br />
-	<button (click)="addPointToMap()">Добавить точку на карту</button>
+	<button (click)="addPointToMap()">{{ "addPoint" | transloco }}</button>
 </div>

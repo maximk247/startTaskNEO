@@ -3,7 +3,7 @@ import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
 import { fromLonLat } from "ol/proj";
 import { MapService } from "../map/map.service";
-import { SpatialReference } from "../spatial-reference.model";
+import { SpatialReference } from "../../spatial-reference.model";
 import { SpatialReferenceService } from "../spatial-reference.service";
 import { DrawService } from "../sidenav/draw/draw.service";
 

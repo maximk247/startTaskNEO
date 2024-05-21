@@ -1,4 +1,4 @@
-<h2>Форма</h2>
+<p>{{ "forms" | transloco }}</p>
 <div class="choice">
 	<button
 		*ngFor="let style of pointStyles"
@@ -8,11 +8,13 @@
 		{{ style }}
 	</button>
 </div>
+<p>{{ "pointSize" | transloco }}</p>
 <app-draw-size
-	[name]="'Размер'"
 	[(size)]="pointSize"
 	(sizeChange)="updatePointSize()"
 ></app-draw-size>
+<p>{{ "fillColor" | transloco }}</p>
 <app-draw-color [color]="pointColor" [tool]="tool"></app-draw-color>
+<p>{{ "transparency" | transloco }}</p>
 <app-draw-transparency [tool]="tool"></app-draw-transparency>
 <app-coordinate-input [tool]="tool"></app-coordinate-input>

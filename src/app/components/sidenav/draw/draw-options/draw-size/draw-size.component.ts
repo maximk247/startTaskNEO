@@ -7,7 +7,6 @@ import { Component, EventEmitter, Input, Output } from "@angular/core";
 })
 export class DrawSizeComponent {
 	@Input() public size: number | undefined;
-	@Input() public name: string;
 	@Output() public sizeChange: EventEmitter<number> = new EventEmitter<number>();
 
 	private minSize = 1;

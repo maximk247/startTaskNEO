@@ -1,6 +1,15 @@
+<p>{{ "forms" | transloco }}</p>
 <app-draw-shape></app-draw-shape>
 <div>
-	<h2>Заливка</h2>
+	<p>{{ "outline" | transloco }}</p>
+	<select (change)="setLineStyle($event)">
+		<option *ngFor="let style of lineStyles" [value]="style">
+			{{ style }}
+		</option>
+	</select>
+</div>
+<div>
+	<p>{{ "fill" | transloco }}</p>
 	<select (change)="setFigureFillStyle($event)">
 		<option *ngFor="let style of figureFillStyles" [value]="style">
 			{{ style }}
@@ -8,30 +17,22 @@
 	</select>
 </div>
 
-<div>
-	<h2>Контур</h2>
-	<select (change)="setLineStyle($event)">
-		<option *ngFor="let style of lineStyles" [value]="style">
-			{{ style }}
-		</option>
-	</select>
-</div>
-
+<p>{{ "outlineThickness" | transloco }}</p>
 <app-draw-size
-	[name]="'Толщина контура'"
 	[(size)]="figureSize"
 	(sizeChange)="updateFigureSize()"
 ></app-draw-size>
-<h2>Stroke</h2>
+<p>{{ "outlineColor" | transloco }}</p>
 <app-draw-color
 	[color]="figureStrokeColor"
 	[tool]="tool"
 	[type]="'stroke'"
 ></app-draw-color>
-<h2>Fill</h2>
+<p>{{ "fillColor" | transloco }}</p>
 <app-draw-color
 	[color]="figureFillColor"
 	[tool]="tool"
 	[type]="'fill'"
 ></app-draw-color>
+<p>{{ "transparency" | transloco }}</p>
 <app-draw-transparency [tool]="tool" [type]="allType"></app-draw-transparency>

@@ -6,7 +6,7 @@ import { Draw, Interaction } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
 import Map from "ol/Map";
 import VectorSource from "ol/source/Vector";
-import { Style, RegularShape, Stroke, Fill, Circle } from "ol/style";
+import { Style, RegularShape, Stroke, Fill } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { GeometryFunction } from "ol/interaction/Draw.js";
 import { Subject } from "rxjs";
@@ -842,7 +842,7 @@ export class DrawService {
 				return new Style(options);
 			case "drawFreePolygon":
 				size = this.getSize(tool);
-				this.freePolygon.fillStyle = await this.getFreePolygonFill();
+				this.freePolygon.fillStyle = await this.getFill(tool);
 				this.setStroke(
 					options,
 					this.freePolygon.strokeColor,
@@ -897,7 +897,7 @@ export class DrawService {
 			case "drawFigure":
 				size = this.getSize(tool);
 
-				this.figure.fillStyle = await this.getFigureFill();
+				this.figure.fillStyle = await this.getFill(tool);
 
 				this.setStroke(
 					options,
