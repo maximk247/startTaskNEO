@@ -1,11 +1,12 @@
 import { Injectable } from "@angular/core";
+import { ModalMode } from "./interfaces/modal.interface";
 
 @Injectable({
 	providedIn: "root",
 })
 export class ModalService {
-	updateBoundarySize(
-		mode: "menu" | "draw" | "coordinates" | "measurement",
+	public updateBoundarySize(
+		mode: ModalMode,
 	): void {
 		if (mode !== "menu") {
 			const container = document.getElementsByClassName(

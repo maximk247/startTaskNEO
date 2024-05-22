@@ -1,10 +1,10 @@
-import { Component, OnInit, Output } from "@angular/core";
-import VectorLayer from "ol/layer/Vector";
+import { Component, OnInit } from "@angular/core";
 import Map from "ol/Map";
-import VectorSource from "ol/source/Vector";
 import { MapService } from "../../map/map.service";
-import Feature from "ol/Feature";
 import { DrawService } from "./draw.service";
+import { Draw } from "ol/interaction";
+import { DrawToolKey, DrawTools } from "./interfaces/draw.interface";
+import { TOOLS } from "./consts/draw-consts.consts";
 
 @Component({
 	selector: "app-draw",
@@ -12,75 +12,142 @@ import { DrawService } from "./draw.service";
 	styleUrls: ["./draw.component.scss"],
 })
 export class DrawComponent implements OnInit {
-	map: Map;
-	@Output() pointStyle = "Cross";
-	vectorLayer: VectorLayer<VectorSource>;
-	source: VectorSource;
-	drawnFeatures: Array<Feature> = [];
+	private map: Map;
+	public tools = TOOLS;
 
-	constructor(
+	private activeInteraction: Draw | null = null;
+
+	public constructor(
 		private mapService: MapService,
 		private drawService: DrawService,
 	) {}
 
-	ngOnInit() {
+	public ngOnInit() {
 		this.map = this.mapService.getMap();
-		const vectorLayer = this.drawService.initalizeLayer(this.source);
-		this.map.addLayer(vectorLayer);
+		this.drawService.initalizeLayer();
+		this.map.addLayer(this.drawService.getVectorLayer());
 	}
 
-	componentVisibility: { [key: string]: boolean } = {
+	public componentVisibility: DrawTools = {
 		drawPoint: false,
 		drawLine: false,
 		drawFreeLine: false,
 		drawPolygon: false,
 		drawFreePolygon: false,
-		drawCircle: false,
+		drawFigure: false,
 	};
-	resetComponentVisibility() {
+
+	public updateSize(size: number, tool: DrawToolKey) {
+		this.drawService.setSize(size, tool);
+	}
+	public deleteActiveInteraction() {
+		this.drawService.removeGlobalInteraction(this.map, this.activeInteraction);
+	}
+	private resetComponentVisibility() {
 		for (const key in this.componentVisibility) {
 			this.componentVisibility[key] = false;
 		}
 	}
 
-	drawPoint() {
+	public drawPoint() {
 		this.resetComponentVisibility();
 		this.componentVisibility = {
 			...this.componentVisibility,
 			drawPoint: true,
 		};
-		const draw = this.drawService.initializePoint(this.map);
-		draw.on("drawend", (event) => {
-			this.drawnFeatures.push(event.feature);
-			event.feature.setStyle(this.drawService.getPointStyle(this.pointStyle));
+		this.drawService.removeGlobalInteraction(this.map, this.activeInteraction);
+		const interactions = this.map.getInteractions().getArray();
+		interactions.forEach((interaction) => {
+			if (interaction.get("drawType") === "figure") {
+				this.drawService.removeGlobalInteraction(this.map, interaction);
+			}
 		});
+		const drawPoint = this.drawService.initializePoint(this.map);
+		this.activeInteraction = drawPoint;
+		this.drawService.addGlobalInteraction(this.map, drawPoint);
 	}
 
-	drawCircle() {
-		const drawCicle = this.drawService.initializeCircle(this.map);
-		this.map.addInteraction(drawCicle);
+	public drawLine() {
+		this.resetComponentVisibility();
+		this.componentVisibility = {
+			...this.componentVisibility,
+			drawLine: true,
+		};
+		this.drawService.removeGlobalInteraction(this.map, this.activeInteraction);
+		const interactions = this.map.getInteractions().getArray();
+		interactions.forEach((interaction) => {
+			if (interaction.get("drawType") === "figure") {
+				this.drawService.removeGlobalInteraction(this.map, interaction);
+			}
+		});
+		const drawLine = this.drawService.initializeLine(this.map);
+		this.activeInteraction = drawLine;
+		this.drawService.addGlobalInteraction(this.map, drawLine);
 	}
 
-	drawLine() {
-		const drawLineString = this.drawService.initializeLineString(this.map);
-		this.map.addInteraction(drawLineString);
-	}
-
-	drawPolygon() {
+	public drawPolygon() {
+		this.resetComponentVisibility();
+		this.componentVisibility = {
+			...this.componentVisibility,
+			drawPolygon: true,
+		};
+		this.drawService.removeGlobalInteraction(this.map, this.activeInteraction);
+		const interactions = this.map.getInteractions().getArray();
+		interactions.forEach((interaction) => {
+			if (interaction.get("drawType") === "figure") {
+				this.drawService.removeGlobalInteraction(this.map, interaction);
+			}
+		});
 		const drawPolygon = this.drawService.initializePolygon(this.map);
-		this.map.addInteraction(drawPolygon);
+		this.activeInteraction = drawPolygon;
+		this.drawService.addGlobalInteraction(this.map, drawPolygon);
 	}
 
-	drawFreeLine() {
-		const drawFreeLine = this.drawService.initalizeFreeLineString(this.map);
-		this.map.addInteraction(drawFreeLine);
+	public drawFreeLine() {
+		this.resetComponentVisibility();
+		this.componentVisibility = {
+			...this.componentVisibility,
+			drawFreeLine: true,
+		};
+		this.drawService.removeGlobalInteraction(this.map, this.activeInteraction);
+		const interactions = this.map.getInteractions().getArray();
+		interactions.forEach((interaction) => {
+			if (interaction.get("drawType") === "figure") {
+				this.drawService.removeGlobalInteraction(this.map, interaction);
+			}
+		});
+		const drawFreeLine = this.drawService.initalizeFreeLine(this.map);
+		this.activeInteraction = drawFreeLine;
+		this.drawService.addGlobalInteraction(this.map, drawFreeLine);
 	}
 
-	drawFreePolygon() {
+	public drawFreePolygon() {
+		this.resetComponentVisibility();
+		this.componentVisibility = {
+			...this.componentVisibility,
+			drawFreePolygon: true,
+		};
+		this.drawService.removeGlobalInteraction(this.map, this.activeInteraction);
+		const interactions = this.map.getInteractions().getArray();
+		interactions.forEach((interaction) => {
+			if (interaction.get("drawType") === "figure") {
+				this.drawService.removeGlobalInteraction(this.map, interaction);
+			}
+		});
 		const drawFreePolygon = this.drawService.initalizeFreePolygon(this.map);
-		this.map.addInteraction(drawFreePolygon);
+		this.activeInteraction = drawFreePolygon;
+		this.drawService.addGlobalInteraction(this.map, drawFreePolygon);
 	}
-	updatePointStyle(style: string) {
-		this.pointStyle = style;
+
+	public drawFigure() {
+		this.resetComponentVisibility();
+		this.componentVisibility = {
+			...this.componentVisibility,
+			drawFigure: true,
+		};
+		this.drawService.removeGlobalInteraction(this.map, this.activeInteraction);
+		const drawFigure = this.drawService.initializeFigure(this.map, "Circle");
+		this.activeInteraction = drawFigure;
+		this.drawService.addGlobalInteraction(this.map, drawFigure);
 	}
 }

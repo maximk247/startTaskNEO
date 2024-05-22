@@ -6,11 +6,11 @@ import { Component } from "@angular/core";
 	styleUrls: ["./app.component.scss"],
 })
 export class AppComponent {
-	menuMode: "menu" | "draw" | "coordinates" | "measurement" | null;
+	public menuMode: "menu" | "draw" | "coordinates" | "measurement" | null;
 
-	isWindowVisible = false;
+	public isWindowVisible = false;
 
-	toggleWindow(mode: "menu" | "draw" | "coordinates" | "measurement") {
+	public toggleWindow(mode: "menu" | "draw" | "coordinates" | "measurement") {
 		this.isWindowVisible = !this.isWindowVisible;
 		if (this.menuMode !== mode) {
 			this.menuMode = mode;
@@ -19,7 +19,7 @@ export class AppComponent {
 			}, 100);
 		}
 	}
-	getButtonClass(
+	public getButtonClass(
 		mode: "menu" | "draw" | "coordinates" | "measurement",
 	): string {
 		return this.menuMode === mode && this.isWindowVisible ? "active" : "";

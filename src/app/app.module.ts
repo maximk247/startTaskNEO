@@ -1,26 +1,21 @@
-import { APP_INITIALIZER, NgModule } from "@angular/core";
+import { APP_INITIALIZER, NgModule, isDevMode } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
-
 import { AppRoutingModule } from "./app-routing.module";
-import { CdkDrag, DragDropModule } from "@angular/cdk/drag-drop";
 import { AppComponent } from "./app.component";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatSidenavModule } from "@angular/material/sidenav";
-import { MatMenuModule } from "@angular/material/menu";
-import { MatSliderModule } from "@angular/material/slider";
-import { ModalComponent } from "./components/modal/modal.component";
-import { MeasurementComponent } from "./components/sidenav/measurement/measurement.component";
-import { CoordinatesComponent } from "./components/sidenav/coordinates/coordinates.component";
-import { DrawComponent } from "./components/sidenav/draw/draw.component";
-import { MenuComponent } from "./components/sidenav/menu/menu.component";
-import { MapComponent } from "./components/map/map.component";
-import { ScaleBarComponent } from "./components/map-widgets/scale-bar/scale-bar.component";
-import { SliderComponent } from "./components/map-widgets/slider/slider.component";
-import { ControlsComponent } from "./components/map-widgets/controls/controls.component";
 import { KeycloakAngularModule, KeycloakService } from "keycloak-angular";
-import { DrawPointComponent } from "./components/draw-point/draw-point.component";
 import { HttpClientModule } from "@angular/common/http";
 import { InlineSVGModule } from "ng-inline-svg-2";
+import { FormsModule } from "@angular/forms";
+import { SpatialReferenceService } from "./components/spatial-reference.service";
+import { TranslocoModule, provideTransloco } from "@ngneat/transloco";
+import { TranslocoHttpLoader } from "./transloco.service";
+import { MapModule } from "./components/map/map.module";
+import { ModalModule } from "./components/modal/modal.module";
+import { DialogModule } from "./components/dialog/dialog.module";
+import { SidenavModule } from "./components/sidenav/sidenav.module";
+
 
 function initializeKeycloak(keycloak: KeycloakService) {
 	return () =>
@@ -38,29 +33,20 @@ function initializeKeycloak(keycloak: KeycloakService) {
 		});
 }
 @NgModule({
-	declarations: [
-		AppComponent,
-		MeasurementComponent,
-		CoordinatesComponent,
-		DrawComponent,
-		MenuComponent,
-		MapComponent,
-		ScaleBarComponent,
-		SliderComponent,
-		ControlsComponent,
-		ModalComponent,
-		DrawPointComponent,
-	],
+	declarations: [AppComponent],
+	exports: [],
 	imports: [
 		BrowserModule,
+		MapModule,
+		SidenavModule,
+		ModalModule,
+		DialogModule,
 		AppRoutingModule,
 		BrowserAnimationsModule,
-		DragDropModule,
 		MatSidenavModule,
-		MatSliderModule,
-		MatMenuModule,
-		CdkDrag,
 		KeycloakAngularModule,
+		FormsModule,
+		TranslocoModule,
 		HttpClientModule,
 		InlineSVGModule.forRoot({
 			baseUrl: "../../../assets/images/",
@@ -73,6 +59,16 @@ function initializeKeycloak(keycloak: KeycloakService) {
 		// 	multi: true,
 		// 	deps: [KeycloakService],
 		// },
+		SpatialReferenceService,
+		provideTransloco({
+			config: {
+				availableLangs: ["en", "ru"],
+				defaultLang: "ru",
+				reRenderOnLangChange: true,
+				prodMode: !isDevMode(),
+			},
+			loader: TranslocoHttpLoader,
+		}),
 	],
 	bootstrap: [AppComponent],
 })

@@ -7,26 +7,34 @@ import { Coordinate, toStringHDMS } from "ol/coordinate";
 import MousePosition from "ol/control/MousePosition";
 import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
+import { Feature } from "ol";
+
+import VectorLayer from "ol/layer/Vector";
+import VectorSource from "ol/source/Vector";
+import { ZoomSlider } from "ol/control";
+import { useGeographic } from "ol/proj";
 
 @Injectable({
 	providedIn: "root",
 })
 export class MapService {
-	map: Map;
+	private map: Map;
+	private vectorLayer: VectorLayer<VectorSource<Feature>>;
 
-	mousePositionControl: MousePosition;
-
-	getMap(): Map {
+	public getMap(): Map {
 		return this.map;
 	}
 
-	initMap(target: string) {
+	public initMap(target: string) {
+		useGeographic();
 		this.map = new Map({
 			target: target,
 
 			view: new View({
 				center: [0, 0],
-				zoom: 1,
+				zoom: 0,
+				minZoom: 0,
+				maxZoom: 15,
 			}),
 			layers: [
 				new TileLayer({
@@ -48,7 +56,19 @@ export class MapService {
 					},
 					target: "controls",
 				}),
+				new ZoomSlider({
+					target: "slider",
+				}),
 			],
 		});
+		this.vectorLayer = new VectorLayer({
+			source: new VectorSource(),
+		});
+		this.map.addLayer(this.vectorLayer);
+	}
+
+	public addFeatureToMap(feature: Feature) {
+		const source = this.vectorLayer.getSource();
+		source?.addFeature(feature);
 	}
 }

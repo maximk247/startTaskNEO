@@ -1,5 +1,6 @@
 import { Component, HostListener, Input, OnInit } from "@angular/core";
 import { ModalService } from "./modal.service";
+import { ModalMode } from "./interfaces/modal.interface";
 
 @Component({
 	selector: "app-modal",
@@ -7,16 +8,16 @@ import { ModalService } from "./modal.service";
 	styleUrls: ["./modal.component.scss"],
 })
 export class ModalComponent implements OnInit {
-	@Input() mode: "menu" | "draw" | "coordinates" | "measurement";
+	@Input() public mode: ModalMode;
 
-	constructor(private modalService: ModalService) {}
+	public constructor(private modalService: ModalService) {}
 
-	ngOnInit(): void {
+	public ngOnInit(): void {
 		this.modalService.updateBoundarySize(this.mode);
 	}
 
 	@HostListener("window:resize", ["$event"])
-	onResize(): void {
+	public onResize(): void {
 		this.modalService.updateBoundarySize(this.mode);
 	}
 }

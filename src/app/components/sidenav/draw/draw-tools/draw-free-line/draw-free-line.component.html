@@ -1,0 +1,17 @@
+<div>
+	<p>{{ "outline" | transloco }}</p>
+	<select (change)="setLineStyle($event)">
+		<option *ngFor="let style of lineStyles" [value]="style">
+			{{ style }}
+		</option>
+	</select>
+</div>
+<p>{{ "strokeThickness" | transloco }}</p>
+<app-draw-size
+	[(size)]="freeLineSize"
+	(sizeChange)="updateLineSize()"
+></app-draw-size>
+<p>{{ "strokeColor" | transloco }}</p>
+<app-draw-color [color]="freeLineColor" [tool]="tool"></app-draw-color>
+<p>{{ "transparency" | transloco }}</p>
+<app-draw-transparency [tool]="tool"></app-draw-transparency>

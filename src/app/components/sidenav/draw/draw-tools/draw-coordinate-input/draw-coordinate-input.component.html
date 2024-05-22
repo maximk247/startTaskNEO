@@ -1,0 +1,17 @@
+<div>
+	<select [(ngModel)]="selectedSpatialReference">
+		<option
+			*ngFor="let spatialReference of spatialReferences"
+			[ngValue]="spatialReference"
+		>
+			{{ spatialReference.name }}
+		</option>
+	</select>
+	<label for="xInput">X:</label>
+	<input type="number" [(ngModel)]="x" id="xInput" placeholder="X" />
+	<br />
+	<label for="yInput">Y:</label>
+	<input type="number" [(ngModel)]="y" id="yInput" placeholder="Y" />
+	<br />
+	<button (click)="addPointToMap()">{{ "addPoint" | transloco }}</button>
+</div>
