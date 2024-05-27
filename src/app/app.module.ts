@@ -8,14 +8,13 @@ import { KeycloakAngularModule, KeycloakService } from "keycloak-angular";
 import { HttpClientModule } from "@angular/common/http";
 import { InlineSVGModule } from "ng-inline-svg-2";
 import { FormsModule } from "@angular/forms";
-import { SpatialReferenceService } from "./components/spatial-reference.service";
+import { SpatialReferenceService } from "./modules/shared/spatial-reference.service";
 import { TranslocoModule, provideTransloco } from "@ngneat/transloco";
-import { TranslocoHttpLoader } from "./transloco.service";
-import { MapModule } from "./components/map/map.module";
-import { ModalModule } from "./components/modal/modal.module";
-import { DialogModule } from "./components/dialog/dialog.module";
-import { SidenavModule } from "./components/sidenav/sidenav.module";
-
+import { TranslocoHttpLoader } from "./modules/shared/transloco.service";
+import { MapModule } from "./modules/map/map.module";
+import { ModalModule } from "./modules/modal/modal.module";
+import { DialogModule } from "./modules/dialog/dialog.module";
+import { SidenavModule } from "./modules/sidenav/sidenav.module";
 
 function initializeKeycloak(keycloak: KeycloakService) {
 	return () =>

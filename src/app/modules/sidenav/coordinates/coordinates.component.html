@@ -1,0 +1,27 @@
+<select [(ngModel)]="selectedSpatialReference">
+	<option
+		*ngFor="let spatialReference of spatialReferences"
+		[ngValue]="spatialReference"
+	>
+		{{ spatialReference.name }}
+	</option>
+</select>
+<div>
+	<h2>{{ "latitude" | transloco }}:</h2>
+	<input type="text" [(ngModel)]="latitudeDegrees" placeholder="Градусы" />
+	<input type="text" [(ngModel)]="latitudeMinutes" placeholder="Минуты" />
+	<input type="text" [(ngModel)]="latitudeSeconds" placeholder="Секунды" />
+</div>
+<div>
+	<h2>{{ "longitude" | transloco }}:</h2>
+	<input type="text" [(ngModel)]="longitudeDegrees" placeholder="Градусы" />
+	<input type="text" [(ngModel)]="longitudeMinutes" placeholder="Минуты" />
+	<input type="text" [(ngModel)]="longitudeSeconds" placeholder="Секунды" />
+</div>
+<button (click)="goToCoordinates()">
+	{{ "goToCoordinates" | transloco }}:
+</button>
+<div>
+	<h2>{{ "showPoint" | transloco }}</h2>
+	<input type="checkbox" [(ngModel)]="showPoint" />
+</div>

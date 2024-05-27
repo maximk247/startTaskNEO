@@ -21,5 +21,9 @@
 	"outline": "Контур",
 	"fill": "Заливка",
 	"outlineThickness": "Толщина контура",
-	"strokeThickness": "Толщина линии"
+	"strokeThickness": "Толщина линии",
+	"menu": "User Name",
+	"measurement": "Измерение",
+	"coordinates": "Переход по координатам",
+	"draw": "Рисование"
 }

@@ -1,0 +1,29 @@
+.coordinate-input {
+	display: flex;
+	align-items: center;
+	margin-bottom: 8px;
+}
+
+.coordinate-input label {
+	margin-right: 4px;
+}
+
+.coordinate-input input {
+	margin-right: 4px;
+}
+
+.coordinate-input button {
+	padding: 0;
+	cursor: pointer;
+	background: none;
+	border: none;
+}
+
+.fa-trash {
+	color: red;
+}
+
+.fa-plus {
+	margin-left: 4px;
+	font-size: 20px;
+}

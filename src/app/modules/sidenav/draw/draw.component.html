@@ -1,0 +1,43 @@
+<button (click)="drawPoint()" type="submit">Draw Point</button>
+<button (click)="drawLine()" type="submit">Draw Line</button>
+<button (click)="drawPolygon()" type="submit">Draw Polygon</button>
+<button (click)="drawFreeLine()" type="submit">Draw Free Line</button>
+<button (click)="drawFreePolygon()" type="submit">Draw Free Polygon</button>
+<button (click)="drawFigure()" type="submit">Draw Circle</button>
+<div class="form">
+	<ng-container *ngFor="let tool of tools">
+		<app-draw-point
+			*ngIf="componentVisibility[tool] && tool === 'drawPoint'"
+			[tool]="tool"
+			(pointSizeChange)="updateSize($event, tool)"
+		></app-draw-point>
+		<app-draw-line
+			*ngIf="componentVisibility[tool] && tool === 'drawLine'"
+			[tool]="tool"
+			(lineSizeChange)="updateSize($event, tool)"
+		></app-draw-line>
+		<app-draw-polygon
+			*ngIf="componentVisibility[tool] && tool === 'drawPolygon'"
+			[tool]="tool"
+			(polygonSizeChange)="updateSize($event, tool)"
+		></app-draw-polygon>
+		<app-draw-free-line
+			*ngIf="componentVisibility[tool] && tool === 'drawFreeLine'"
+			[tool]="tool"
+			(freeLineSizeChange)="updateSize($event, tool)"
+		></app-draw-free-line>
+		<app-draw-free-polygon
+			*ngIf="componentVisibility[tool] && tool === 'drawFreePolygon'"
+			[tool]="tool"
+			(freePolygonSizeChange)="updateSize($event, tool)"
+		></app-draw-free-polygon>
+		<app-draw-figure
+			*ngIf="componentVisibility[tool] && tool === 'drawFigure'"
+			[tool]="tool"
+			(figureSizeChange)="updateSize($event, tool)"
+		></app-draw-figure>
+	</ng-container>
+</div>
+<app-draw-delete
+	(interactionDeleted)="deleteActiveInteraction()"
+></app-draw-delete>
