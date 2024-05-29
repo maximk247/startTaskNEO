@@ -1,18 +1,47 @@
 <div>
-	<select [(ngModel)]="mode" (change)="changeMode(mode)">
+	<select [(ngModel)]="mode">
 		<option value="point">Кординаты точки</option>
 		<option value="line">Измерение длины</option>
 		<option value="polygon">Измерение периметра и площади</option>
-		\
 		<option value="circle">Измерение радиуса</option>
 	</select>
 </div>
 
+<ng-container [ngSwitch]="mode" changeMode="onModeChange()">
+	<ng-container *ngSwitchCase="'point'">
+		<app-measurement-point
+			[map]="map"
+			[vectorSource]="vectorSource"
+			(pointsChange)="onPointsChange($event)"
+		></app-measurement-point>
+	</ng-container>
+	<ng-container *ngSwitchCase="'line'">
+		<app-measurement-line
+			[map]="map"
+			[vectorSource]="vectorSource"
+			(linesChange)="onLinesChange($event)"
+		></app-measurement-line>
+	</ng-container>
+	<ng-container *ngSwitchCase="'polygon'">
+		<app-measurement-polygon
+			[map]="map"
+			[vectorSource]="vectorSource"
+			(polygonsChange)="onPolygonsChange($event)"
+		></app-measurement-polygon>
+	</ng-container>
+	<ng-container *ngSwitchCase="'circle'">
+		<app-measurement-circle
+			[map]="map"
+			[vectorSource]="vectorSource"
+			(circlesChange)="onCirclesChange($event)"
+		></app-measurement-circle>
+	</ng-container>
+</ng-container>
+
 <div *ngFor="let point of points">
 	<p>
-		Точка {{ point.id }}:
-		{{ point.feature.getGeometry()!.getCoordinates()[0] }},
-		{{ point.feature.getGeometry()!.getCoordinates()[1] }}
+		Точка {{ point.id }}: {{ point.coordinates[0] }},
+		{{ point.coordinates[1] }}
 		<button (click)="removePoint(point.id)">Удалить</button>
 	</p>
 </div>

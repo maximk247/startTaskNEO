@@ -8,12 +8,11 @@ import MousePosition from "ol/control/MousePosition";
 import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
 import { Feature } from "ol";
-import { get as getProjection, transform } from "ol/proj";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { ZoomSlider } from "ol/control";
 import { useGeographic } from "ol/proj";
-import { Point } from "proj4";
+
 
 @Injectable({
 	providedIn: "root",

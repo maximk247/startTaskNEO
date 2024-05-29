@@ -1,0 +1,41 @@
+<div>
+	<select (change)="onChange($event)">
+		<option
+			*ngFor="let spatialReference of spatialReferences"
+			[value]="spatialReference.id"
+		>
+			{{ spatialReference.name }}
+		</option>
+	</select>
+	<div *ngFor="let point of points; let i = index" class="coordinate-input">
+		<label [for]="'y' + i">{{ "latitude" | transloco }} (Y):</label>
+		<input type="number" [(ngModel)]="point.y" [id]="'y' + i" placeholder="Y" />
+		<label [for]="'x' + i">{{ "longitude" | transloco }} (X):</label>
+		<input type="number" [(ngModel)]="point.x" [id]="'x' + i" placeholder="X" />
+		<button type="button" (click)="removePoint(i)">
+			{{ "delete" | transloco }}
+		</button>
+	</div>
+	<button type="button" (click)="addPoint()">
+		{{ "addCoordinate" | transloco }}
+	</button>
+	<br />
+	<br />
+	<div [ngSwitch]="tool">
+		<div *ngSwitchCase="drawPoint">
+			<button type="button" (click)="addPointToMap()">
+				{{ "addPoint" | transloco }}
+			</button>
+		</div>
+		<div *ngSwitchCase="drawLine">
+			<button type="button" (click)="addLineToMap()">
+				{{ "addLine" | transloco }}
+			</button>
+		</div>
+		<div *ngSwitchCase="drawPolygon">
+			<button type="button" (click)="addPolygonToMap()">
+				{{ "addPolygon" | transloco }}
+			</button>
+		</div>
+	</div>
+</div>

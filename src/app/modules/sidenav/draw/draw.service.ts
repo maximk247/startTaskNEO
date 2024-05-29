@@ -20,6 +20,7 @@ import {
 	DrawFigure,
 } from "./interfaces/draw.interface";
 import { Feature } from "ol";
+import { ColorType, FillStyles, PointStyles, StrokeStyles, Tools } from "./enum/draw.enum";
 
 @Injectable({
 	providedIn: "root",
@@ -218,7 +219,7 @@ export class DrawService {
 		);
 		draw.set("drawType", "point");
 		draw.on("drawend", async (event) => {
-			event.feature.setStyle(await this.getStyle("drawPoint"));
+			event.feature.setStyle(await this.getStyle(Tools.Point));
 		});
 		return draw;
 	}
@@ -233,7 +234,7 @@ export class DrawService {
 		);
 		draw.set("drawType", "line");
 		draw.on("drawstart", async (event) => {
-			event.feature.setStyle(await this.getStyle("drawLine"));
+			event.feature.setStyle(await this.getStyle(Tools.Line));
 		});
 		return draw;
 	}
@@ -249,7 +250,7 @@ export class DrawService {
 		);
 		draw.set("drawType", "freeLine");
 		draw.on("drawstart", async (event) => {
-			event.feature.setStyle(await this.getStyle("drawFreeLine"));
+			event.feature.setStyle(await this.getStyle(Tools.FreeLine));
 		});
 		return draw;
 	}
@@ -263,7 +264,7 @@ export class DrawService {
 		);
 		draw.set("drawType", "polygon");
 		draw.on("drawstart", async (event) => {
-			event.feature.setStyle(await this.getStyle("drawPolygon"));
+			event.feature.setStyle(await this.getStyle(Tools.Polygon));
 		});
 		return draw;
 	}
@@ -278,7 +279,7 @@ export class DrawService {
 		);
 		draw.set("drawType", "freePolygon");
 		draw.on("drawstart", async (event) => {
-			event.feature.setStyle(await this.getStyle("drawFreePolygon"));
+			event.feature.setStyle(await this.getStyle(Tools.FreePolygon));
 		});
 		return draw;
 	}
@@ -295,29 +296,29 @@ export class DrawService {
 		);
 		draw.set("drawType", "figure");
 		draw.on("drawstart", async (event) => {
-			event.feature.setStyle(await this.getStyle("drawFigure"));
+			event.feature.setStyle(await this.getStyle(Tools.Figure));
 		});
 		return draw;
 	}
 
 	public setSize(size: number, tool: DrawToolKey) {
 		switch (tool) {
-			case "drawPoint":
+			case Tools.Point:
 				this.point.size = size;
 				break;
-			case "drawLine":
+			case Tools.Line:
 				this.line.size = size;
 				break;
-			case "drawPolygon":
+			case Tools.Polygon:
 				this.polygon.size = size;
 				break;
-			case "drawFreeLine":
+			case Tools.FreeLine:
 				this.freeLine.size = size;
 				break;
-			case "drawFreePolygon":
+			case Tools.FreePolygon:
 				this.freePolygon.size = size;
 				break;
-			case "drawFigure":
+			case Tools.Figure:
 				this.figure.size = size;
 				break;
 		}
@@ -325,33 +326,33 @@ export class DrawService {
 
 	public getSize(tool: DrawToolKey): number | undefined {
 		switch (tool) {
-			case "drawPoint":
+			case Tools.Point:
 				return this.point.size;
-			case "drawLine":
+			case Tools.Line:
 				return this.line.size;
-			case "drawPolygon":
+			case Tools.Polygon:
 				return this.polygon.size;
-			case "drawFreeLine":
+			case Tools.FreeLine:
 				return this.freeLine.size;
-			case "drawFreePolygon":
+			case Tools.FreePolygon:
 				return this.freePolygon.size;
-			case "drawFigure":
+			case Tools.Figure:
 				return this.figure.size;
 		}
 	}
 
 	public setColor(color: string, tool: DrawToolKey, type?: string) {
 		switch (tool) {
-			case "drawPoint":
+			case Tools.Point:
 				this.point.color = color;
 				this.colorChanged.next(color);
 				break;
-			case "drawLine":
+			case Tools.Line:
 				this.line.color = color;
 				this.colorChanged.next(color);
 				break;
-			case "drawPolygon":
-				if (type === "polygon") {
+			case Tools.Polygon:
+				if (type === ColorType.Polygon) {
 					this.polygon.fillColor = this.replaceAlpha(
 						this.polygon.fillColor,
 						color,
@@ -361,24 +362,24 @@ export class DrawService {
 						color,
 					);
 				}
-				if (type === "fill") {
+				if (type === ColorType.Fill) {
 					this.polygon.fillColor = color;
 					this.colorChanged.next(color);
 				}
 
-				if (type === "stroke") {
+				if (type === ColorType.Stroke) {
 					this.polygon.strokeColor = color;
 					this.colorChanged.next(color);
 				}
 				this.polygon.color = this.polygon.fillColor + this.polygon.strokeColor;
 				break;
 
-			case "drawFreeLine":
+			case Tools.FreeLine:
 				this.freeLine.color = color;
 				this.colorChanged.next(color);
 				break;
-			case "drawFreePolygon":
-				if (type === "polygon") {
+			case Tools.FreePolygon:
+				if (type === ColorType.Polygon) {
 					this.freePolygon.fillColor = this.replaceAlpha(
 						this.freePolygon.fillColor,
 						color,
@@ -388,20 +389,20 @@ export class DrawService {
 						color,
 					);
 				}
-				if (type === "fill") {
+				if (type === ColorType.Fill) {
 					this.freePolygon.fillColor = color;
 					this.colorChanged.next(color);
 				}
 
-				if (type === "stroke") {
+				if (type === ColorType.Stroke) {
 					this.freePolygon.strokeColor = color;
 					this.colorChanged.next(color);
 				}
 				this.freePolygon.color =
 					this.freePolygon.fillColor + this.freePolygon.strokeColor;
 				break;
-			case "drawFigure":
-				if (type === "figure") {
+			case Tools.Figure:
+				if (type === ColorType.Figure) {
 					this.figure.fillColor = this.replaceAlpha(
 						this.figure.fillColor,
 						color,
@@ -411,12 +412,12 @@ export class DrawService {
 						color,
 					);
 				}
-				if (type === "fill") {
+				if (type === ColorType.Fill) {
 					this.figure.fillColor = color;
 					this.colorChanged.next(color);
 				}
 
-				if (type === "stroke") {
+				if (type === ColorType.Stroke) {
 					this.figure.strokeColor = color;
 					this.colorChanged.next(color);
 				}
@@ -427,55 +428,54 @@ export class DrawService {
 
 	public getColor(tool: DrawToolKey): string | undefined {
 		switch (tool) {
-			case "drawPoint":
+			case Tools.Point:
 				return this.point.color;
-			case "drawLine":
+			case Tools.Line:
 				return this.line.color;
-			case "drawPolygon":
+			case Tools.Polygon:
 				return this.polygon.color;
-			case "drawFreeLine":
+			case Tools.FreeLine:
 				return this.freeLine.color;
-			case "drawFreePolygon":
+			case Tools.FreePolygon:
 				return this.freePolygon.color;
-			case "drawFigure":
+			case Tools.Figure:
 				return this.figure.color;
 		}
 	}
 
-	
 	private async setPolygonFill(style: string) {
 		switch (style) {
-			case "VerticalHatching":
+			case FillStyles.VerticalHatching:
 				this.polygon.fillStyle = await this.stylePatternSimplePoly(
 					"vertical.png",
 					this.polygon.fillColor,
 				);
 				break;
-			case "HorizontalHatching":
+			case FillStyles.HorizontalHatching:
 				this.polygon.fillStyle = await this.stylePatternSimplePoly(
 					"horizontal.png",
 					this.polygon.fillColor,
 				);
 				break;
-			case "CrossHatching":
+			case FillStyles.CrossHatching:
 				this.polygon.fillStyle = await this.stylePatternSimplePoly(
 					"square.png",
 					this.polygon.fillColor,
 				);
 				break;
-			case "DiagonalHatching":
+			case FillStyles.DiagonalHatching:
 				this.polygon.fillStyle = await this.stylePatternSimplePoly(
 					"diagonal.png",
 					this.polygon.fillColor,
 				);
 				break;
-			case "ReverseDiagonalHatching":
+			case FillStyles.ReverseDiagonalHatching:
 				this.polygon.fillStyle = await this.stylePatternSimplePoly(
 					"reverseDiagonal.png",
 					this.polygon.fillColor,
 				);
 				break;
-			case "DiagonalCrossHatching":
+			case FillStyles.DiagonalCrossHatching:
 				this.polygon.fillStyle = await this.stylePatternSimplePoly(
 					"cross.png",
 					this.polygon.fillColor,
@@ -493,37 +493,37 @@ export class DrawService {
 
 	private async setFreePolygonFill(style: string) {
 		switch (style) {
-			case "VerticalHatching":
+			case FillStyles.VerticalHatching:
 				this.freePolygon.fillStyle = await this.stylePatternSimplePoly(
 					"vertical.png",
 					this.freePolygon.fillColor,
 				);
 				break;
-			case "HorizontalHatching":
+			case FillStyles.HorizontalHatching:
 				this.freePolygon.fillStyle = await this.stylePatternSimplePoly(
 					"horizontal.png",
 					this.freePolygon.fillColor,
 				);
 				break;
-			case "CrossHatching":
+			case FillStyles.CrossHatching:
 				this.freePolygon.fillStyle = await this.stylePatternSimplePoly(
 					"square.png",
 					this.freePolygon.fillColor,
 				);
 				break;
-			case "DiagonalHatching":
+			case FillStyles.DiagonalHatching:
 				this.freePolygon.fillStyle = await this.stylePatternSimplePoly(
 					"diagonal.png",
 					this.freePolygon.fillColor,
 				);
 				break;
-			case "ReverseDiagonalHatching":
+			case FillStyles.ReverseDiagonalHatching:
 				this.freePolygon.fillStyle = await this.stylePatternSimplePoly(
 					"reverseDiagonal.png",
 					this.freePolygon.fillColor,
 				);
 				break;
-			case "DiagonalCrossHatching":
+			case FillStyles.DiagonalCrossHatching:
 				this.freePolygon.fillStyle = await this.stylePatternSimplePoly(
 					"cross.png",
 					this.freePolygon.fillColor,
@@ -540,37 +540,37 @@ export class DrawService {
 
 	private async setFigureFill(style: string) {
 		switch (style) {
-			case "VerticalHatching":
+			case FillStyles.VerticalHatching:
 				this.figure.fillStyle = await this.stylePatternSimplePoly(
 					"vertical.png",
 					this.figure.fillColor,
 				);
 				break;
-			case "HorizontalHatching":
+			case FillStyles.HorizontalHatching:
 				this.figure.fillStyle = await this.stylePatternSimplePoly(
 					"horizontal.png",
 					this.figure.fillColor,
 				);
 				break;
-			case "CrossHatching":
+			case FillStyles.CrossHatching:
 				this.figure.fillStyle = await this.stylePatternSimplePoly(
 					"square.png",
 					this.figure.fillColor,
 				);
 				break;
-			case "DiagonalHatching":
+			case FillStyles.DiagonalHatching:
 				this.figure.fillStyle = await this.stylePatternSimplePoly(
 					"diagonal.png",
 					this.figure.fillColor,
 				);
 				break;
-			case "ReverseDiagonalHatching":
+			case FillStyles.ReverseDiagonalHatching:
 				this.figure.fillStyle = await this.stylePatternSimplePoly(
 					"reverseDiagonal.png",
 					this.figure.fillColor,
 				);
 				break;
-			case "DiagonalCrossHatching":
+			case FillStyles.DiagonalCrossHatching:
 				this.figure.fillStyle = await this.stylePatternSimplePoly(
 					"cross.png",
 					this.figure.fillColor,
@@ -587,13 +587,13 @@ export class DrawService {
 	}
 	public async setFill(tool: DrawToolKey, style: string) {
 		switch (tool) {
-			case "drawPolygon":
+			case Tools.Polygon:
 				await this.setPolygonFill(style);
 				break;
-			case "drawFreePolygon":
+			case Tools.FreePolygon:
 				await this.setFreePolygonFill(style);
 				break;
-			case "drawFigure":
+			case Tools.Figure:
 				await this.setFigureFill(style);
 				break;
 		}
@@ -601,11 +601,11 @@ export class DrawService {
 
 	public async getFill(tool: DrawToolKey) {
 		switch (tool) {
-			case "drawPolygon":
+			case Tools.Polygon:
 				return this.getPolygonFill();
-			case "drawFreePolygon":
+			case Tools.FreePolygon:
 				return this.getFreePolygonFill();
-			case "drawFigure":
+			case Tools.Figure:
 				return this.getFigureFill();
 		}
 	}
@@ -668,24 +668,24 @@ export class DrawService {
 			color: style,
 		});
 	}
-	public setStyle(tool: DrawToolKey, style: string) {
+	public setStrokeStyle(tool: DrawToolKey, style: string) {
 		switch (tool) {
-			case "drawPoint":
+			case Tools.Point:
 				this.point.style = style;
 				break;
-			case "drawLine":
+			case Tools.Line:
 				this.line.style = style;
 				break;
-			case "drawPolygon":
+			case Tools.Polygon:
 				this.polygon.strokeStyle = style;
 				break;
-			case "drawFreeLine":
+			case Tools.FreeLine:
 				this.freeLine.style = style;
 				break;
-			case "drawFreePolygon":
+			case Tools.FreePolygon:
 				this.freePolygon.strokeStyle = style;
 				break;
-			case "drawFigure":
+			case Tools.Figure:
 				this.figure.strokeStyle = style;
 				break;
 		}
@@ -695,14 +695,14 @@ export class DrawService {
 		let color;
 		const options: DrawOptions = {};
 		switch (tool) {
-			case "drawPoint":
+			case Tools.Point:
 				size = this.getSize(tool);
 				color = this.getColor(tool);
 				switch (this.point.style) {
-					case "Cross":
+					case PointStyles.Cross:
 						this.setImageForPoint(options, false, color, 2, 4, 0, size!, 0);
 						break;
-					case "Diamond":
+					case PointStyles.Diamond:
 						this.setImageForPoint(
 							options,
 							true,
@@ -714,7 +714,7 @@ export class DrawService {
 							size! * Math.sqrt(2),
 						);
 						break;
-					case "Cancel":
+					case PointStyles.Cancel:
 						this.setImageForPoint(
 							options,
 							false,
@@ -726,7 +726,7 @@ export class DrawService {
 							0,
 						);
 						break;
-					case "Square":
+					case PointStyles.Square:
 						this.setImageForPoint(
 							options,
 							true,
@@ -737,7 +737,7 @@ export class DrawService {
 							size!,
 						);
 						break;
-					case "Circle":
+					case PointStyles.Circle:
 						this.setImageForPoint(
 							options,
 							false,
@@ -751,28 +751,30 @@ export class DrawService {
 						);
 				}
 				return new Style(options);
-			case "drawLine":
+
+			case Tools.Line:
 				size = this.getSize(tool);
 				color = this.getColor(tool);
 				switch (this.line.style) {
-					case "Dashed":
+					case StrokeStyles.Dashed:
 						this.setStroke(options, color, size, [16, 8]);
 						break;
-					case "DashDot":
+					case StrokeStyles.DashDot:
 						this.setStroke(options, color, size, [16, 16, 0, 16]);
 						break;
-					case "Dotted":
+					case StrokeStyles.Dotted:
 						this.setStroke(options, color, size, [0, 8]);
 						break;
-					case "DashDotDot":
+					case StrokeStyles.DashDotDot:
 						this.setStroke(options, color, size, [16, 16, 0, 16, 0, 16]);
 						break;
-					case "Solid":
+					case StrokeStyles.Solid:
 						this.setStroke(options, color, size);
 				}
 
 				return new Style(options);
-			case "drawPolygon":
+
+			case Tools.Polygon:
 				size = this.getSize(tool);
 				this.polygon.fillStyle = await this.getFill(tool);
 				this.setStroke(
@@ -784,11 +786,11 @@ export class DrawService {
 				this.setFillStyle(options, this.polygon.fillStyle);
 
 				switch (this.polygon.strokeStyle) {
-					case "Dashed":
+					case StrokeStyles.Dashed:
 						this.setStroke(options, this.polygon.strokeColor, size, [16, 8]);
 						this.setFillStyle(options, this.polygon.fillStyle);
 						break;
-					case "DashDot":
+					case StrokeStyles.DashDot:
 						this.setStroke(
 							options,
 							this.polygon.strokeColor,
@@ -797,11 +799,11 @@ export class DrawService {
 						);
 						this.setFillStyle(options, this.polygon.fillStyle);
 						break;
-					case "Dotted":
+					case StrokeStyles.Dotted:
 						this.setStroke(options, this.polygon.strokeColor, size, [0, 8]);
 						this.setFillStyle(options, this.polygon.fillStyle);
 						break;
-					case "DashDotDot":
+					case StrokeStyles.DashDotDot:
 						this.setStroke(
 							options,
 							this.polygon.strokeColor,
@@ -810,7 +812,7 @@ export class DrawService {
 						);
 						this.setFillStyle(options, this.polygon.fillStyle);
 						break;
-					case "Solid":
+					case StrokeStyles.Solid:
 						this.setStroke(options, this.polygon.strokeColor, size);
 						this.setFillStyle(options, this.polygon.fillColor);
 				}
@@ -819,28 +821,29 @@ export class DrawService {
 				}
 				this.polygon.color = this.polygon.fillColor + this.polygon.strokeColor;
 				return new Style(options);
-			case "drawFreeLine":
+
+			case Tools.FreeLine:
 				size = this.getSize(tool);
 				color = this.getColor(tool);
 				switch (this.freeLine.style) {
-					case "Dashed":
+					case StrokeStyles.Dashed:
 						this.setStroke(options, color, size, [16, 8]);
 						break;
-					case "DashDot":
+					case StrokeStyles.DashDot:
 						this.setStroke(options, color, size, [16, 16, 0, 16]);
 						break;
-					case "Dotted":
+					case StrokeStyles.Dotted:
 						this.setStroke(options, color, size, [0, 8]);
 						break;
-					case "DashDotDot":
+					case StrokeStyles.DashDotDot:
 						this.setStroke(options, color, size, [16, 16, 0, 16, 0, 16]);
 						break;
-					case "Solid":
+					case StrokeStyles.Solid:
 						this.setStroke(options, color, size);
 				}
-
 				return new Style(options);
-			case "drawFreePolygon":
+
+			case Tools.FreePolygon:
 				size = this.getSize(tool);
 				this.freePolygon.fillStyle = await this.getFill(tool);
 				this.setStroke(
@@ -852,7 +855,7 @@ export class DrawService {
 				this.setFillStyle(options, this.freePolygon.fillStyle);
 
 				switch (this.freePolygon.strokeStyle) {
-					case "Dashed":
+					case StrokeStyles.Dashed:
 						this.setStroke(
 							options,
 							this.freePolygon.strokeColor,
@@ -861,7 +864,7 @@ export class DrawService {
 						);
 						this.setFillStyle(options, this.freePolygon.fillStyle);
 						break;
-					case "DashDot":
+					case StrokeStyles.DashDot:
 						this.setStroke(
 							options,
 							this.freePolygon.strokeColor,
@@ -870,11 +873,11 @@ export class DrawService {
 						);
 						this.setFillStyle(options, this.freePolygon.fillStyle);
 						break;
-					case "Dotted":
+					case StrokeStyles.Dotted:
 						this.setStroke(options, this.freePolygon.strokeColor, size, [0, 8]);
 						this.setFillStyle(options, this.freePolygon.fillStyle);
 						break;
-					case "DashDotDot":
+					case StrokeStyles.DashDotDot:
 						this.setStroke(
 							options,
 							this.freePolygon.strokeColor,
@@ -883,18 +886,18 @@ export class DrawService {
 						);
 						this.setFillStyle(options, this.freePolygon.fillStyle);
 						break;
-					case "Solid":
+					case StrokeStyles.Solid:
 						this.setStroke(options, this.freePolygon.strokeColor, size);
 						this.setFillStyle(options, this.freePolygon.fillColor);
 				}
 				if (!this.freePolygon.fillStyle) {
 					this.setFillStyle(options, this.freePolygon.fillColor);
 				}
-
 				this.freePolygon.color =
 					this.freePolygon.fillColor + this.freePolygon.strokeColor;
 				return new Style(options);
-			case "drawFigure":
+
+			case Tools.Figure:
 				size = this.getSize(tool);
 
 				this.figure.fillStyle = await this.getFill(tool);
@@ -908,11 +911,11 @@ export class DrawService {
 				this.setFillStyle(options, this.figure.fillStyle);
 
 				switch (this.figure.strokeStyle) {
-					case "Dashed":
+					case StrokeStyles.Dashed:
 						this.setStroke(options, this.figure.strokeColor, size, [16, 8]);
 						this.setFillStyle(options, this.figure.fillStyle);
 						break;
-					case "DashDot":
+					case StrokeStyles.DashDot:
 						this.setStroke(
 							options,
 							this.figure.strokeColor,
@@ -921,11 +924,11 @@ export class DrawService {
 						);
 						this.setFillStyle(options, this.figure.fillStyle);
 						break;
-					case "Dotted":
+					case StrokeStyles.Dotted:
 						this.setStroke(options, this.figure.strokeColor, size, [0, 8]);
 						this.setFillStyle(options, this.figure.fillStyle);
 						break;
-					case "DashDotDot":
+					case StrokeStyles.DashDotDot:
 						this.setStroke(
 							options,
 							this.figure.strokeColor,
@@ -934,7 +937,7 @@ export class DrawService {
 						);
 						this.setFillStyle(options, this.figure.fillStyle);
 						break;
-					case "Solid":
+					case StrokeStyles.Solid:
 						this.setStroke(options, this.figure.strokeColor, size);
 						this.setFillStyle(options, this.figure.fillColor);
 				}

@@ -10,6 +10,7 @@ import { fromLonLat } from "ol/proj";
 
 import { SpatialReferenceService } from "../../shared/spatial-reference.service";
 import { SpatialReference } from "../../shared/interfaces/spatial-reference.interfaces";
+import { TranslocoService } from "@ngneat/transloco";
 
 @Component({
 	selector: "app-coordinates",
@@ -31,6 +32,7 @@ export class CoordinatesComponent implements OnInit {
 	public constructor(
 		private mapService: MapService,
 		private spatialReferenceService: SpatialReferenceService,
+		private translocoService: TranslocoService,
 	) {}
 	public ngOnInit() {
 		this.map = this.mapService.getMap();
@@ -47,7 +49,10 @@ export class CoordinatesComponent implements OnInit {
 				console.log(this.spatialReferences);
 			},
 			(error) => {
-				console.error("Ошибка при загрузке пространственных ссылок:", error);
+				const errorMessage = this.translocoService.translate(
+					"errorDueToSpecialReference",
+				);
+				console.error(errorMessage, error);
 			},
 		);
 	}

@@ -3,7 +3,7 @@
 		class="modal-container"
 		cdkDragBoundary=".box-boundary"
 		cdkDrag
-		[class.turn]="turn"
+		[ngClass]="{'turn': turn}"
 	>
 		<header class="modal-container__header" cdkDragHandle>
 			<div class="header__title" [ngSwitch]="mode">
@@ -17,10 +17,10 @@
 				<span *ngSwitchCase="'draw'">{{ "draw" | transloco }}</span>
 			</div>
 			<div class="header__buttons" *ngIf="mode !== 'menu'; else profileIcon">
-				<button type="button" (click)="toggleTurn()">
+				<button type="button" (click)="turn = !turn">
 					<div [inlineSVG]="'turn.svg'"></div>
 				</button>
-				<button type="button" (click)="closeModal()">
+				<button type="button" (click)="isVisible = false">
 					<div [inlineSVG]="'cancel.svg'"></div>
 				</button>
 			</div>

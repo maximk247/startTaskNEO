@@ -10,6 +10,7 @@
 	"selectColor": "Выберите цвет",
 	"accept": "Принять",
 	"reject": "Отменить",
+	"delete": "Удалить",
 	"deleteOnClick": "Удалить по клику",
 	"deleteAll": "Удалить все",
 	"fillColor": "Цвет заливки",
@@ -25,5 +26,8 @@
 	"menu": "User Name",
 	"measurement": "Измерение",
 	"coordinates": "Переход по координатам",
-	"draw": "Рисование"
+	"addCoordinates": "Добавить координаты",
+	"draw": "Рисование",
+	"errorDueToSpecialReference": "Ошибка при загрузке пространственных ссылок:",
+	"errorDueToNotEnoughPoints": "Недостаточно точек для создания фигуры"
 }

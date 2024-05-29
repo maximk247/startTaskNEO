@@ -26,10 +26,4 @@ export class ModalComponent implements AfterContentChecked {
 	public onResize(): void {
 		this.modalService.updateBoundarySize(this.mode);
 	}
-	public toggleTurn(): void {
-		this.turn = !this.turn;
-	}
-	public closeModal(): void {
-		this.isVisible = false;
-	}
 }

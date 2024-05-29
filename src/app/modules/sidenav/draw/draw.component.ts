@@ -5,6 +5,7 @@ import { DrawService } from "./draw.service";
 import { Draw } from "ol/interaction";
 import { DrawToolKey, DrawTools } from "./interfaces/draw.interface";
 import { TOOLS } from "./consts/draw-consts.consts";
+import { DrawType } from "./enum/draw.enum";
 
 @Component({
 	selector: "app-draw",
@@ -59,8 +60,8 @@ export class DrawComponent implements OnInit {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
 			if (
-				interaction.get("drawType") === "figure" ||
-				interaction.get("drawType") === "measurement"
+				interaction.get("drawType") === DrawType.Figure ||
+				interaction.get("drawType") === DrawType.Measurement
 			) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
@@ -80,8 +81,8 @@ export class DrawComponent implements OnInit {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
 			if (
-				interaction.get("drawType") === "figure" ||
-				interaction.get("drawType") === "measurement"
+				interaction.get("drawType") === DrawType.Figure ||
+				interaction.get("drawType") === DrawType.Measurement
 			) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
@@ -101,8 +102,8 @@ export class DrawComponent implements OnInit {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
 			if (
-				interaction.get("drawType") === "figure" ||
-				interaction.get("drawType") === "measurement"
+				interaction.get("drawType") === DrawType.Figure ||
+				interaction.get("drawType") === DrawType.Measurement
 			) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
@@ -122,8 +123,8 @@ export class DrawComponent implements OnInit {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
 			if (
-				interaction.get("drawType") === "figure" ||
-				interaction.get("drawType") === "measurement"
+				interaction.get("drawType") === DrawType.Figure ||
+				interaction.get("drawType") === DrawType.Measurement
 			) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
@@ -143,8 +144,8 @@ export class DrawComponent implements OnInit {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
 			if (
-				interaction.get("drawType") === "figure" ||
-				interaction.get("drawType") === "measurement"
+				interaction.get("drawType") === DrawType.Figure ||
+				interaction.get("drawType") === DrawType.Measurement
 			) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
@@ -163,7 +164,7 @@ export class DrawComponent implements OnInit {
 		this.drawService.removeGlobalInteraction(this.map, this.activeInteraction);
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
-			if (interaction.get("drawType") === "measurement") {
+			if (interaction.get("drawType") === DrawType.Measurement) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
 		});

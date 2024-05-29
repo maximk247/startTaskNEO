@@ -1,0 +1,10 @@
+
+	<select (change)="onChange($event)">
+		<option
+			*ngFor="let spatialReference of spatialReferences"
+			[value]="spatialReference.id"
+		>
+			{{ spatialReference.name }}
+		</option>
+	</select>
+
