@@ -8,6 +8,8 @@ import { Draw } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
 import { DrawService } from "../../../draw/draw.service";
 import { getLength } from "ol/sphere";
+import { DrawType } from "../../../draw/enum/draw.enum";
+import { MeasurementService } from "../../measurement.service";
 
 @Component({
 	selector: "app-measurement-line",
@@ -22,15 +24,16 @@ export class LineComponent implements OnInit {
 	public lines: Array<MeasurementLine> = [];
 	public lineCounter = 1;
 	public draw: Draw;
-	public currentLength = "";
-	public lastLineLength = "";
+	public currentLength: number;
+	public lastLineLength: number;
+	public selectedUnit = "meters";
 
-	public constructor(private drawService: DrawService) {}
+	public constructor(private drawService: DrawService, private measurementService: MeasurementService) {}
 
 	public ngOnInit(): void {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
-			if (interaction.get("drawType") === "measurement") {
+			if (interaction.get("drawType") === DrawType.Measurement) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
 		});
@@ -61,17 +64,17 @@ export class LineComponent implements OnInit {
 				const currentPointCount = geometry.getCoordinates().length;
 				const coordinates = geometry.getCoordinates();
 				if (currentPointCount > lastPointCount) {
-					this.currentLength = ""; 
+					this.currentLength = 0;
 					lastPointCount = currentPointCount;
 				} else {
 					if (coordinates.length > 1) {
 						const lastSegment = new LineString(coordinates.slice(-2));
 						this.currentLength = this.calculateLength(lastSegment);
 					} else {
-						this.currentLength = "0m";
+						this.currentLength = 0;
 					}
 				}
-				this.lastLineLength = this.calculateLength(geometry); 
+				this.lastLineLength = this.calculateLength(geometry);
 			});
 		});
 
@@ -80,9 +83,9 @@ export class LineComponent implements OnInit {
 			const geometry = evt.feature.getGeometry() as LineString;
 			const length = this.calculateLength(geometry);
 			const lineId = this.lineCounter++;
-			const newLine: MeasurementLine = { id: lineId, feature, length };
+			const formattedLength = this.measurementService.formatMeasurement(length, this.selectedUnit);
+			const newLine: MeasurementLine = { id: lineId, feature, length: formattedLength };
 			this.lines.push(newLine);
-			this.currentLength = length;
 			this.lastLineLength = length;
 			this.linesChange.emit(this.lines);
 		});
@@ -94,8 +97,28 @@ export class LineComponent implements OnInit {
 			.transform("EPSG:4326", "EPSG:3857");
 
 		const length = getLength(transformedGeometry);
+		return length;
+	}
 
-		const output = Math.round(length * 100) / 100 + "m";
-		return output;
+	public removeLine(id: number) {
+		const line = this.lines.find((line) => line.id === id);
+		if (line) {
+			this.vectorSource.removeFeature(line.feature);
+			this.lines = this.lines.filter((l) => l.id !== id);
+		}
+		if (this.lines.length === 0) {
+			this.lineCounter = 1;
+		}
+	}
+
+	public formatLength(length: number): string {
+		if (!length) {
+			return "";
+		}
+		if (this.selectedUnit === "kilometers") {
+			return Math.round((length / 1000) * 100) / 100 + " km";
+		} else {
+			return Math.round(length * 100) / 100 + " м";
+		}
 	}
 }

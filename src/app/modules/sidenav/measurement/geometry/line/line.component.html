@@ -1,10 +1,24 @@
 <div class="measurement-line-result">
 	<div class="measurement-line-result__item">
 		<strong>Сегмент:</strong>
-		<span>{{ currentLength }}</span>
+		<span>{{ formatLength(currentLength) }}</span>
 	</div>
 	<div class="measurement-line-result__item">
 		<strong>Всего:</strong>
-		<span>{{ lastLineLength }}</span>
+		<span>{{ formatLength(lastLineLength) }}</span>
 	</div>
 </div>
+<div>
+	<label for="unit-select">Единицы измерения:</label>
+	<select id="unit-select" [(ngModel)]="selectedUnit">
+		<option value="meters">Метры</option>
+		<option value="kilometers">Километры</option>
+	</select>
+</div>
+
+<!-- <div *ngFor="let line of lines">
+	<p>
+		{{'line'| transloco}} {{ line.id }}: {{ line.length }}
+		<button (click)="removeLine(line.id)">{{'delete'| transloco}}</button>
+	</p>
+</div> -->

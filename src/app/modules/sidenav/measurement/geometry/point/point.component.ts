@@ -12,6 +12,7 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { MeasurementPoint } from "../../interfaces/measurement.interface";
 import { Point } from "ol/geom";
+import { TranslocoService } from "@ngneat/transloco";
 @Component({
 	selector: "app-measurement-point",
 	templateUrl: "./point.component.html",
@@ -28,7 +29,6 @@ export class PointComponent implements OnInit {
 	private newProjection: SpatialReference;
 	private draw: Draw;
 
-
 	private measureTooltips: Map<number, Overlay> = new Map();
 	public points: Array<MeasurementPoint> = [];
 	public pointCounter = 1;
@@ -36,6 +36,7 @@ export class PointComponent implements OnInit {
 	public constructor(
 		private spatialReferenceService: SpatialReferenceService,
 		private drawService: DrawService,
+		private translocoService: TranslocoService,
 	) {}
 
 	public ngOnInit(): void {
@@ -58,7 +59,10 @@ export class PointComponent implements OnInit {
 			},
 
 			(error) => {
-				console.error("Ошибка при загрузке пространственных ссылок:", error);
+				const errorMessage = this.translocoService.translate(
+					"errorDueToSpecialReference",
+				);
+				console.error(errorMessage, error);
 			},
 		);
 	}
@@ -83,7 +87,7 @@ export class PointComponent implements OnInit {
 				coordinates: transformedCoordinates,
 			});
 			this.createPointTooltip(pointId, transformedCoordinates);
-      this.pointsChange.emit(this.points);
+			this.pointsChange.emit(this.points);
 		});
 	}
 
@@ -94,7 +98,6 @@ export class PointComponent implements OnInit {
 
 	private transformCoordinates(coordinates: Array<number>) {
 		const proj4 = (proj4x as any).default;
-		console.log(this.currentProjection.name, this.newProjection.name);
 		const transformedCoordinates = proj4(
 			this.currentProjection.name,
 			this.newProjection.name,
@@ -132,7 +135,6 @@ export class PointComponent implements OnInit {
 		const tooltipElement = document.createElement("div");
 		tooltipElement.innerHTML =
 			"Point: " + coordinates[0] + ", " + coordinates[1];
-		console.log(tooltipElement);
 		const measureTooltip = new Overlay({
 			element: tooltipElement,
 			offset: [0, -25],
@@ -157,7 +159,6 @@ export class PointComponent implements OnInit {
 			this.vectorSource.removeFeature(point.feature);
 			this.points = this.points.filter((p) => p.id !== id);
 		}
-
 		const tooltip = this.measureTooltips.get(id);
 		if (tooltip) {
 			this.map.removeOverlay(tooltip);

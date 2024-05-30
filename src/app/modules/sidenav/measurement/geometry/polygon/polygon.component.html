@@ -1,1 +1,45 @@
-<p>polygon works!</p>
+<div class="measurement-polygon-result">
+	<div class="measurement-polygon-result__item">
+		<strong>Площадь сегмента:</strong>
+		<span>{{ formatArea(currentSegmentArea) }}</span>
+	</div>
+	<div class="measurement-polygon-result__item">
+		<strong>Площадь всего полигона:</strong>
+		<span>{{ formatArea(totalArea) }}</span>
+	</div>
+	<div class="measurement-polygon-result__item">
+		<strong>Периметр сегмента:</strong>
+		<span>{{ formatPerimeter(currentSegmentPerimeter) }}</span>
+	</div>
+	<div class="measurement-polygon-result__item">
+		<strong>Периметр всего полигона:</strong>
+		<span>{{ formatPerimeter(totalPerimeter) }}</span>
+	</div>
+	<div>
+		<label for="unit-select">Единицы измерения:</label>
+		<select id="unit-select" [(ngModel)]="selectedUnit">
+			<option value="meters">Метры</option>
+			<option value="kilometers">Километры</option>
+		</select>
+	</div>
+
+	<div>
+		<label for="unit-select">Единицы измерения:</label>
+		<select id="unit-select" [(ngModel)]="selectedAreaUnit">
+			<option value="squareMeters">Квадратные Метры</option>
+			<option value="squareKilometers">Квадратные километры</option>
+		</select>
+	</div>
+
+	<!-- <div *ngFor="let polygon of polygons">
+		<p>
+			{{'polygon'| transloco}} {{ polygon.id }}: Площадь: {{ polygon.area }}, Периметр:
+			{{ polygon.perimeter }}
+		</p>
+		<button (click)="removePolygon(polygon.id)">{{'delete'| transloco}}</button>
+	</div> -->
+</div>
+
+
+
+

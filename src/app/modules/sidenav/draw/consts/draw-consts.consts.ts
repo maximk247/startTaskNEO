@@ -1,11 +1,11 @@
 import {
 	DrawFillStyles,
-	DrawLineStyles,
+	DrawStrokeStyles,
 	DrawPointStyles,
 	DrawToolKey,
 } from "../interfaces/draw.interface";
 
-export const LINE_STYLES: DrawLineStyles = [
+export const LINE_STYLES: DrawStrokeStyles = [
 	"Solid",
 	"Dotted",
 	"Dashed",

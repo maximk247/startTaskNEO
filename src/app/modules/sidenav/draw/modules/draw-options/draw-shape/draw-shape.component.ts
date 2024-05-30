@@ -9,6 +9,8 @@ import Draw, {
 import { DrawService } from "../../../draw.service";
 import { MapService } from "src/app/modules/map/map.service";
 import { Coordinate } from "ol/coordinate";
+import { DrawType } from "../../../enum/draw.enum";
+import { DrawShapes } from "../enum/draw-options.enum";
 
 @Component({
 	selector: "app-draw-shape",
@@ -28,24 +30,24 @@ export class DrawShapeComponent implements OnInit {
 	public addDrawInteraction(shape: string) {
 		let geometryFunction;
 		switch (shape) {
-			case "Circle":
+			case DrawShapes.Circle:
 				this.drawService.removeGlobalInteraction(this.map);
 				geometryFunction = undefined;
 				break;
-			case "Square":
+			case DrawShapes.Square:
 				this.drawService.removeGlobalInteraction(this.map);
 				geometryFunction = createRegularPolygon(4);
 				break;
-			case "Rectangle":
+			case DrawShapes.Rectangle:
 				this.drawService.removeGlobalInteraction(this.map);
 				geometryFunction = createBox();
 				break;
-			case "Triangle":
+			case DrawShapes.Triangle:
 				this.drawService.removeGlobalInteraction(this.map);
 				geometryFunction = createRegularPolygon(3);
 
 				break;
-			case "Arrow":
+			case DrawShapes.Arrow:
 				this.drawService.removeGlobalInteraction(this.map);
 				geometryFunction = function (
 					coordinates: Array<Coordinate>,
@@ -110,7 +112,7 @@ export class DrawShapeComponent implements OnInit {
 		}
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
-			if (interaction.get("drawType") === "figure") {
+			if (interaction.get("drawType") === DrawType.Figure) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
 		});

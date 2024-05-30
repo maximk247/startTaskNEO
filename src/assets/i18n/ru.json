@@ -29,5 +29,9 @@
 	"addCoordinates": "Добавить координаты",
 	"draw": "Рисование",
 	"errorDueToSpecialReference": "Ошибка при загрузке пространственных ссылок:",
-	"errorDueToNotEnoughPoints": "Недостаточно точек для создания фигуры"
+	"errorDueToNotEnoughPoints": "Недостаточно точек для создания фигуры",
+	"point": "Точка",
+	"line": "Линия",
+	"polygon": "Полигон",
+	"circle": "Круг"
 }

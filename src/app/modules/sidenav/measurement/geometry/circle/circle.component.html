@@ -1,1 +1,22 @@
-<p>circle works!</p>
+<div class="measurement-line-result">
+	<div class="measurement-line-result__item">
+		<strong>Сегмент:</strong>
+		<span>{{ formatRadius(currentRadius) }}</span>
+	</div>
+	<div class="measurement-line-result__item">
+		<strong>Всего:</strong>
+		<span>{{ formatRadius(totalRadius) }}</span>
+	</div>
+</div>
+<div>
+	<label for="unit-select">Единицы измерения:</label>
+	<select id="unit-select" [(ngModel)]="selectedUnit">
+		<option value="meters">Метры</option>
+		<option value="kilometers">Километры</option>
+	</select>
+</div>
+
+<!-- <div *ngFor="let circle of circles">
+	<p>{{ "circle" | transloco }} {{ circle.id }}: Радиус: {{ circle.radius }}</p>
+	<button (click)="removeCircle(circle.id)">{{ "delete" | transloco }}</button>
+</div> -->

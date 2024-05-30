@@ -37,31 +37,12 @@
 		></app-measurement-circle>
 	</ng-container>
 </ng-container>
-
-<div *ngFor="let point of points">
-	<p>
-		Точка {{ point.id }}: {{ point.coordinates[0] }},
-		{{ point.coordinates[1] }}
-		<button (click)="removePoint(point.id)">Удалить</button>
-	</p>
-</div>
-
-<div *ngFor="let line of lines">
-	<p>
-		Линия {{ line.id }}: {{ line.length }} метров
-		<button (click)="removeLine(line.id)">Удалить</button>
-	</p>
-</div>
-
-<div *ngFor="let polygon of polygons">
-	<p>
-		Полигон {{ polygon.id }}: Площадь: {{ polygon.area }} кв. метров, Периметр:
-		{{ polygon.perimeter }} метров
-	</p>
-	<button (click)="removePolygon(polygon.id)">Удалить</button>
-</div>
-
-<div *ngFor="let circle of circles">
-	<p>Круг {{ circle.id }}: Радиус: {{ circle.radius }} метров,</p>
-	<button (click)="removeCircle(circle.id)">Удалить</button>
+<div class="measurement-result">
+	<div *ngFor="let measurement of allMeasurements">
+		{{ measurement.coordinates }}
+		{{ measurement.area }}
+		{{ measurement.perimeter }}
+		{{ measurement.length }}
+		{{ measurement.radius }}
+	</div>
 </div>

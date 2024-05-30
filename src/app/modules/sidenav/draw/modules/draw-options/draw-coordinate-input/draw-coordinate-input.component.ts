@@ -22,7 +22,7 @@ export class DrawCoordinateInputComponent implements OnInit {
 
 	public spatialReferences: Array<SpatialReference> = [];
 
-	private currentProjection: SpatialReference;
+	private defaultDegreeProjection: SpatialReference;
 	private newProjection: SpatialReference;
 
 	public points: Array<Coordinate> = [{ x: 0, y: 0 }];
@@ -69,7 +69,7 @@ export class DrawCoordinateInputComponent implements OnInit {
 	private setDefaultProjection(): void {
 		if (this.spatialReferences.length > 0) {
 			const [firstProjection] = this.spatialReferences;
-			this.currentProjection = firstProjection;
+			this.defaultDegreeProjection = firstProjection;
 			this.newProjection = firstProjection;
 		}
 	}
@@ -80,7 +80,7 @@ export class DrawCoordinateInputComponent implements OnInit {
 		if (this.newProjection.type === ProjectionType.Metric) {
 			[x, y] = proj4(this.newProjection.name, "EPSG:4326", [point.x, point.y]);
 		} else if (this.newProjection.type === ProjectionType.Degree) {
-			[x, y] = proj4(this.currentProjection.name).forward([point.x, point.y]);
+			[x, y] = proj4(this.defaultDegreeProjection.name).forward([point.x, point.y]);
 		}
 		return [x, y];
 	}
@@ -118,18 +118,14 @@ export class DrawCoordinateInputComponent implements OnInit {
 			const coordinates = [this.transformCoordinates(point)];
 			await this.createFeature(coordinates, DrawOptionsTools.Point);
 		}
-		this.currentProjection.name = this.newProjection.name;
 	}
 	public async addLineToMap(): Promise<void> {
 		const coordinates = this.points.map((point) =>
 			this.transformCoordinates(point),
 		);
-
 		coordinates.push(coordinates[0]);
-
 		await this.createFeature(coordinates, DrawOptionsTools.Line);
 
-		this.currentProjection.name = this.newProjection.name;
 	}
 
 	public async addPolygonToMap(): Promise<void> {
@@ -139,7 +135,6 @@ export class DrawCoordinateInputComponent implements OnInit {
 			);
 			coordinates.push(coordinates[0]);
 			await this.createFeature(coordinates, DrawOptionsTools.Polygon);
-			this.currentProjection.name = this.newProjection.name;
 		} else {
 			const errorMessage = this.translocoService.translate(
 				"errorDueToNotEnoughPoints",

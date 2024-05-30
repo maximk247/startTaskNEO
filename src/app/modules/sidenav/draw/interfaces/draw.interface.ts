@@ -59,7 +59,7 @@ export interface DrawFigure {
 	dash: lineDash;
 }
 
-export type lineStyles =
+export type strokeStyles =
 	| "Solid"
 	| "Dotted"
 	| "Dashed"
@@ -75,8 +75,8 @@ export type fillStyles =
 	| "ReverseDiagonalHatching"
 	| "DiagonalCrossHatching";
 
-export type pointStyle = "Circle" | "Cross" | "Square" | "Diamond" | "Cancel";
+export type pointStyles = "Circle" | "Cross" | "Square" | "Diamond" | "Cancel";
 
-export type DrawLineStyles = Array<lineStyles>;
+export type DrawStrokeStyles = Array<strokeStyles>;
 export type DrawFillStyles = Array<fillStyles>;
-export type DrawPointStyles = Array<pointStyle>
+export type DrawPointStyles = Array<pointStyles>
