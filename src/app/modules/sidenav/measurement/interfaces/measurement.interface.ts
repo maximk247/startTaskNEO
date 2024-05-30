@@ -15,7 +15,7 @@ export interface Measurement<T extends MeasurementGeometry> {
 }
 
 export interface MeasurementPoint extends Measurement<Point> {
-	coordinates: Array<number>;
+	coordinates: Array<number> ;
 }
 
 export interface MeasurementLine extends Measurement<LineString> {

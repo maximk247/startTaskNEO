@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
+import Map from "ol/Map";
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
 import { MapService } from "../../../../../map/map.service";
@@ -11,6 +12,8 @@ import { register } from "ol/proj/proj4";
 import { TranslocoService } from "@ngneat/transloco";
 import { Coordinate, Coordinates } from "../interfaces/draw-options.interface";
 import { DrawOptionsTools, ProjectionType } from "../enum/draw-options.enum";
+import VectorLayer from "ol/layer/Vector";
+import VectorSource from "ol/source/Vector";
 
 @Component({
 	selector: "app-coordinate-input",
@@ -19,7 +22,6 @@ import { DrawOptionsTools, ProjectionType } from "../enum/draw-options.enum";
 })
 export class DrawCoordinateInputComponent implements OnInit {
 	@Input() public tool: string;
-
 	public spatialReferences: Array<SpatialReference> = [];
 
 	private defaultDegreeProjection: SpatialReference;
@@ -80,7 +82,10 @@ export class DrawCoordinateInputComponent implements OnInit {
 		if (this.newProjection.type === ProjectionType.Metric) {
 			[x, y] = proj4(this.newProjection.name, "EPSG:4326", [point.x, point.y]);
 		} else if (this.newProjection.type === ProjectionType.Degree) {
-			[x, y] = proj4(this.defaultDegreeProjection.name).forward([point.x, point.y]);
+			[x, y] = proj4(this.defaultDegreeProjection.name).forward([
+				point.x,
+				point.y,
+			]);
 		}
 		return [x, y];
 	}
@@ -125,7 +130,6 @@ export class DrawCoordinateInputComponent implements OnInit {
 		);
 		coordinates.push(coordinates[0]);
 		await this.createFeature(coordinates, DrawOptionsTools.Line);
-
 	}
 
 	public async addPolygonToMap(): Promise<void> {

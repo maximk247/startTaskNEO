@@ -1,18 +1,18 @@
 <div class="measurement-line-result">
 	<div class="measurement-line-result__item">
-		<strong>Сегмент:</strong>
+		<strong>{{"segment" | transloco}}:</strong>
 		<span>{{ formatRadius(currentRadius) }}</span>
 	</div>
 	<div class="measurement-line-result__item">
-		<strong>Всего:</strong>
+		<strong>{{"total" | transloco}}:</strong>
 		<span>{{ formatRadius(totalRadius) }}</span>
 	</div>
 </div>
 <div>
 	<label for="unit-select">Единицы измерения:</label>
 	<select id="unit-select" [(ngModel)]="selectedUnit">
-		<option value="meters">Метры</option>
-		<option value="kilometers">Километры</option>
+		<option value="meters">{{"meters" | transloco}}</option>
+		<option value="kilometers">{{"kilometers" | transloco}}</option>
 	</select>
 </div>
 

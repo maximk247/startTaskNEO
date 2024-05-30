@@ -4,13 +4,13 @@ import Map from "ol/Map";
 import { Point } from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-
 import { Feature } from "ol";
-import { fromLonLat } from "ol/proj";
-
 import { SpatialReferenceService } from "../../shared/spatial-reference.service";
 import { SpatialReference } from "../../shared/interfaces/spatial-reference.interfaces";
 import { TranslocoService } from "@ngneat/transloco";
+import * as proj4x from "proj4";
+import { register } from "ol/proj/proj4";
+import { ProjectionType } from "../draw/modules/draw-options/enum/draw-options.enum";
 
 @Component({
 	selector: "app-coordinates",
@@ -24,11 +24,16 @@ export class CoordinatesComponent implements OnInit {
 	public longitudeDegrees = 0;
 	public longitudeMinutes = 0;
 	public longitudeSeconds = 0;
+	public x = 0;
+	public y = 0;
 	private map: Map;
 	public showPoint = false;
 	private pointLayer: VectorLayer<VectorSource>;
 	public spatialReferences: Array<SpatialReference> = [];
-	public selectedSpatialReference: SpatialReference | undefined;
+
+	private defaultDegreeProjection: SpatialReference;
+	public newProjection: SpatialReference;
+
 	public constructor(
 		private mapService: MapService,
 		private spatialReferenceService: SpatialReferenceService,
@@ -46,8 +51,10 @@ export class CoordinatesComponent implements OnInit {
 		this.spatialReferenceService.getSpatialReferences().subscribe(
 			(data: Array<SpatialReference>) => {
 				this.spatialReferences = data;
-				console.log(this.spatialReferences);
+				this.registerProjections();
+				this.setDefaultProjection();
 			},
+
 			(error) => {
 				const errorMessage = this.translocoService.translate(
 					"errorDueToSpecialReference",
@@ -57,32 +64,68 @@ export class CoordinatesComponent implements OnInit {
 		);
 	}
 
-	public goToCoordinates() {
-		const latitude =
-			Number(this.latitudeDegrees) +
-			Number(this.latitudeMinutes) / 60 +
-			Number(this.latitudeSeconds) / 3600;
-		const longitude =
-			Number(this.longitudeDegrees) +
-			Number(this.longitudeMinutes) / 60 +
-			Number(this.longitudeSeconds) / 3600;
+	private registerProjections(): void {
+		const proj4 = (proj4x as any).default;
+		this.spatialReferences.forEach((ref) => {
+			proj4.defs(ref.name, ref.definition);
+		});
+		register(proj4);
+	}
 
-		const coordinates = [longitude, latitude];
-		const lonlat = fromLonLat(coordinates, "EPSG:4326");
-		if (this.showPoint) {
-			this.addPointToMap(lonlat);
-		} else {
-			this.pointLayer.getSource()!.clear(true);
+	private setDefaultProjection(): void {
+		if (this.spatialReferences.length > 0) {
+			const [firstProjection] = this.spatialReferences;
+			this.defaultDegreeProjection = firstProjection;
+			this.newProjection = firstProjection;
 		}
+	}
 
-		this.map.getView().setCenter(lonlat);
+	public goToCoordinates() {
+		const proj4 = (proj4x as any).default;
+		let transformCoordinates;
+		if (this.newProjection.type === ProjectionType.Degree) {
+			const latitude =
+				Number(this.latitudeDegrees) +
+				Number(this.latitudeMinutes) / 60 +
+				Number(this.latitudeSeconds) / 3600;
+			const longitude =
+				Number(this.longitudeDegrees) +
+				Number(this.longitudeMinutes) / 60 +
+				Number(this.longitudeSeconds) / 3600;
+
+			const coordinates = [longitude, latitude];
+			transformCoordinates = proj4(this.defaultDegreeProjection.name).forward(
+				coordinates,
+			);
+		} else if (this.newProjection.type === ProjectionType.Metric) {
+			const x = Number(this.x);
+			const y = Number(this.y);
+			transformCoordinates = proj4(this.newProjection.name, "EPSG:4326", [
+				x,
+				y,
+			]);
+		}
+	
+		if (this.showPoint) {
+			this.addPointToMap(transformCoordinates);
+		} 
+		this.map.getView().setCenter(transformCoordinates);
 	}
 	public addPointToMap(coordinates: Array<number>) {
 		const point = new Point(coordinates);
 		const feature = new Feature(point);
-		this.pointLayer.getSource()!.addFeature(feature);
-		if (!this.map.getLayers().getArray().includes(this.pointLayer)) {
-			this.map.addLayer(this.pointLayer);
+		this.pointLayer.getSource()?.addFeature(feature)
+	}
+
+	public onChange(event: Event) {
+		const target = event.target as HTMLSelectElement;
+		console.log(target.value);
+		const selectedRef = this.spatialReferences.find(
+			(ref) => ref.name === target.value,
+		);
+		if (selectedRef) {
+			this.newProjection = selectedRef;
 		}
+		this.showPoint = false;
 	}
 }

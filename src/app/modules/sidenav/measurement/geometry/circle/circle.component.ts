@@ -19,7 +19,7 @@ import { MeasurementService } from "../../measurement.service";
 export class CircleComponent implements OnInit {
 	@Input() public map: Map;
 	@Input() public vectorSource: VectorSource;
-	@Output() public circlesChange = new EventEmitter<Array<MeasurementCircle>>();
+	@Output() public circlesChange = new EventEmitter<any>();
 
 	public circles: Array<MeasurementCircle> = [];
 	public circleCounter = 1;
@@ -95,7 +95,18 @@ export class CircleComponent implements OnInit {
 			const circleId = this.circleCounter++;
 			this.circles.push({ id: circleId, feature, radius: formattedRadius });
 			this.totalRadius = radius;
-			this.circlesChange.emit(this.circles);
+			const obj = {
+				circles: this.circles,
+				vectorSource: this.vectorSource,}
+			this.circlesChange.emit(obj);
+		});
+	}
+
+	public resetLine() {
+		this.circleCounter = 1;
+		this.circlesChange.emit({
+			circles: null,
+			vectorSource: this.vectorSource,
 		});
 	}
 

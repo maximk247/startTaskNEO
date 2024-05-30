@@ -1,23 +1,40 @@
-<select [(ngModel)]="selectedSpatialReference">
+<select (change)="onChange($event)">
 	<option
 		*ngFor="let spatialReference of spatialReferences"
-		[ngValue]="spatialReference"
+		[ngValue]="spatialReference.id"
 	>
 		{{ spatialReference.name }}
 	</option>
 </select>
-<div>
-	<h2>{{ "latitude" | transloco }}:</h2>
-	<input type="text" [(ngModel)]="latitudeDegrees" placeholder="Градусы" />
-	<input type="text" [(ngModel)]="latitudeMinutes" placeholder="Минуты" />
-	<input type="text" [(ngModel)]="latitudeSeconds" placeholder="Секунды" />
+
+<div [ngSwitch]="newProjection?.type">
+	<div *ngSwitchCase="'degree'">
+		<div>
+			<h2>{{ "latitude" | transloco }}:</h2>
+			<input type="text" [(ngModel)]="latitudeDegrees" />
+			<input type="text" [(ngModel)]="latitudeMinutes" />
+			<input type="text" [(ngModel)]="latitudeSeconds" />
+		</div>
+		<div>
+			<h2>{{ "longitude" | transloco }}:</h2>
+			<input type="text" [(ngModel)]="longitudeDegrees" />
+			<input type="text" [(ngModel)]="longitudeMinutes" />
+			<input type="text" [(ngModel)]="longitudeSeconds" />
+		</div>
+	</div>
+	<div *ngSwitchCase="'metric'">
+		<div>
+			<h2>X</h2>
+			<input type="text" [(ngModel)]="x" />
+		</div>
+
+		<div>
+			<h2>Y</h2>
+			<input type="text" [(ngModel)]="y" />
+		</div>
+	</div>
 </div>
-<div>
-	<h2>{{ "longitude" | transloco }}:</h2>
-	<input type="text" [(ngModel)]="longitudeDegrees" placeholder="Градусы" />
-	<input type="text" [(ngModel)]="longitudeMinutes" placeholder="Минуты" />
-	<input type="text" [(ngModel)]="longitudeSeconds" placeholder="Секунды" />
-</div>
+
 <button (click)="goToCoordinates()">
 	{{ "goToCoordinates" | transloco }}:
 </button>

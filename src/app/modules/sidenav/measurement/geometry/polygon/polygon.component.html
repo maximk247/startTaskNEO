@@ -18,16 +18,16 @@
 	<div>
 		<label for="unit-select">Единицы измерения:</label>
 		<select id="unit-select" [(ngModel)]="selectedUnit">
-			<option value="meters">Метры</option>
-			<option value="kilometers">Километры</option>
+			<option value="meters">{{"meters" | transloco}}</option>
+			<option value="kilometers">{{"kilometers" | transloco}}</option>
 		</select>
 	</div>
 
 	<div>
 		<label for="unit-select">Единицы измерения:</label>
 		<select id="unit-select" [(ngModel)]="selectedAreaUnit">
-			<option value="squareMeters">Квадратные Метры</option>
-			<option value="squareKilometers">Квадратные километры</option>
+			<option value="squareMeters">{{"squareMeters" | transloco}}</option>
+			<option value="squareKilometers">{{"squareKilometers" | transloco}}</option>
 		</select>
 	</div>
 

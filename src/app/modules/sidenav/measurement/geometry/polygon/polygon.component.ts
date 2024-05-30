@@ -18,9 +18,7 @@ import { MeasurementService } from "../../measurement.service";
 export class PolygonComponent implements OnInit {
 	@Input() public map: Map;
 	@Input() public vectorSource: VectorSource;
-	@Output() public polygonsChange = new EventEmitter<
-		Array<MeasurementPolygon>
-	>();
+	@Output() public polygonsChange = new EventEmitter<any>();
 
 	public polygons: Array<MeasurementPolygon> = [];
 	public polygonCounter = 1;
@@ -103,10 +101,24 @@ export class PolygonComponent implements OnInit {
 				this.selectedUnit,
 			);
 			const polygonId = this.polygonCounter++;
-			this.polygons.push({ id: polygonId, feature, area: formattedArea, perimeter: formattedPerimeter });
+			this.polygons.push({
+				id: polygonId,
+				feature,
+				area: formattedArea,
+				perimeter: formattedPerimeter,
+			});
 			this.totalArea = area;
 			this.totalPerimeter = perimeter;
-			this.polygonsChange.emit(this.polygons);
+			const obj = { polygons: this.polygons, vectorSource: this.vectorSource };
+			this.polygonsChange.emit(obj);
+		});
+	}
+
+	public resetPolygon() {
+		this.polygonCounter = 1;
+		this.polygonsChange.emit({
+			polygons: null,
+			vectorSource: this.vectorSource,
 		});
 	}
 

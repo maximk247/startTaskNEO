@@ -13,6 +13,7 @@ import VectorSource from "ol/source/Vector";
 import { MeasurementPoint } from "../../interfaces/measurement.interface";
 import { Point } from "ol/geom";
 import { TranslocoService } from "@ngneat/transloco";
+import { DrawType } from "../../../draw/enum/draw.enum";
 @Component({
 	selector: "app-measurement-point",
 	templateUrl: "./point.component.html",
@@ -21,7 +22,7 @@ import { TranslocoService } from "@ngneat/transloco";
 export class PointComponent implements OnInit {
 	@Input() public map: MapOpen;
 	@Input() public vectorSource: VectorSource;
-	@Output() public pointsChange = new EventEmitter<Array<MeasurementPoint>>();
+	@Output() public pointsChange = new EventEmitter<any>();
 
 	public spatialReferences: Array<SpatialReference> = [];
 
@@ -40,6 +41,12 @@ export class PointComponent implements OnInit {
 	) {}
 
 	public ngOnInit(): void {
+		const interactions = this.map.getInteractions().getArray();
+		interactions.forEach((interaction) => {
+			if (interaction.get("drawType") === DrawType.Measurement) {
+				this.drawService.removeGlobalInteraction(this.map, interaction);
+			}
+		});
 		this.getSpatialReferences();
 
 		this.map.addLayer(
@@ -81,14 +88,30 @@ export class PointComponent implements OnInit {
 			const coordinates = this.calculateCoordinates(geometry);
 			const transformedCoordinates = this.transformCoordinates(coordinates);
 			const pointId = this.pointCounter++;
-			this.points.push({
+			this.points?.push({
 				id: pointId,
 				feature,
 				coordinates: transformedCoordinates,
 			});
 			this.createPointTooltip(pointId, transformedCoordinates);
-			this.pointsChange.emit(this.points);
+			const obj = {
+				points: this.points,
+				vectorSource: this.vectorSource,
+				measureTooltips: this.measureTooltips,
+			};
+			console.log(obj.points);
+			this.pointsChange.emit(obj);
 		});
+	}
+
+	public resetPoint() {
+		this.pointsChange.emit({
+			points: [],
+			vectorSource: this.vectorSource,
+			measureTooltips: this.measureTooltips,
+		});
+		this.points = []
+		this.pointCounter = 1
 	}
 
 	private calculateCoordinates(geometry: Point) {
@@ -154,18 +177,15 @@ export class PointComponent implements OnInit {
 		this.measureTooltips.set(id, measureTooltip);
 	}
 	public removePoint(id: number) {
-		const point = this.points.find((point) => point.id === id);
+		const point = this.points?.find((point) => point.id === id);
 		if (point) {
 			this.vectorSource.removeFeature(point.feature);
-			this.points = this.points.filter((p) => p.id !== id);
+			this.points = this.points!.filter((p) => p.id !== id);
 		}
 		const tooltip = this.measureTooltips.get(id);
 		if (tooltip) {
 			this.map.removeOverlay(tooltip);
 			this.measureTooltips.delete(id);
-		}
-		if (this.points.length === 0) {
-			this.pointCounter = 1;
 		}
 	}
 }

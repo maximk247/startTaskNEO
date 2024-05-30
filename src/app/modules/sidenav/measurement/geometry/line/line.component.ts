@@ -19,7 +19,7 @@ import { MeasurementService } from "../../measurement.service";
 export class LineComponent implements OnInit {
 	@Input() public map: Map;
 	@Input() public vectorSource: VectorSource;
-	@Output() public linesChange = new EventEmitter<Array<MeasurementLine>>();
+	@Output() public linesChange = new EventEmitter<any>();
 
 	public lines: Array<MeasurementLine> = [];
 	public lineCounter = 1;
@@ -87,7 +87,16 @@ export class LineComponent implements OnInit {
 			const newLine: MeasurementLine = { id: lineId, feature, length: formattedLength };
 			this.lines.push(newLine);
 			this.lastLineLength = length;
-			this.linesChange.emit(this.lines);
+			const obj = {lines: this.lines, vectorSource: this.vectorSource}
+			this.linesChange.emit(obj);
+		});
+	}
+
+	public resetLine() {
+		this.lineCounter = 1;
+		this.linesChange.emit({
+			lines: null,
+			vectorSource: this.vectorSource,
 		});
 	}
 

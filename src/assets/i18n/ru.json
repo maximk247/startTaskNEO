@@ -33,5 +33,15 @@
 	"point": "Точка",
 	"line": "Линия",
 	"polygon": "Полигон",
-	"circle": "Круг"
+	"circle": "Круг",
+	"pointCoordinates": "Координаты точки",
+	"measurementLine": "Измерение длины",
+	"measurementPolygon": "Измерение периметра и площади",
+	"measurementCircle": "Измерение радиуса",
+	"segment": "Сегмент",
+	"total": "Всего",
+	"meters": "Метры",
+	"kilometers": "Километры",
+	"squareMeters": "Квадратные метры",
+	"squareKilometers": "Квадратные километры"
 }
