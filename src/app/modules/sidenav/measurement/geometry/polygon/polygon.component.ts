@@ -27,9 +27,7 @@ export class PolygonComponent implements OnInit {
 	public selectedAreaUnit = "squareMeters";
 	public selectedUnit = "meters";
 
-	public currentSegmentArea: number;
 	public totalArea: number;
-	public currentSegmentPerimeter: number;
 	public totalPerimeter: number;
 
 	public constructor(
@@ -59,45 +57,27 @@ export class PolygonComponent implements OnInit {
 		});
 
 		this.drawService.addGlobalInteraction(this.map, this.draw);
-		this.draw.set("drawType", "measurement");
 
 		let lastPointCount = 0;
+		this.draw.set("drawType", DrawType.Measurement);
 		this.draw.on("drawstart", (evt) => {
 			const geometry = evt.feature.getGeometry() as Polygon;
 			lastPointCount = geometry.getCoordinates()[0].length;
 
 			geometry.on("change", () => {
-				const currentPointCount = geometry.getCoordinates()[0].length;
-				const coordinates = geometry.getCoordinates()[0];
-				if (currentPointCount > lastPointCount) {
-					this.currentSegmentArea = 0;
-					this.currentSegmentPerimeter = 0;
-					lastPointCount = currentPointCount;
-				} else {
-					if (coordinates.length > 2) {
-						const lastSegment = new Polygon([coordinates.slice(-3)]);
-						this.currentSegmentArea = this.calculateArea(lastSegment);
-						this.currentSegmentPerimeter = this.calculatePerimeter(lastSegment);
-					} else {
-						this.currentSegmentArea = 0;
-						this.currentSegmentPerimeter = 0;
-					}
-				}
 				this.totalArea = this.calculateArea(geometry);
 				this.totalPerimeter = this.calculatePerimeter(geometry);
 			});
 		});
 		this.draw.on("drawend", (evt) => {
 			const feature = evt.feature as Feature<Polygon>;
-			const geometry = evt.feature.getGeometry() as Polygon;
-			const area = this.calculateArea(geometry);
-			const perimeter = this.calculatePerimeter(geometry);
+			feature.set("drawType", "measurement");
 			const formattedArea = this.measurementService.formatMeasurementSquare(
-				area,
+				this.totalArea,
 				this.selectedAreaUnit,
 			);
 			const formattedPerimeter = this.measurementService.formatMeasurement(
-				perimeter,
+				this.totalPerimeter,
 				this.selectedUnit,
 			);
 			const polygonId = this.polygonCounter++;
@@ -107,8 +87,6 @@ export class PolygonComponent implements OnInit {
 				area: formattedArea,
 				perimeter: formattedPerimeter,
 			});
-			this.totalArea = area;
-			this.totalPerimeter = perimeter;
 			const obj = { polygons: this.polygons, vectorSource: this.vectorSource };
 			this.polygonsChange.emit(obj);
 		});
@@ -120,6 +98,8 @@ export class PolygonComponent implements OnInit {
 			polygons: null,
 			vectorSource: this.vectorSource,
 		});
+		this.totalArea = 0
+		this.totalPerimeter = 0
 	}
 
 	private calculateArea(geometry: Polygon) {
@@ -150,25 +130,25 @@ export class PolygonComponent implements OnInit {
 		}
 	}
 
-	public formatPerimeter(perimeter: number): string {
+	public formatPerimeter(perimeter: number) {
 		if (!perimeter) {
-			return "";
+			return 0;
 		}
 		if (this.selectedUnit === "kilometers") {
-			return Math.round((perimeter / 1000) * 100) / 100 + " km";
+			return Math.round((perimeter / 1000) * 100) / 100;
 		} else {
-			return Math.round(perimeter * 100) / 100 + " м";
+			return Math.round(perimeter * 100) / 100;
 		}
 	}
 
-	public formatArea(area: number): string {
+	public formatArea(area: number) {
 		if (!area) {
-			return "";
+			return 0;
 		}
 		if (this.selectedAreaUnit === "squareKilometers") {
-			return Math.round((area / 1000000) * 100) / 100 + " km\xB2";
+			return Math.round((area / 1000000) * 100) / 100;
 		} else {
-			return Math.round(area * 100) / 100 + " м\xB2";
+			return Math.round(area * 100) / 100;
 		}
 	}
 }

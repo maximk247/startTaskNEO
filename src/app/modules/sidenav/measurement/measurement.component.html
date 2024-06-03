@@ -1,9 +1,9 @@
 <div>
 	<select [(ngModel)]="mode" (change)="onModeChange($event)">
 		<option value="point">{{ "pointCoordinates" | transloco }}</option>
-		<option value="line">{{"measurementLine" | transloco}}</option>
-		<option value="polygon">{{"measurementPolygon" | transloco}}</option>
-		<option value="circle">{{"measurementCircle" | transloco}}</option>
+		<option value="line">{{ "measurementLine" | transloco }}</option>
+		<option value="polygon">{{ "measurementPolygon" | transloco }}</option>
+		<option value="circle">{{ "measurementCircle" | transloco }}</option>
 	</select>
 </div>
 
@@ -39,11 +39,15 @@
 </ng-container>
 <div class="measurement-result">
 	<div *ngFor="let measurement of allMeasurements">
-		{{measurement.id}} айди {{ measurement.coordinates }}
+		{{ measurement.id }} айди {{ measurement.coordinates }}
 		{{ measurement.area }}
 		{{ measurement.perimeter }}
 		{{ measurement.length }}
 		{{ measurement.radius }}
-		<button (click) = removeMeasurement(measurement) >{{ "delete" | transloco }}</button>
+		<button type="button" (click)="removeMeasurement(measurement)">
+			{{ "delete" | transloco }}
+		</button>
 	</div>
 </div>
+
+<button type="button" (click)="removeAllMeasurement()">Очистить</button>

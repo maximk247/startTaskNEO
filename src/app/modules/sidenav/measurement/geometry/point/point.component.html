@@ -6,11 +6,14 @@
 		{{ spatialReference.name }}
 	</option>
 </select>
-<!-- 
-<div *ngFor="let point of points">
+
+<div *ngIf="points[points.length - 1]">
 	<p>
-		{{ "point" | transloco }} {{ point.id }}: {{ point.coordinates[0] }},
-		{{ point.coordinates[1] }}
-		<button (click)="removePoint(point.id)">{{ "delete" | transloco }}</button>
+		<strong>Широта(Y):</strong>
+		<span>{{points[points.length - 1].coordinates[1]}}</span>
 	</p>
-</div> -->
+	<p>
+		<strong>Долгота(X):</strong>
+		<span>{{points[points.length - 1].coordinates[0]}}</span>
+	</p>
+</div>

@@ -52,10 +52,9 @@ export class CircleComponent implements OnInit {
 		});
 
 		this.drawService.addGlobalInteraction(this.map, this.draw);
-		this.draw.set("drawType", "measurement");
 
 		let lastRadius = 0;
-
+		this.draw.set("drawType", DrawType.Measurement);
 		this.draw.on("drawstart", (evt) => {
 			const geometry = evt.feature.getGeometry() as Circle;
 			lastRadius = geometry.getRadius();
@@ -68,46 +67,35 @@ export class CircleComponent implements OnInit {
 				];
 				const radiusLineString = new LineString(radiusCoords);
 				const newRadius = this.calculateRadius(radiusLineString);
-				if (newRadius !== lastRadius) {
-					this.currentRadius = newRadius;
-					lastRadius = newRadius;
-				}
-				this.totalRadius = this.currentRadius;
+				this.totalRadius = newRadius;
 			});
 		});
 
 		this.draw.on("drawend", (evt) => {
 			const feature = evt.feature as Feature<Circle>;
-			const geometry = evt.feature.getGeometry() as Circle;
-			const radiusCoords = [
-				geometry.getCenter(),
-				[
-					geometry.getCenter()[0] + geometry.getRadius(),
-					geometry.getCenter()[1],
-				],
-			];
-			const radiusLineString = new LineString(radiusCoords);
-			const radius = this.calculateRadius(radiusLineString);
+			feature.set("drawType", "measurement");
 			const formattedRadius = this.measurementService.formatMeasurement(
-				radius,
+				this.totalRadius,
 				this.selectedUnit,
 			);
 			const circleId = this.circleCounter++;
 			this.circles.push({ id: circleId, feature, radius: formattedRadius });
-			this.totalRadius = radius;
+
 			const obj = {
 				circles: this.circles,
-				vectorSource: this.vectorSource,}
+				vectorSource: this.vectorSource,
+			};
 			this.circlesChange.emit(obj);
 		});
 	}
 
-	public resetLine() {
+	public resetCircle() {
 		this.circleCounter = 1;
 		this.circlesChange.emit({
-			circles: null,
+			circles: [],
 			vectorSource: this.vectorSource,
 		});
+		this.totalRadius = 0;
 	}
 
 	private calculateRadius(geometry: LineString) {
@@ -130,14 +118,14 @@ export class CircleComponent implements OnInit {
 		}
 	}
 
-	public formatRadius(radius: number): string {
+	public formatRadius(radius: number) {
 		if (!radius) {
-			return "";
+			return 0;
 		}
 		if (this.selectedUnit === "kilometers") {
-			return Math.round((radius / 1000) * 100) / 100 + " km";
+			return Math.round((radius / 1000) * 100) / 100;
 		} else {
-			return Math.round(radius * 100) / 100 + " м";
+			return Math.round(radius * 100) / 100;
 		}
 	}
 }

@@ -1,6 +1,7 @@
 export enum DrawType {
-    Figure = "figure",
-    Measurement = "measurement",
+	Measurement = "measurement",
+	Draw = "draw",
+	Coordinates = "coordinates",
 }
 
 export enum ColorType {
@@ -20,27 +21,27 @@ export enum Tools {
 }
 
 export enum PointStyles {
-    Cross = "Cross",
-    Diamond = "Diamond",
-    Square = "Square",
-    Circle = "Circle",
-    Cancel = "Cancel",
+	Cross = "Cross",
+	Diamond = "Diamond",
+	Square = "Square",
+	Circle = "Circle",
+	Cancel = "Cancel",
 }
 
 export enum StrokeStyles {
-    Solid = "Solid",
-    Dotted = "Dotted",
-    Dashed = "Dashed",
-    DashDot = "DashDot",
-    DashDotDot = "DashDotDot",
+	Solid = "Solid",
+	Dotted = "Dotted",
+	Dashed = "Dashed",
+	DashDot = "DashDot",
+	DashDotDot = "DashDotDot",
 }
 
 export enum FillStyles {
-    Solid = "Solid",
-    VerticalHatching = "VerticalHatching",
-    HorizontalHatching = "HorizontalHatching",
-    CrossHatching = "CrossHatching",
-    DiagonalHatching = "DiagonalHatching",
-    ReverseDiagonalHatching = "ReverseDiagonalHatching",
-    DiagonalCrossHatching = "DiagonalCrossHatching",
+	Solid = "Solid",
+	VerticalHatching = "VerticalHatching",
+	HorizontalHatching = "HorizontalHatching",
+	CrossHatching = "CrossHatching",
+	DiagonalHatching = "DiagonalHatching",
+	ReverseDiagonalHatching = "ReverseDiagonalHatching",
+	DiagonalCrossHatching = "DiagonalCrossHatching",
 }

@@ -20,7 +20,14 @@ import {
 	DrawFigure,
 } from "./interfaces/draw.interface";
 import { Feature } from "ol";
-import { ColorType, FillStyles, PointStyles, StrokeStyles, Tools } from "./enum/draw.enum";
+import {
+	ColorType,
+	DrawType,
+	FillStyles,
+	PointStyles,
+	StrokeStyles,
+	Tools,
+} from "./enum/draw.enum";
 
 @Injectable({
 	providedIn: "root",
@@ -89,7 +96,10 @@ export class DrawService {
 			if (layer instanceof VectorLayer) {
 				const source = layer.getSource();
 				if (source instanceof VectorSource) {
-					source.clear();
+					const featuresToRemove = source.getFeatures().filter((feature) => {
+						return feature.get("drawType") === DrawType.Draw;
+					});
+					featuresToRemove.forEach((feature) => source.removeFeature(feature));
 				}
 			}
 		});
@@ -126,7 +136,7 @@ export class DrawService {
 			const vectorImage = new Image();
 			vectorImage.crossOrigin = "anonymous";
 			vectorImage.src = "../../../assets/images/" + pattern;
-			switch(tool) {
+			switch (tool) {
 				case Tools.Polygon:
 					this.polygon.pattern = pattern;
 					break;
@@ -225,8 +235,9 @@ export class DrawService {
 			this.vectorSource,
 			"Point",
 		);
-		draw.set("drawType", "point");
+		draw.set("drawType", DrawType.Draw)
 		draw.on("drawend", async (event) => {
+			event.feature.set("drawType", DrawType.Draw);
 			event.feature.setStyle(await this.getStyle(Tools.Point));
 		});
 		return draw;
@@ -240,8 +251,9 @@ export class DrawService {
 			this.vectorSource,
 			"LineString",
 		);
-		draw.set("drawType", "line");
+		draw.set("drawType", DrawType.Draw)
 		draw.on("drawstart", async (event) => {
+			event.feature.set("drawType", DrawType.Draw);
 			event.feature.setStyle(await this.getStyle(Tools.Line));
 		});
 		return draw;
@@ -256,8 +268,9 @@ export class DrawService {
 			"LineString",
 			true,
 		);
-		draw.set("drawType", "freeLine");
+		draw.set("drawType", DrawType.Draw)
 		draw.on("drawstart", async (event) => {
+			event.feature.set("drawType", DrawType.Draw);
 			event.feature.setStyle(await this.getStyle(Tools.FreeLine));
 		});
 		return draw;
@@ -270,8 +283,9 @@ export class DrawService {
 			this.vectorSource,
 			"Polygon",
 		);
-		draw.set("drawType", "polygon");
+		draw.set("drawType", DrawType.Draw)
 		draw.on("drawstart", async (event) => {
+			event.feature.set("drawType", DrawType.Draw);
 			event.feature.setStyle(await this.getStyle(Tools.Polygon));
 		});
 		return draw;
@@ -285,8 +299,9 @@ export class DrawService {
 			"Polygon",
 			true,
 		);
-		draw.set("drawType", "freePolygon");
+		draw.set("drawType", DrawType.Draw)
 		draw.on("drawstart", async (event) => {
+			event.feature.set("drawType", DrawType.Draw);
 			event.feature.setStyle(await this.getStyle(Tools.FreePolygon));
 		});
 		return draw;
@@ -302,8 +317,9 @@ export class DrawService {
 			false,
 			figure,
 		);
-		draw.set("drawType", "figure");
+		draw.set("drawType", DrawType.Draw)
 		draw.on("drawstart", async (event) => {
+			event.feature.set("drawType", DrawType.Draw);
 			event.feature.setStyle(await this.getStyle(Tools.Figure));
 		});
 		return draw;
@@ -457,42 +473,42 @@ export class DrawService {
 				this.polygon.fillStyle = await this.stylePatternSimplePoly(
 					"vertical.png",
 					this.polygon.fillColor,
-					Tools.Polygon
+					Tools.Polygon,
 				);
 				break;
 			case FillStyles.HorizontalHatching:
 				this.polygon.fillStyle = await this.stylePatternSimplePoly(
 					"horizontal.png",
 					this.polygon.fillColor,
-					Tools.Polygon
+					Tools.Polygon,
 				);
 				break;
 			case FillStyles.CrossHatching:
 				this.polygon.fillStyle = await this.stylePatternSimplePoly(
 					"square.png",
 					this.polygon.fillColor,
-					Tools.Polygon
+					Tools.Polygon,
 				);
 				break;
 			case FillStyles.DiagonalHatching:
 				this.polygon.fillStyle = await this.stylePatternSimplePoly(
 					"diagonal.png",
 					this.polygon.fillColor,
-					Tools.Polygon
+					Tools.Polygon,
 				);
 				break;
 			case FillStyles.ReverseDiagonalHatching:
 				this.polygon.fillStyle = await this.stylePatternSimplePoly(
 					"reverseDiagonal.png",
 					this.polygon.fillColor,
-					Tools.Polygon
+					Tools.Polygon,
 				);
 				break;
 			case FillStyles.DiagonalCrossHatching:
 				this.polygon.fillStyle = await this.stylePatternSimplePoly(
 					"cross.png",
 					this.polygon.fillColor,
-					Tools.Polygon
+					Tools.Polygon,
 				);
 				break;
 		}
@@ -502,7 +518,7 @@ export class DrawService {
 		return this.stylePatternSimplePoly(
 			this.polygon.pattern,
 			this.polygon.fillColor,
-			Tools.Polygon
+			Tools.Polygon,
 		);
 	}
 
@@ -512,42 +528,42 @@ export class DrawService {
 				this.freePolygon.fillStyle = await this.stylePatternSimplePoly(
 					"vertical.png",
 					this.freePolygon.fillColor,
-					Tools.FreePolygon
+					Tools.FreePolygon,
 				);
 				break;
 			case FillStyles.HorizontalHatching:
 				this.freePolygon.fillStyle = await this.stylePatternSimplePoly(
 					"horizontal.png",
 					this.freePolygon.fillColor,
-					Tools.FreePolygon
+					Tools.FreePolygon,
 				);
 				break;
 			case FillStyles.CrossHatching:
 				this.freePolygon.fillStyle = await this.stylePatternSimplePoly(
 					"square.png",
 					this.freePolygon.fillColor,
-					Tools.FreePolygon
+					Tools.FreePolygon,
 				);
 				break;
 			case FillStyles.DiagonalHatching:
 				this.freePolygon.fillStyle = await this.stylePatternSimplePoly(
 					"diagonal.png",
 					this.freePolygon.fillColor,
-					Tools.FreePolygon
+					Tools.FreePolygon,
 				);
 				break;
 			case FillStyles.ReverseDiagonalHatching:
 				this.freePolygon.fillStyle = await this.stylePatternSimplePoly(
 					"reverseDiagonal.png",
 					this.freePolygon.fillColor,
-					Tools.FreePolygon
+					Tools.FreePolygon,
 				);
 				break;
 			case FillStyles.DiagonalCrossHatching:
 				this.freePolygon.fillStyle = await this.stylePatternSimplePoly(
 					"cross.png",
 					this.freePolygon.fillColor,
-					Tools.FreePolygon
+					Tools.FreePolygon,
 				);
 				break;
 		}
@@ -556,7 +572,7 @@ export class DrawService {
 		return this.stylePatternSimplePoly(
 			this.freePolygon.pattern,
 			this.freePolygon.fillColor,
-			Tools.FreePolygon
+			Tools.FreePolygon,
 		);
 	}
 
@@ -566,42 +582,42 @@ export class DrawService {
 				this.figure.fillStyle = await this.stylePatternSimplePoly(
 					"vertical.png",
 					this.figure.fillColor,
-					Tools.Figure
+					Tools.Figure,
 				);
 				break;
 			case FillStyles.HorizontalHatching:
 				this.figure.fillStyle = await this.stylePatternSimplePoly(
 					"horizontal.png",
 					this.figure.fillColor,
-					Tools.Figure
+					Tools.Figure,
 				);
 				break;
 			case FillStyles.CrossHatching:
 				this.figure.fillStyle = await this.stylePatternSimplePoly(
 					"square.png",
 					this.figure.fillColor,
-					Tools.Figure
+					Tools.Figure,
 				);
 				break;
 			case FillStyles.DiagonalHatching:
 				this.figure.fillStyle = await this.stylePatternSimplePoly(
 					"diagonal.png",
 					this.figure.fillColor,
-					Tools.Figure
+					Tools.Figure,
 				);
 				break;
 			case FillStyles.ReverseDiagonalHatching:
 				this.figure.fillStyle = await this.stylePatternSimplePoly(
 					"reverseDiagonal.png",
 					this.figure.fillColor,
-					Tools.Figure
+					Tools.Figure,
 				);
 				break;
 			case FillStyles.DiagonalCrossHatching:
 				this.figure.fillStyle = await this.stylePatternSimplePoly(
 					"cross.png",
 					this.figure.fillColor,
-					Tools.Figure
+					Tools.Figure,
 				);
 				break;
 		}
@@ -611,7 +627,7 @@ export class DrawService {
 		return this.stylePatternSimplePoly(
 			this.figure.pattern,
 			this.figure.fillColor,
-			Tools.Figure
+			Tools.Figure,
 		);
 	}
 	public async setFill(tool: DrawToolKey, style: string) {

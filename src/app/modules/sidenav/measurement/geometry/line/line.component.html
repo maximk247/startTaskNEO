@@ -9,16 +9,8 @@
 	</div>
 </div>
 <div>
-	<label for="unit-select">Единицы измерения:</label>
 	<select id="unit-select" [(ngModel)]="selectedUnit">
 		<option value="meters">{{"meters" | transloco}}</option>
 		<option value="kilometers">{{"kilometers" | transloco}}</option>
 	</select>
 </div>
-
-<!-- <div *ngFor="let line of lines">
-	<p>
-		{{'line'| transloco}} {{ line.id }}: {{ line.length }}
-		<button (click)="removeLine(line.id)">{{'delete'| transloco}}</button>
-	</p>
-</div> -->

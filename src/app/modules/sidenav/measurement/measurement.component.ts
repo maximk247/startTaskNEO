@@ -11,6 +11,7 @@ import { LineComponent } from "./geometry/line/line.component";
 import { CircleComponent } from "./geometry/circle/circle.component";
 import { PolygonComponent } from "./geometry/polygon/polygon.component";
 
+
 @Component({
 	selector: "app-measurement",
 	templateUrl: "./measurement.component.html",
@@ -34,6 +35,7 @@ export class MeasurementComponent implements OnInit {
 	public constructor(
 		private mapService: MapService,
 		private drawService: DrawService,
+	
 	) {}
 
 	public ngOnInit() {
@@ -54,9 +56,9 @@ export class MeasurementComponent implements OnInit {
 		});
 	}
 
+
 	public onPointsChange(obj: any) {
 		const lastPoint = obj.points.slice(-1)[0];
-		console.log(lastPoint);
 		if (lastPoint) {
 			this.allMeasurements.push({
 				...lastPoint,
@@ -64,6 +66,7 @@ export class MeasurementComponent implements OnInit {
 				measureTooltips: obj.measureTooltips,
 			});
 		}
+
 		this.vectorSource = obj.vectorSource;
 		this.lastId.point = lastPoint.id;
 	}
@@ -161,5 +164,11 @@ export class MeasurementComponent implements OnInit {
 		if (measurementsLeft.length === 0 && component) {
 			component[resetMethod]();
 		}
+	}
+
+	public removeAllMeasurement() {
+		this.allMeasurements.forEach((measurement: any) => {
+			this.removeMeasurement(measurement)
+		})
 	}
 }

@@ -14,6 +14,7 @@ import { MeasurementPoint } from "../../interfaces/measurement.interface";
 import { Point } from "ol/geom";
 import { TranslocoService } from "@ngneat/transloco";
 import { DrawType } from "../../../draw/enum/draw.enum";
+import { HeightService } from "src/app/modules/shared/heigt.service";
 @Component({
 	selector: "app-measurement-point",
 	templateUrl: "./point.component.html",
@@ -38,6 +39,7 @@ export class PointComponent implements OnInit {
 		private spatialReferenceService: SpatialReferenceService,
 		private drawService: DrawService,
 		private translocoService: TranslocoService,
+		private heightService: HeightService,
 	) {}
 
 	public ngOnInit(): void {
@@ -74,20 +76,35 @@ export class PointComponent implements OnInit {
 		);
 	}
 
+	private getHeight(coordinates: any): void {
+		this.heightService.postCoordinates(coordinates).subscribe(
+			(data) => {
+				console.log(data);
+			},
+			(error) => {
+				console.log(error);
+			},
+		)
+	}
+
 	public addPointInteraction() {
 		this.draw = new Draw({
 			source: this.vectorSource,
 			type: "Point",
 		});
-
+		const proj4 = (proj4x as any).default;
 		this.drawService.addGlobalInteraction(this.map, this.draw);
-		this.draw.set("drawType", "measurement");
+		this.draw.set("drawType", DrawType.Measurement);
 		this.draw.on("drawend", (evt) => {
 			const feature = evt.feature as Feature<Point>;
+			feature.set("drawType", "measurement");
 			const geometry = evt.feature.getGeometry() as Point;
 			const coordinates = this.calculateCoordinates(geometry);
 			const transformedCoordinates = this.transformCoordinates(coordinates);
+			const coordinatesForHeight = proj4('Web Mercator',coordinates)
 			const pointId = this.pointCounter++;
+			const height = this.getHeight(coordinatesForHeight)
+			console.log(height)
 			this.points?.push({
 				id: pointId,
 				feature,
@@ -99,7 +116,6 @@ export class PointComponent implements OnInit {
 				vectorSource: this.vectorSource,
 				measureTooltips: this.measureTooltips,
 			};
-			console.log(obj.points);
 			this.pointsChange.emit(obj);
 		});
 	}
@@ -110,8 +126,8 @@ export class PointComponent implements OnInit {
 			vectorSource: this.vectorSource,
 			measureTooltips: this.measureTooltips,
 		});
-		this.points = []
-		this.pointCounter = 1
+		this.points = [];
+		this.pointCounter = 1;
 	}
 
 	private calculateCoordinates(geometry: Point) {

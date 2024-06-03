@@ -112,7 +112,7 @@ export class DrawShapeComponent implements OnInit {
 		}
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
-			if (interaction.get("drawType") === DrawType.Figure) {
+			if (interaction.get("drawType") === DrawType.Draw) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
 		});

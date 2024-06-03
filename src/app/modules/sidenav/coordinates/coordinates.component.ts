@@ -11,6 +11,8 @@ import { TranslocoService } from "@ngneat/transloco";
 import * as proj4x from "proj4";
 import { register } from "ol/proj/proj4";
 import { ProjectionType } from "../draw/modules/draw-options/enum/draw-options.enum";
+import { map } from "rxjs";
+import { DrawType } from "../draw/enum/draw.enum";
 
 @Component({
 	selector: "app-coordinates",
@@ -105,27 +107,40 @@ export class CoordinatesComponent implements OnInit {
 				y,
 			]);
 		}
-	
+
 		if (this.showPoint) {
 			this.addPointToMap(transformCoordinates);
-		} 
+		}
 		this.map.getView().setCenter(transformCoordinates);
 	}
 	public addPointToMap(coordinates: Array<number>) {
 		const point = new Point(coordinates);
 		const feature = new Feature(point);
-		this.pointLayer.getSource()?.addFeature(feature)
+		feature.set('drawType', 'coordinates')
+		this.pointLayer.getSource()?.addFeature(feature);
 	}
 
 	public onChange(event: Event) {
 		const target = event.target as HTMLSelectElement;
-		console.log(target.value);
 		const selectedRef = this.spatialReferences.find(
 			(ref) => ref.name === target.value,
 		);
 		if (selectedRef) {
 			this.newProjection = selectedRef;
 		}
-		this.showPoint = false;
+	}
+
+	public removeAllCoordinates() {
+		this.map.getLayers().forEach((layer) => {
+			if (layer instanceof VectorLayer) {
+				const source = layer.getSource();
+				if (source instanceof VectorSource) {
+					const featuresToRemove = source.getFeatures().filter((feature) => {
+						return feature.get("drawType") === DrawType.Coordinates;
+					});
+					featuresToRemove.forEach((feature) => source.removeFeature(feature));
+				}
+			}
+		});
 	}
 }

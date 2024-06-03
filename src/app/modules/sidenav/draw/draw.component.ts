@@ -66,7 +66,7 @@ export class DrawComponent implements OnInit {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
 			if (
-				interaction.get("drawType") === DrawType.Figure ||
+				interaction.get("drawType") === DrawType.Draw ||
 				interaction.get("drawType") === DrawType.Measurement
 			) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
@@ -87,7 +87,7 @@ export class DrawComponent implements OnInit {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
 			if (
-				interaction.get("drawType") === DrawType.Figure ||
+				interaction.get("drawType") === DrawType.Draw ||
 				interaction.get("drawType") === DrawType.Measurement
 			) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
@@ -108,7 +108,7 @@ export class DrawComponent implements OnInit {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
 			if (
-				interaction.get("drawType") === DrawType.Figure ||
+				interaction.get("drawType") === DrawType.Draw ||
 				interaction.get("drawType") === DrawType.Measurement
 			) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
@@ -129,7 +129,7 @@ export class DrawComponent implements OnInit {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
 			if (
-				interaction.get("drawType") === DrawType.Figure ||
+				interaction.get("drawType") === DrawType.Draw ||
 				interaction.get("drawType") === DrawType.Measurement
 			) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
@@ -150,7 +150,7 @@ export class DrawComponent implements OnInit {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
 			if (
-				interaction.get("drawType") === DrawType.Figure ||
+				interaction.get("drawType") === DrawType.Draw ||
 				interaction.get("drawType") === DrawType.Measurement
 			) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);

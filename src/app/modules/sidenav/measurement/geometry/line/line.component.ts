@@ -52,10 +52,10 @@ export class LineComponent implements OnInit {
 		});
 
 		this.drawService.addGlobalInteraction(this.map, this.draw);
-		this.draw.set("drawType", "measurement");
+	
 
 		let lastPointCount = 0;
-
+		this.draw.set("drawType", DrawType.Measurement);
 		this.draw.on("drawstart", (evt) => {
 			const geometry = evt.feature.getGeometry() as LineString;
 			lastPointCount = geometry.getCoordinates().length;
@@ -80,6 +80,7 @@ export class LineComponent implements OnInit {
 
 		this.draw.on("drawend", (evt) => {
 			const feature = evt.feature as Feature<LineString>;
+			feature.set("drawType", "measurement");
 			const geometry = evt.feature.getGeometry() as LineString;
 			const length = this.calculateLength(geometry);
 			const lineId = this.lineCounter++;
@@ -99,6 +100,8 @@ export class LineComponent implements OnInit {
 		});
 		this.lines = []
 		this.lineCounter = 1;
+		this.currentLength = 0
+		this.lastLineLength = 0
 	}
 
 	private calculateLength(geometry: LineString) {
@@ -121,14 +124,14 @@ export class LineComponent implements OnInit {
 		}
 	}
 
-	public formatLength(length: number): string {
+	public formatLength(length: number){
 		if (!length) {
-			return "";
+			return 0;
 		}
 		if (this.selectedUnit === "kilometers") {
-			return Math.round((length / 1000) * 100) / 100 + " km";
+			return Math.round((length / 1000) * 100) / 100;
 		} else {
-			return Math.round(length * 100) / 100 + " м";
+			return Math.round(length * 100) / 100;
 		}
 	}
 }

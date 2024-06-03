@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { DrawService } from "../../../draw.service";
 import { FILL_STYLES, LINE_STYLES } from "../../../consts/draw-consts.consts";
+import { DrawType } from "../../../enum/draw.enum";
 
 @Component({
 	selector: "app-draw-figure",
@@ -14,7 +15,7 @@ export class DrawFigureComponent implements OnInit {
 	@Input() public tool: string;
 	@Output() public figureSizeChange: EventEmitter<number> =
 		new EventEmitter<number>();
-	public type = "figure";
+	public type = 'figure';
 	public lineStyles = LINE_STYLES;
 
 	public figureFillStyles = FILL_STYLES;
