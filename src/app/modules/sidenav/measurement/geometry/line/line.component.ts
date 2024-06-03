@@ -93,11 +93,12 @@ export class LineComponent implements OnInit {
 	}
 
 	public resetLine() {
-		this.lineCounter = 1;
 		this.linesChange.emit({
-			lines: null,
+			lines: [],
 			vectorSource: this.vectorSource,
 		});
+		this.lines = []
+		this.lineCounter = 1;
 	}
 
 	private calculateLength(geometry: LineString) {

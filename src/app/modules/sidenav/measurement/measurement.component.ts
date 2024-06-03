@@ -20,7 +20,12 @@ export class MeasurementComponent implements OnInit {
 	public map: MapOpen;
 	public vectorSource: VectorSource;
 	public mode: MeasurementMode = "point";
-	public lastId: number;
+	public lastId = {
+		point: 0,
+		line: 0,
+		polygon: 0,
+		circle: 0,
+	};
 	public allMeasurements: any = [];
 	@ViewChild(PointComponent) public pointComponent: PointComponent;
 	@ViewChild(LineComponent) public lineComponent: LineComponent;
@@ -60,7 +65,7 @@ export class MeasurementComponent implements OnInit {
 			});
 		}
 		this.vectorSource = obj.vectorSource;
-		this.lastId = lastPoint.id;
+		this.lastId.point = lastPoint.id;
 	}
 	public onLinesChange(obj: any) {
 		const lastLine = obj.lines.slice(-1)[0];
@@ -68,6 +73,7 @@ export class MeasurementComponent implements OnInit {
 			this.allMeasurements.push({ ...lastLine, type: "line" });
 		}
 		this.vectorSource = obj.vectorSource;
+		this.lastId.line = lastLine.id;
 	}
 
 	public onPolygonsChange(obj: any) {
@@ -76,6 +82,7 @@ export class MeasurementComponent implements OnInit {
 			this.allMeasurements.push({ ...lastPolygon, type: "polygon" });
 		}
 		this.vectorSource = obj.vectorSource;
+		this.lastId.polygon = lastPolygon.id;
 	}
 
 	public onCirclesChange(obj: any) {
@@ -84,19 +91,26 @@ export class MeasurementComponent implements OnInit {
 			this.allMeasurements.push({ ...lastCircle, type: "circle" });
 		}
 		this.vectorSource = obj.vectorSource;
+		this.lastId.circle = lastCircle.id;
 	}
 
 	public onModeChange(event: Event) {
 		const target = event.target as HTMLSelectElement;
-		if (target.value === "point" && this.pointComponent) {
-			this.pointComponent.pointCounter = this.lastId;
-		} else if (target.value === "point" && !this.pointComponent) {
-			setTimeout(() => {
-				if (this.pointComponent) {
-					this.pointComponent.pointCounter = this.lastId + 1;
-				}
-			}, 0);
-		}
+		const mode = target.value as MeasurementMode;
+
+		setTimeout(() => {
+			const componentsMap = {
+				point: this.pointComponent,
+				line: this.lineComponent,
+				polygon: this.polygonComponent,
+				circle: this.circleComponent,
+			};
+			const component = componentsMap[mode];
+
+			const lastId = this.lastId[mode];
+
+			(component as any)[`${mode}Counter`] = lastId + 1;
+		}, 0);
 	}
 
 	public removeMeasurement(measurement: any) {

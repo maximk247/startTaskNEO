@@ -25,6 +25,12 @@ export class DrawComponent implements OnInit {
 
 	public ngOnInit() {
 		this.map = this.mapService.getMap();
+		const interactions = this.map.getInteractions().getArray();
+		interactions.forEach((interaction) => {
+			if (interaction.get("drawType") === DrawType.Measurement) {
+				this.drawService.removeGlobalInteraction(this.map, interaction);
+			}
+		});
 		this.drawService.initalizeLayer();
 		this.map.addLayer(this.drawService.getVectorLayer());
 	}
