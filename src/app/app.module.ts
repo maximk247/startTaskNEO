@@ -52,12 +52,12 @@ function initializeKeycloak(keycloak: KeycloakService) {
 		}),
 	],
 	providers: [
-		{
-			provide: APP_INITIALIZER,
-			useFactory: initializeKeycloak,
-			multi: true,
-			deps: [KeycloakService],
-		},
+		// {
+		// 	provide: APP_INITIALIZER,
+		// 	useFactory: initializeKeycloak,
+		// 	multi: true,
+		// 	deps: [KeycloakService],
+		// },
 		SpatialReferenceService,
 		provideTransloco({
 			config: {

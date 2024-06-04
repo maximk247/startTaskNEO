@@ -15,6 +15,9 @@ import { Point } from "ol/geom";
 import { TranslocoService } from "@ngneat/transloco";
 import { DrawType } from "../../../draw/enum/draw.enum";
 import { HeightService } from "src/app/modules/shared/heigt.service";
+import { style } from "@angular/animations";
+import { Style } from "ol/style";
+import { Coordinate, toStringHDMS } from "ol/coordinate";
 @Component({
 	selector: "app-measurement-point",
 	templateUrl: "./point.component.html",
@@ -25,15 +28,22 @@ export class PointComponent implements OnInit {
 	@Input() public vectorSource: VectorSource;
 	@Output() public pointsChange = new EventEmitter<any>();
 
+	public showCoordinates: boolean;
+	public showHeight: boolean;
+
 	public spatialReferences: Array<SpatialReference> = [];
 
 	private currentProjection: SpatialReference;
 	private newProjection: SpatialReference;
 	private draw: Draw;
 
+	public height: any;
+
 	private measureTooltips: Map<number, Overlay> = new Map();
 	public points: Array<MeasurementPoint> = [];
 	public pointCounter = 1;
+	public latitudeDegrees: string;
+	public longitudeDegrees: string;
 
 	public constructor(
 		private spatialReferenceService: SpatialReferenceService,
@@ -76,15 +86,19 @@ export class PointComponent implements OnInit {
 		);
 	}
 
-	private getHeight(coordinates: any): void {
-		this.heightService.postCoordinates(coordinates).subscribe(
-			(data) => {
-				console.log(data);
-			},
-			(error) => {
-				console.log(error);
-			},
-		)
+	private getHeight(coordinates: any): Promise<void> {
+		return new Promise<void>((resolve, reject) => {
+			this.heightService.postCoordinates(coordinates).subscribe(
+				(data: any) => {
+					this.height = data.results[0].elevation;
+					resolve();
+				},
+				(error) => {
+					console.log(error);
+					reject(error);
+				},
+			);
+		});
 	}
 
 	public addPointInteraction() {
@@ -92,25 +106,52 @@ export class PointComponent implements OnInit {
 			source: this.vectorSource,
 			type: "Point",
 		});
-		const proj4 = (proj4x as any).default;
 		this.drawService.addGlobalInteraction(this.map, this.draw);
 		this.draw.set("drawType", DrawType.Measurement);
-		this.draw.on("drawend", (evt) => {
+		this.draw.on("drawend", async (evt) => {
 			const feature = evt.feature as Feature<Point>;
 			feature.set("drawType", "measurement");
 			const geometry = evt.feature.getGeometry() as Point;
+
 			const coordinates = this.calculateCoordinates(geometry);
 			const transformedCoordinates = this.transformCoordinates(coordinates);
-			const coordinatesForHeight = proj4('Web Mercator',coordinates)
+
 			const pointId = this.pointCounter++;
-			const height = this.getHeight(coordinatesForHeight)
-			console.log(height)
+
+			if (this.showHeight) {
+				await this.getHeight(coordinates);
+				transformedCoordinates.push(this.height);
+			}
+
+			if (this.showCoordinates) {
+				this.createPointTooltip(pointId, transformedCoordinates);
+			} else {
+				feature.setStyle(
+					new Style({
+						image: undefined,
+					}),
+				);
+			}
+			const fullCoordinates = transformedCoordinates.map(
+				(coordinate: string, index: number) => {
+					coordinate = coordinate.toString();
+					if (index === 0) {
+						coordinate += " " + `(${this.latitudeDegrees})`;
+					} else if (index === 1) {
+						coordinate += " " + `(${this.longitudeDegrees})`;
+					} else if(index === 2) {
+						coordinate += " м"
+					}
+					return coordinate
+				},
+			);
+			console.log(fullCoordinates)
 			this.points?.push({
 				id: pointId,
 				feature,
-				coordinates: transformedCoordinates,
+				coordinates: fullCoordinates,
 			});
-			this.createPointTooltip(pointId, transformedCoordinates);
+
 			const obj = {
 				points: this.points,
 				vectorSource: this.vectorSource,
@@ -122,7 +163,7 @@ export class PointComponent implements OnInit {
 
 	public resetPoint() {
 		this.pointsChange.emit({
-			points: [],
+			points: null,
 			vectorSource: this.vectorSource,
 			measureTooltips: this.measureTooltips,
 		});
@@ -132,6 +173,17 @@ export class PointComponent implements OnInit {
 
 	private calculateCoordinates(geometry: Point) {
 		const coordinates = geometry.getCoordinates();
+		const degreesCoordinates = toStringHDMS(coordinates)
+			.split(" ")
+			.filter((coordinate) => {
+				if (coordinate === "N" || coordinate === "E" || coordinate === "S") {
+					return false;
+				}
+				return true;
+			});
+
+		this.latitudeDegrees = degreesCoordinates.slice(0, 3).join(" ");
+		this.longitudeDegrees = degreesCoordinates.slice(3, 6).join(" ");
 		return coordinates;
 	}
 
@@ -142,6 +194,9 @@ export class PointComponent implements OnInit {
 			this.newProjection.name,
 			coordinates,
 		);
+		for (let i = 0; i < transformedCoordinates.length; i++) {
+			transformedCoordinates[i] = Number(transformedCoordinates[i].toFixed(5));
+		}
 		return transformedCoordinates;
 	}
 
@@ -155,8 +210,9 @@ export class PointComponent implements OnInit {
 
 	private setDefaultProjection(): void {
 		if (this.spatialReferences.length > 0) {
-			this.currentProjection = this.spatialReferences[0];
-			this.newProjection = this.currentProjection;
+			const firstProjection = this.spatialReferences[0];
+			this.currentProjection = firstProjection;
+			this.newProjection = firstProjection;
 		}
 	}
 
@@ -172,8 +228,15 @@ export class PointComponent implements OnInit {
 
 	public createPointTooltip(id: number, coordinates: Array<number>) {
 		const tooltipElement = document.createElement("div");
-		tooltipElement.innerHTML =
-			"Point: " + coordinates[0] + ", " + coordinates[1];
+
+		const [x, y, z = 0] = coordinates;
+
+		tooltipElement.innerHTML = `
+        <div class="centered-text">Широта (Y): ${y} (${this.latitudeDegrees})</div>
+        <div class="centered-text">Долгота(X): ${x} (${this.longitudeDegrees})</div>
+        ${(z || z === 0) && this.showHeight ? `<div class="centered-text">Высота(Z): ${z} м</div>` : ""}
+    `;
+
 		const measureTooltip = new Overlay({
 			element: tooltipElement,
 			offset: [0, -25],
@@ -181,10 +244,11 @@ export class PointComponent implements OnInit {
 		});
 
 		const proj4 = (proj4x as any).default;
+		const clonedCoordinates = JSON.parse(JSON.stringify(coordinates)); // proj4 менял исходные координаты, а он (proj4) не учитывал Z координаты
 		const transformedCoordinatesToDegrees = proj4(
 			this.newProjection.name,
 			"EPSG:4326",
-			coordinates,
+			clonedCoordinates,
 		);
 
 		measureTooltip.setPosition(transformedCoordinatesToDegrees);
@@ -196,7 +260,7 @@ export class PointComponent implements OnInit {
 		const point = this.points?.find((point) => point.id === id);
 		if (point) {
 			this.vectorSource.removeFeature(point.feature);
-			this.points = this.points!.filter((p) => p.id !== id);
+			this.points = this.points.filter((p) => p.id !== id);
 		}
 		const tooltip = this.measureTooltips.get(id);
 		if (tooltip) {

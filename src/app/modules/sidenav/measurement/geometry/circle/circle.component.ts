@@ -92,7 +92,7 @@ export class CircleComponent implements OnInit {
 	public resetCircle() {
 		this.circleCounter = 1;
 		this.circlesChange.emit({
-			circles: [],
+			circles: null,
 			vectorSource: this.vectorSource,
 		});
 		this.totalRadius = 0;

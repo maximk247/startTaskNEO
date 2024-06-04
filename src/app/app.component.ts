@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { MenuMode } from "./interfaces/app.interface";
 
 @Component({
 	selector: "app-root",
@@ -6,11 +7,11 @@ import { Component } from "@angular/core";
 	styleUrls: ["./app.component.scss"],
 })
 export class AppComponent {
-	public menuMode: "menu" | "draw" | "coordinates" | "measurement" | null;
+	public menuMode: MenuMode;
 
 	public isWindowVisible = false;
 
-	public toggleWindow(mode: "menu" | "draw" | "coordinates" | "measurement") {
+	public toggleWindow(mode: MenuMode) {
 		this.isWindowVisible = !this.isWindowVisible;
 		if (this.menuMode !== mode) {
 			this.menuMode = mode;
@@ -20,7 +21,7 @@ export class AppComponent {
 		}
 	}
 	public getButtonClass(
-		mode: "menu" | "draw" | "coordinates" | "measurement",
+		mode: MenuMode,
 	): string {
 		return this.menuMode === mode && this.isWindowVisible ? "active" : "";
 	}

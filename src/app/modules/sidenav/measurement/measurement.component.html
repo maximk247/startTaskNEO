@@ -39,7 +39,13 @@
 </ng-container>
 <div class="measurement-result">
 	<div *ngFor="let measurement of allMeasurements">
-		{{ measurement.id }} айди {{ measurement.coordinates }}
+		<ng-container *ngIf="measurement.coordinates">
+			{{ measurement.id }} X: {{ measurement.coordinates[0] }}, Y:
+			{{ measurement.coordinates[1] }}
+			<span *ngIf="measurement.coordinates[2]">
+				Z: {{ measurement.coordinates[2] }}</span
+			>
+		</ng-container>
 		{{ measurement.area }}
 		{{ measurement.perimeter }}
 		{{ measurement.length }}

@@ -95,7 +95,7 @@ export class LineComponent implements OnInit {
 
 	public resetLine() {
 		this.linesChange.emit({
-			lines: [],
+			lines: null,
 			vectorSource: this.vectorSource,
 		});
 		this.lines = []

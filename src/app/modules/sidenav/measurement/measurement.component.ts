@@ -11,7 +11,6 @@ import { LineComponent } from "./geometry/line/line.component";
 import { CircleComponent } from "./geometry/circle/circle.component";
 import { PolygonComponent } from "./geometry/polygon/polygon.component";
 
-
 @Component({
 	selector: "app-measurement",
 	templateUrl: "./measurement.component.html",
@@ -35,7 +34,6 @@ export class MeasurementComponent implements OnInit {
 	public constructor(
 		private mapService: MapService,
 		private drawService: DrawService,
-	
 	) {}
 
 	public ngOnInit() {
@@ -56,45 +54,43 @@ export class MeasurementComponent implements OnInit {
 		});
 	}
 
-
 	public onPointsChange(obj: any) {
-		const lastPoint = obj.points.slice(-1)[0];
-		if (lastPoint) {
+		if (obj.points) {
+			const lastPoint = obj.points.slice(-1)[0];
 			this.allMeasurements.push({
 				...lastPoint,
 				type: "point",
 				measureTooltips: obj.measureTooltips,
 			});
+			this.vectorSource = obj.vectorSource;
+			this.lastId.point = lastPoint.id;
 		}
-
-		this.vectorSource = obj.vectorSource;
-		this.lastId.point = lastPoint.id;
 	}
 	public onLinesChange(obj: any) {
-		const lastLine = obj.lines.slice(-1)[0];
-		if (lastLine) {
+		if (obj.lines) {
+			const lastLine = obj.lines.slice(-1)[0];
 			this.allMeasurements.push({ ...lastLine, type: "line" });
+			this.vectorSource = obj.vectorSource;
+			this.lastId.line = lastLine.id;
 		}
-		this.vectorSource = obj.vectorSource;
-		this.lastId.line = lastLine.id;
 	}
 
 	public onPolygonsChange(obj: any) {
-		const lastPolygon = obj.polygons.slice(-1)[0];
-		if (lastPolygon) {
+		if (obj.polygons) {
+			const lastPolygon = obj.polygons.slice(-1)[0];
 			this.allMeasurements.push({ ...lastPolygon, type: "polygon" });
+			this.vectorSource = obj.vectorSource;
+			this.lastId.polygon = lastPolygon.id;
 		}
-		this.vectorSource = obj.vectorSource;
-		this.lastId.polygon = lastPolygon.id;
 	}
 
 	public onCirclesChange(obj: any) {
-		const lastCircle = obj.circles.slice(-1)[0];
-		if (lastCircle) {
+		if (obj.circles) {
+			const lastCircle = obj.circles.slice(-1)[0];
 			this.allMeasurements.push({ ...lastCircle, type: "circle" });
+			this.vectorSource = obj.vectorSource;
+			this.lastId.circle = lastCircle.id;
 		}
-		this.vectorSource = obj.vectorSource;
-		this.lastId.circle = lastCircle.id;
 	}
 
 	public onModeChange(event: Event) {
@@ -168,7 +164,7 @@ export class MeasurementComponent implements OnInit {
 
 	public removeAllMeasurement() {
 		this.allMeasurements.forEach((measurement: any) => {
-			this.removeMeasurement(measurement)
-		})
+			this.removeMeasurement(measurement);
+		});
 	}
 }
