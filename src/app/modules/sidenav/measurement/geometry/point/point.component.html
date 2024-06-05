@@ -9,25 +9,25 @@
 
 <div *ngIf="points[points.length - 1]">
 	<p>
-		<strong>Широта(Y):</strong>
+		<strong>{{ "latitude" | transloco }}(Y):</strong>
 		<span>{{ points[points.length - 1].coordinates[1] }} </span>
 	</p>
 	<p>
-		<strong>Долгота(X):</strong>
+		<strong>{{ "longitude" | transloco }}(X):</strong>
 		<span>{{ points[points.length - 1].coordinates[0] }} </span>
 	</p>
 	<p *ngIf="showHeight">
-		<strong>Высота(Z):</strong>
+		<strong>{{ "height" | transloco }}(Z):</strong>
 		<span>{{ points[points.length - 1].coordinates[2] }}</span>
 	</p>
 </div>
 
 <label>
 	<input type="checkbox" [(ngModel)]="showCoordinates" />
-	<span>Показать координаты на карте</span>
+	<span>{{ "showCoordinates" | transloco }}</span>
 </label>
 
 <label>
 	<input type="checkbox" [(ngModel)]="showHeight" />
-	<span>Показать высоту координаты</span>
+	<span>{{ "showHeightFromCoordinates" | transloco }}</span>
 </label>

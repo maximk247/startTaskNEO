@@ -57,12 +57,12 @@ export class PolygonComponent implements OnInit {
 		});
 
 		this.drawService.addGlobalInteraction(this.map, this.draw);
-
-		let lastPointCount = 0;
+		this.polygonCounter =
+			this.measurementService.getLastIdMeasurement("polygon");
+	
 		this.draw.set("drawType", DrawType.Measurement);
 		this.draw.on("drawstart", (evt) => {
 			const geometry = evt.feature.getGeometry() as Polygon;
-			lastPointCount = geometry.getCoordinates()[0].length;
 
 			geometry.on("change", () => {
 				this.totalArea = this.calculateArea(geometry);
@@ -80,26 +80,29 @@ export class PolygonComponent implements OnInit {
 				this.totalPerimeter,
 				this.selectedUnit,
 			);
-			const polygonId = this.polygonCounter++;
+
+			const polygonId = ++this.polygonCounter;
 			this.polygons.push({
+				type: 'polygon',
 				id: polygonId,
 				feature,
 				area: formattedArea,
 				perimeter: formattedPerimeter,
 			});
 			const obj = { polygons: this.polygons, vectorSource: this.vectorSource };
+			this.measurementService.setLastId("polygon", polygonId);
 			this.polygonsChange.emit(obj);
 		});
 	}
 
 	public resetPolygon() {
-		this.polygonCounter = 1;
+		this.polygonCounter = 0;
 		this.polygonsChange.emit({
 			polygons: null,
 			vectorSource: this.vectorSource,
 		});
-		this.totalArea = 0
-		this.totalPerimeter = 0
+		this.totalArea = 0;
+		this.totalPerimeter = 0;
 	}
 
 	private calculateArea(geometry: Polygon) {

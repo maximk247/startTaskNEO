@@ -50,14 +50,12 @@ export class CircleComponent implements OnInit {
 			source: this.vectorSource,
 			type: "Circle",
 		});
-
+		this.circleCounter = this.measurementService.getLastIdMeasurement("circle");
 		this.drawService.addGlobalInteraction(this.map, this.draw);
 
-		let lastRadius = 0;
 		this.draw.set("drawType", DrawType.Measurement);
 		this.draw.on("drawstart", (evt) => {
 			const geometry = evt.feature.getGeometry() as Circle;
-			lastRadius = geometry.getRadius();
 
 			geometry.on("change", () => {
 				const centerCoords = geometry.getCenter();
@@ -78,19 +76,26 @@ export class CircleComponent implements OnInit {
 				this.totalRadius,
 				this.selectedUnit,
 			);
-			const circleId = this.circleCounter++;
-			this.circles.push({ id: circleId, feature, radius: formattedRadius });
+
+			const circleId = ++this.circleCounter;
+			this.circles.push({
+				type: "circle",
+				id: circleId,
+				feature,
+				radius: formattedRadius,
+			});
 
 			const obj = {
 				circles: this.circles,
 				vectorSource: this.vectorSource,
 			};
+			this.measurementService.setLastId("circle", circleId);
 			this.circlesChange.emit(obj);
 		});
 	}
 
 	public resetCircle() {
-		this.circleCounter = 1;
+		this.circleCounter = 0;
 		this.circlesChange.emit({
 			circles: null,
 			vectorSource: this.vectorSource,

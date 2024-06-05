@@ -1,12 +1,48 @@
 import { Injectable } from "@angular/core";
-import Map from "ol/Map";
-import VectorLayer from "ol/layer/Vector";
-import VectorSource from "ol/source/Vector";
-import { DrawType } from "../draw/enum/draw.enum";
+import { MeasurementMode } from "./interfaces/measurement.interface";
+
 @Injectable({
 	providedIn: "root",
 })
 export class MeasurementService {
+	private measurements: Array<any> = [];
+	private lastId: Record<MeasurementMode, number> = {
+		point: 0,
+		line: 0,
+		polygon: 0,
+		circle: 0,
+	};
+
+	public getMeasurements() {
+		return this.measurements;
+	}
+
+	public setMeasurements(measurements: Array<any>) {
+		this.measurements = measurements;
+	}
+
+	public getLastIdMeasurement(type: MeasurementMode) {
+		return this.lastId[type];
+	}
+
+	public getLastId() {
+		return this.lastId
+	}
+
+	public setLastId(type: MeasurementMode, id: number) {
+		this.lastId[type] = id;
+	}
+
+	public clearMeasurements() {
+		this.measurements = [];
+		this.lastId = {
+			point: 0,
+			line: 0,
+			polygon: 0,
+			circle: 0,
+		};
+	}
+
 	public formatMeasurement(measure: number, unit: string) {
 		if (!measure) {
 			return "";

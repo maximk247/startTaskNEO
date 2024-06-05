@@ -14,10 +14,11 @@ import { MeasurementPoint } from "../../interfaces/measurement.interface";
 import { Point } from "ol/geom";
 import { TranslocoService } from "@ngneat/transloco";
 import { DrawType } from "../../../draw/enum/draw.enum";
-import { HeightService } from "src/app/modules/shared/heigt.service";
+import { HeightService } from "src/app/modules/shared/height.service";
 import { style } from "@angular/animations";
 import { Style } from "ol/style";
 import { Coordinate, toStringHDMS } from "ol/coordinate";
+import { MeasurementService } from "../../measurement.service";
 @Component({
 	selector: "app-measurement-point",
 	templateUrl: "./point.component.html",
@@ -50,6 +51,7 @@ export class PointComponent implements OnInit {
 		private drawService: DrawService,
 		private translocoService: TranslocoService,
 		private heightService: HeightService,
+		private measurementService: MeasurementService,
 	) {}
 
 	public ngOnInit(): void {
@@ -107,6 +109,7 @@ export class PointComponent implements OnInit {
 			type: "Point",
 		});
 		this.drawService.addGlobalInteraction(this.map, this.draw);
+		this.pointCounter = this.measurementService.getLastIdMeasurement("point") ;
 		this.draw.set("drawType", DrawType.Measurement);
 		this.draw.on("drawend", async (evt) => {
 			const feature = evt.feature as Feature<Point>;
@@ -116,7 +119,7 @@ export class PointComponent implements OnInit {
 			const coordinates = this.calculateCoordinates(geometry);
 			const transformedCoordinates = this.transformCoordinates(coordinates);
 
-			const pointId = this.pointCounter++;
+			const pointId = ++this.pointCounter;
 
 			if (this.showHeight) {
 				await this.getHeight(coordinates);
@@ -139,14 +142,14 @@ export class PointComponent implements OnInit {
 						coordinate += " " + `(${this.latitudeDegrees})`;
 					} else if (index === 1) {
 						coordinate += " " + `(${this.longitudeDegrees})`;
-					} else if(index === 2) {
-						coordinate += " м"
+					} else if (index === 2) {
+						coordinate += " м";
 					}
-					return coordinate
+					return coordinate;
 				},
 			);
-			console.log(fullCoordinates)
 			this.points?.push({
+				type: 'point',
 				id: pointId,
 				feature,
 				coordinates: fullCoordinates,
@@ -155,8 +158,9 @@ export class PointComponent implements OnInit {
 			const obj = {
 				points: this.points,
 				vectorSource: this.vectorSource,
-				measureTooltips: this.measureTooltips,
+				overlay: this.measureTooltips,
 			};
+			this.measurementService.setLastId("point", pointId);
 			this.pointsChange.emit(obj);
 		});
 	}
@@ -168,7 +172,7 @@ export class PointComponent implements OnInit {
 			measureTooltips: this.measureTooltips,
 		});
 		this.points = [];
-		this.pointCounter = 1;
+		this.pointCounter = 0;
 	}
 
 	private calculateCoordinates(geometry: Point) {

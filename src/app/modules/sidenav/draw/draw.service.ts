@@ -91,42 +91,9 @@ export class DrawService {
 
 	public colorChanged = new Subject<string>();
 
-	public removeAllDrawings(map: Map) {
-		map.getLayers().forEach((layer) => {
-			if (layer instanceof VectorLayer) {
-				const source = layer.getSource();
-				if (source instanceof VectorSource) {
-					const featuresToRemove = source.getFeatures().filter((feature) => {
-						return feature.get("drawType") === DrawType.Draw;
-					});
-					featuresToRemove.forEach((feature) => source.removeFeature(feature));
-				}
-			}
-		});
-	}
+	
 
-	public removeDrawingOnMouseClick(
-		map: Map,
-		vectorLayer: VectorLayer<VectorSource>,
-	) {
-		map.on("click", (event) => {
-			const pixel = event.pixel;
-			const features = map.getFeaturesAtPixel(pixel, {
-				hitTolerance: 5,
-				layerFilter: (layer) => layer === vectorLayer,
-			}) as Array<Feature<Geometry>> | undefined;
-
-			const clickedFeature =
-				features?.find((feature) => feature instanceof Feature) || null;
-
-			if (clickedFeature) {
-				const source = vectorLayer.getSource();
-				if (source instanceof VectorSource) {
-					source.removeFeature(clickedFeature);
-				}
-			}
-		});
-	}
+	
 	private async stylePatternSimplePoly(
 		pattern: string,
 		fillColor: fillColor,

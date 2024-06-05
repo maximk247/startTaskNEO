@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { MapService } from "src/app/modules/map/map.service";
 import { DrawService } from "../../../draw.service";
 import { Map } from "ol";
+import { DrawType } from "../../../enum/draw.enum";
 
 @Component({
 	selector: "app-draw-delete",
@@ -33,13 +34,13 @@ export class DrawDeleteComponent implements OnInit {
 		const vectorLayer = this.drawService.getVectorLayer();
 		const source = this.drawService.getVectorSource();
 		if (vectorLayer && source) {
-			this.drawService.removeDrawingOnMouseClick(this.map, vectorLayer);
+			this.mapService.removeFeatureOnMouseClick(this.map, vectorLayer);
 		}
 		this.interactionDeleted.emit();
 	}
 
 	public deleteAll() {
-		this.drawService.removeAllDrawings(this.map);
+		this.mapService.removeAllFeatures(DrawType.Draw)
 		this.interactionDeleted.emit();
 	}
 }

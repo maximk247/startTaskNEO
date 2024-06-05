@@ -28,7 +28,10 @@ export class LineComponent implements OnInit {
 	public lastLineLength: number;
 	public selectedUnit = "meters";
 
-	public constructor(private drawService: DrawService, private measurementService: MeasurementService) {}
+	public constructor(
+		private drawService: DrawService,
+		private measurementService: MeasurementService,
+	) {}
 
 	public ngOnInit(): void {
 		const interactions = this.map.getInteractions().getArray();
@@ -50,9 +53,8 @@ export class LineComponent implements OnInit {
 			source: this.vectorSource,
 			type: "LineString",
 		});
-
+		this.lineCounter = this.measurementService.getLastIdMeasurement("line");
 		this.drawService.addGlobalInteraction(this.map, this.draw);
-	
 
 		let lastPointCount = 0;
 		this.draw.set("drawType", DrawType.Measurement);
@@ -83,12 +85,22 @@ export class LineComponent implements OnInit {
 			feature.set("drawType", "measurement");
 			const geometry = evt.feature.getGeometry() as LineString;
 			const length = this.calculateLength(geometry);
-			const lineId = this.lineCounter++;
-			const formattedLength = this.measurementService.formatMeasurement(length, this.selectedUnit);
-			const newLine: MeasurementLine = { id: lineId, feature, length: formattedLength };
+
+			const lineId = ++this.lineCounter;
+			const formattedLength = this.measurementService.formatMeasurement(
+				length,
+				this.selectedUnit,
+			);
+			const newLine: MeasurementLine = {
+				type: "line",
+				id: lineId,
+				feature,
+				length: formattedLength,
+			};
 			this.lines.push(newLine);
 			this.lastLineLength = length;
-			const obj = {lines: this.lines, vectorSource: this.vectorSource}
+			const obj = { lines: this.lines, vectorSource: this.vectorSource };
+			this.measurementService.setLastId("line", lineId);
 			this.linesChange.emit(obj);
 		});
 	}
@@ -98,10 +110,10 @@ export class LineComponent implements OnInit {
 			lines: null,
 			vectorSource: this.vectorSource,
 		});
-		this.lines = []
-		this.lineCounter = 1;
-		this.currentLength = 0
-		this.lastLineLength = 0
+		this.lines = [];
+		this.lineCounter = 0;
+		this.currentLength = 0;
+		this.lastLineLength = 0;
 	}
 
 	private calculateLength(geometry: LineString) {
@@ -124,7 +136,7 @@ export class LineComponent implements OnInit {
 		}
 	}
 
-	public formatLength(length: number){
+	public formatLength(length: number) {
 		if (!length) {
 			return 0;
 		}

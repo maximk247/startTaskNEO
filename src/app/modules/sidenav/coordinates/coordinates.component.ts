@@ -131,16 +131,6 @@ export class CoordinatesComponent implements OnInit {
 	}
 
 	public removeAllCoordinates() {
-		this.map.getLayers().forEach((layer) => {
-			if (layer instanceof VectorLayer) {
-				const source = layer.getSource();
-				if (source instanceof VectorSource) {
-					const featuresToRemove = source.getFeatures().filter((feature) => {
-						return feature.get("drawType") === DrawType.Coordinates;
-					});
-					featuresToRemove.forEach((feature) => source.removeFeature(feature));
-				}
-			}
-		});
+		this.mapService.removeAllFeatures(DrawType.Coordinates)
 	}
 }

@@ -1,5 +1,5 @@
 <div>
-	<select [(ngModel)]="mode" (change)="onModeChange($event)">
+	<select [(ngModel)]="mode">
 		<option value="point">{{ "pointCoordinates" | transloco }}</option>
 		<option value="line">{{ "measurementLine" | transloco }}</option>
 		<option value="polygon">{{ "measurementPolygon" | transloco }}</option>
@@ -7,53 +7,60 @@
 	</select>
 </div>
 
-<ng-container [ngSwitch]="mode" changeMode="onModeChange()">
-	<ng-container *ngSwitchCase="'point'">
-		<app-measurement-point
-			[map]="map"
-			[vectorSource]="vectorSource"
-			(pointsChange)="onPointsChange($event)"
-		></app-measurement-point>
-	</ng-container>
-	<ng-container *ngSwitchCase="'line'">
-		<app-measurement-line
-			[map]="map"
-			[vectorSource]="vectorSource"
-			(linesChange)="onLinesChange($event)"
-		></app-measurement-line>
-	</ng-container>
-	<ng-container *ngSwitchCase="'polygon'">
-		<app-measurement-polygon
-			[map]="map"
-			[vectorSource]="vectorSource"
-			(polygonsChange)="onPolygonsChange($event)"
-		></app-measurement-polygon>
-	</ng-container>
-	<ng-container *ngSwitchCase="'circle'">
-		<app-measurement-circle
-			[map]="map"
-			[vectorSource]="vectorSource"
-			(circlesChange)="onCirclesChange($event)"
-		></app-measurement-circle>
-	</ng-container>
+<ng-container [ngSwitch]="mode">
+	<app-measurement-point
+		*ngSwitchCase="'point'"
+		[map]="map"
+		[vectorSource]="vectorSource"
+		(pointsChange)="onPointsChange($event)"
+	></app-measurement-point>
+	<app-measurement-line
+		*ngSwitchCase="'line'"
+		[map]="map"
+		[vectorSource]="vectorSource"
+		(linesChange)="onLinesChange($event)"
+	></app-measurement-line>
+	<app-measurement-polygon
+		*ngSwitchCase="'polygon'"
+		[map]="map"
+		[vectorSource]="vectorSource"
+		(polygonsChange)="onPolygonsChange($event)"
+	></app-measurement-polygon>
+	<app-measurement-circle
+		*ngSwitchCase="'circle'"
+		[map]="map"
+		[vectorSource]="vectorSource"
+		(circlesChange)="onCirclesChange($event)"
+	></app-measurement-circle>
 </ng-container>
+
 <div class="measurement-result">
 	<div *ngFor="let measurement of allMeasurements">
-		<ng-container *ngIf="measurement.coordinates">
-			{{ measurement.id }} X: {{ measurement.coordinates[0] }}, Y:
-			{{ measurement.coordinates[1] }}
-			<span *ngIf="measurement.coordinates[2]">
-				Z: {{ measurement.coordinates[2] }}</span
+		<ng-container *ngIf="isPoint(measurement)">
+			<div>{{ "point" | transloco }} {{ measurement.id }}</div>
+			X: {{ measurement.coordinates[0] }}, Y: {{ measurement.coordinates[1] }}
+			<span *ngIf="measurement.coordinates[2]"
+				>Z: {{ measurement.coordinates[2] }}</span
 			>
 		</ng-container>
-		{{ measurement.area }}
-		{{ measurement.perimeter }}
-		{{ measurement.length }}
-		{{ measurement.radius }}
+		<ng-container *ngIf="isLine(measurement)">
+			<div>{{ "line" | transloco }} {{ measurement.id }}</div>
+			{{ measurement.length }}
+		</ng-container>
+		<ng-container *ngIf="isPolygon(measurement)">
+			<div>{{ "polygon" | transloco }} {{ measurement.id }}</div>
+			{{ measurement.area }} {{ measurement.perimeter }}
+		</ng-container>
+		<ng-container *ngIf="isCircle(measurement)">
+			<div>{{ "circle" | transloco }} {{ measurement.id }}</div>
+			{{ measurement.radius }}
+		</ng-container>
 		<button type="button" (click)="removeMeasurement(measurement)">
 			{{ "delete" | transloco }}
 		</button>
 	</div>
 </div>
 
-<button type="button" (click)="removeAllMeasurement()">Очистить</button>
+<button type="button" (click)="removeAllMeasurement()">
+	{{ "clear" | transloco }}
+</button>
