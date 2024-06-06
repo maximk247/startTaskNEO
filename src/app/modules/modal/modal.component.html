@@ -1,0 +1,38 @@
+<div class="box-boundary" *ngIf="isVisible">
+	<div
+		class="modal-container"
+		cdkDragBoundary=".box-boundary"
+		cdkDrag
+		[ngClass]="{'turn': turn}"
+	>
+		<header class="modal-container__header" cdkDragHandle>
+			<div class="header__title" [ngSwitch]="mode">
+				<span *ngSwitchCase="'menu'">{{ "menu" | transloco }}</span>
+				<span *ngSwitchCase="'measurement'">{{
+					"measurement" | transloco
+				}}</span>
+				<span *ngSwitchCase="'coordinates'">{{
+					"coordinates" | transloco
+				}}</span>
+				<span *ngSwitchCase="'draw'">{{ "draw" | transloco }}</span>
+			</div>
+			<div class="header__buttons" *ngIf="mode !== 'menu'; else profileIcon">
+				<button type="button" (click)="turn = !turn">
+					<div [inlineSVG]="'turn.svg'"></div>
+				</button>
+				<button type="button" (click)="isVisible = false">
+					<div [inlineSVG]="'cancel.svg'"></div>
+				</button>
+			</div>
+			<ng-template #profileIcon>
+				<div [inlineSVG]="'profile.svg'"></div>
+			</ng-template>
+		</header>
+		<div class="modal-container__content" [ngSwitch]="mode">
+			<app-draw *ngSwitchCase="'draw'"></app-draw>
+			<app-menu *ngSwitchCase="'menu'" class="menu"></app-menu>
+			<app-measurement *ngSwitchCase="'measurement'"></app-measurement>
+			<app-coordinates *ngSwitchCase="'coordinates'"></app-coordinates>
+		</div>
+	</div>
+</div>

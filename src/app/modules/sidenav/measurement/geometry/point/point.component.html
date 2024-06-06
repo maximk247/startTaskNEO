@@ -1,0 +1,33 @@
+<select (change)="onChange($event)">
+	<option
+		*ngFor="let spatialReference of spatialReferences"
+		[value]="spatialReference.id"
+	>
+		{{ spatialReference.name }}
+	</option>
+</select>
+
+<div *ngIf="points[points.length - 1]">
+	<p>
+		<strong>{{ "latitude" | transloco }}(Y):</strong>
+		<span>{{ points[points.length - 1].coordinates[1] }} </span>
+	</p>
+	<p>
+		<strong>{{ "longitude" | transloco }}(X):</strong>
+		<span>{{ points[points.length - 1].coordinates[0] }} </span>
+	</p>
+	<p *ngIf="showHeight">
+		<strong>{{ "height" | transloco }}(Z):</strong>
+		<span>{{ points[points.length - 1].coordinates[2] }}</span>
+	</p>
+</div>
+
+<label>
+	<input type="checkbox" [(ngModel)]="showCoordinates" />
+	<span>{{ "showCoordinates" | transloco }}</span>
+</label>
+
+<label>
+	<input type="checkbox" [(ngModel)]="showHeight" />
+	<span>{{ "showHeightFromCoordinates" | transloco }}</span>
+</label>

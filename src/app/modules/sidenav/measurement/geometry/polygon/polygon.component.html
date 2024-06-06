@@ -1,0 +1,26 @@
+<div class="measurement-polygon-result">
+	<div class="measurement-polygon-result__item">
+		<strong>{{"perimeter" | transloco}}:</strong>
+		<span>{{ formatPerimeter(totalPerimeter) }}</span>
+	</div>
+	<div class="measurement-polygon-result__item">
+		<strong>{{"area" | transloco}}:</strong>
+		<span>{{ formatArea(totalArea) }}</span>
+	</div>
+
+	<div>
+		<select id="unit-select" [(ngModel)]="selectedUnit">
+			<option value="meters">{{ "meters" | transloco }}</option>
+			<option value="kilometers">{{ "kilometers" | transloco }}</option>
+		</select>
+	</div>
+
+	<div>
+		<select id="unit-select" [(ngModel)]="selectedAreaUnit">
+			<option value="squareMeters">{{ "squareMeters" | transloco }}</option>
+			<option value="squareKilometers">
+				{{ "squareKilometers" | transloco }}
+			</option>
+		</select>
+	</div>
+</div>
