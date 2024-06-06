@@ -1,11 +1,11 @@
 <p>{{ "forms" | transloco }}</p>
 <div class="choice">
 	<button
-		*ngFor="let style of pointStyles"
+		*ngFor="let shape of pointShapes"
 		type="submit"
-		(click)="setPointStyle(style)"
+		(click)="setPointShape(shape)"
 	>
-		{{ style }}
+		{{ shape }}
 	</button>
 </div>
 <p>{{ "pointSize" | transloco }}</p>

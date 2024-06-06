@@ -7,18 +7,18 @@
 	</option>
 </select>
 
-<div *ngIf="points[points.length - 1]">
+<div *ngIf="point[point.length - 1]">
 	<p>
 		<strong>{{ "latitude" | transloco }}(Y):</strong>
-		<span>{{ points[points.length - 1].coordinates[1] }} </span>
+		<span>{{ point[point.length - 1].coordinates[1] }} </span>
 	</p>
 	<p>
 		<strong>{{ "longitude" | transloco }}(X):</strong>
-		<span>{{ points[points.length - 1].coordinates[0] }} </span>
+		<span>{{ point[point.length - 1].coordinates[0] }} </span>
 	</p>
-	<p *ngIf="showHeight">
-		<strong>{{ "height" | transloco }}(Z):</strong>
-		<span>{{ points[points.length - 1].coordinates[2] }}</span>
+	<p *ngIf="showElevation">
+		<strong>{{ "elevation" | transloco }}(Z):</strong>
+		<span>{{ point[point.length - 1].coordinates[2] }}</span>
 	</p>
 </div>
 
@@ -28,6 +28,6 @@
 </label>
 
 <label>
-	<input type="checkbox" [(ngModel)]="showHeight" />
-	<span>{{ "showHeightFromCoordinates" | transloco }}</span>
+	<input type="checkbox" [(ngModel)]="showElevation" />
+	<span>{{ "showElevationFromCoordinates" | transloco }}</span>
 </label>

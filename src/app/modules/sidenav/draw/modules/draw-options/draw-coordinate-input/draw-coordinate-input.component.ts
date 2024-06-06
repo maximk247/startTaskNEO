@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from "@angular/core";
-import Map from "ol/Map";
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
 import { MapService } from "../../../../../map/map.service";
@@ -10,10 +9,9 @@ import { SpatialReference } from "src/app/modules/shared/interfaces/spatial-refe
 import * as proj4x from "proj4";
 import { register } from "ol/proj/proj4";
 import { TranslocoService } from "@ngneat/transloco";
-import { Coordinate, Coordinates } from "../interfaces/draw-options.interface";
-import { DrawOptionsTools, ProjectionType } from "../enum/draw-options.enum";
-import VectorLayer from "ol/layer/Vector";
-import VectorSource from "ol/source/Vector";
+import { CoordinateForDraw, CoordinatesForDraw } from "../interfaces/draw-options.interface";
+import { DrawTools, ProjectionType } from "../enum/draw-options.enum";
+
 
 @Component({
 	selector: "app-coordinate-input",
@@ -27,11 +25,11 @@ export class DrawCoordinateInputComponent implements OnInit {
 	private defaultDegreeProjection: SpatialReference;
 	private newProjection: SpatialReference;
 
-	public points: Array<Coordinate> = [{ x: 0, y: 0 }];
+	public points: Array<CoordinateForDraw> = [{ x: 0, y: 0 }];
 
-	public drawPoint = DrawOptionsTools.Point;
-	public drawLine = DrawOptionsTools.Line;
-	public drawPolygon = DrawOptionsTools.Polygon;
+	public drawPoint = DrawTools.Point;
+	public drawLine = DrawTools.Line;
+	public drawPolygon = DrawTools.Polygon;
 	public constructor(
 		private mapService: MapService,
 		private drawService: DrawService,
@@ -76,7 +74,7 @@ export class DrawCoordinateInputComponent implements OnInit {
 		}
 	}
 
-	private transformCoordinates(point: Coordinate) {
+	private transformCoordinates(point: CoordinateForDraw) {
 		const proj4 = (proj4x as any).default;
 		let [x, y] = [point.x, point.y];
 		if (this.newProjection.type === ProjectionType.Metric) {
@@ -91,24 +89,24 @@ export class DrawCoordinateInputComponent implements OnInit {
 	}
 
 	private async createFeature(
-		coordinates: Coordinates,
-		geometryType: DrawOptionsTools,
+		coordinates: CoordinatesForDraw,
+		geometryType: DrawTools,
 	) {
 		const style = await this.drawService.getStyle(this.tool);
 		let feature;
 
 		switch (geometryType) {
-			case DrawOptionsTools.Point:
+			case DrawTools.Point:
 				feature = new Feature({
 					geometry: new Point(coordinates[0]),
 				});
 				break;
-			case DrawOptionsTools.Line:
+			case DrawTools.Line:
 				feature = new Feature({
 					geometry: new LineString(coordinates),
 				});
 				break;
-			case DrawOptionsTools.Polygon:
+			case DrawTools.Polygon:
 				feature = new Feature({
 					geometry: new Polygon([coordinates]),
 				});
@@ -121,7 +119,7 @@ export class DrawCoordinateInputComponent implements OnInit {
 	public async addPointToMap(): Promise<void> {
 		for (const point of this.points) {
 			const coordinates = [this.transformCoordinates(point)];
-			await this.createFeature(coordinates, DrawOptionsTools.Point);
+			await this.createFeature(coordinates, DrawTools.Point);
 		}
 	}
 	public async addLineToMap(): Promise<void> {
@@ -129,7 +127,7 @@ export class DrawCoordinateInputComponent implements OnInit {
 			this.transformCoordinates(point),
 		);
 		coordinates.push(coordinates[0]);
-		await this.createFeature(coordinates, DrawOptionsTools.Line);
+		await this.createFeature(coordinates, DrawTools.Line);
 	}
 
 	public async addPolygonToMap(): Promise<void> {
@@ -138,7 +136,7 @@ export class DrawCoordinateInputComponent implements OnInit {
 				this.transformCoordinates(point),
 			);
 			coordinates.push(coordinates[0]);
-			await this.createFeature(coordinates, DrawOptionsTools.Polygon);
+			await this.createFeature(coordinates, DrawTools.Polygon);
 		} else {
 			const errorMessage = this.translocoService.translate(
 				"errorDueToNotEnoughPoints",

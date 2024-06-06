@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { DrawService } from "../../../draw.service";
-import { LINE_STYLES } from "../../../consts/draw-consts.consts";
+import { STROKE_STYLES } from "../../../consts/draw-consts.consts";
 
 @Component({
 	selector: "app-draw-free-line",
@@ -13,9 +13,9 @@ export class DrawFreeLineComponent implements OnInit {
 	@Input() public tool: string;
 	@Output() public freeLineSizeChange: EventEmitter<number> =
 		new EventEmitter<number>();
-	public lineStyles = LINE_STYLES;
+	public strokeStyles = STROKE_STYLES;
 
-	public setLineStyle(event: Event) {
+	public setStrokeStyle(event: Event) {
 		const target = event.target as HTMLSelectElement;
 		const style = target.value;
 

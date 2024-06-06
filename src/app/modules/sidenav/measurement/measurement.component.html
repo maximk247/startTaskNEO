@@ -12,25 +12,25 @@
 		*ngSwitchCase="'point'"
 		[map]="map"
 		[vectorSource]="vectorSource"
-		(pointsChange)="onPointsChange($event)"
+		(pointChange)="onPointChange($event)"
 	></app-measurement-point>
 	<app-measurement-line
 		*ngSwitchCase="'line'"
 		[map]="map"
 		[vectorSource]="vectorSource"
-		(linesChange)="onLinesChange($event)"
+		(lineChange)="onLineChange($event)"
 	></app-measurement-line>
 	<app-measurement-polygon
 		*ngSwitchCase="'polygon'"
 		[map]="map"
 		[vectorSource]="vectorSource"
-		(polygonsChange)="onPolygonsChange($event)"
+		(polygonChange)="onPolygonChange($event)"
 	></app-measurement-polygon>
 	<app-measurement-circle
 		*ngSwitchCase="'circle'"
 		[map]="map"
 		[vectorSource]="vectorSource"
-		(circlesChange)="onCirclesChange($event)"
+		(circleChange)="onCircleChange($event)"
 	></app-measurement-circle>
 </ng-container>
 

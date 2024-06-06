@@ -5,7 +5,7 @@ import { DrawService } from "./draw.service";
 import { Draw } from "ol/interaction";
 import { DrawToolKey, DrawTools } from "./interfaces/draw.interface";
 import { TOOLS } from "./consts/draw-consts.consts";
-import { DrawType } from "./enum/draw.enum";
+import { SidenavTools } from "../interfaces/sidenav.interfaces";
 
 @Component({
 	selector: "app-draw",
@@ -17,6 +17,7 @@ export class DrawComponent implements OnInit {
 	public tools = TOOLS;
 
 	private activeInteraction: Draw | null = null;
+	public signal = false;
 
 	public constructor(
 		private mapService: MapService,
@@ -27,11 +28,11 @@ export class DrawComponent implements OnInit {
 		this.map = this.mapService.getMap();
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
-			if (interaction.get("drawType") === DrawType.Measurement) {
+			if (interaction.get("sidenavTool") === SidenavTools.Measurement) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
 		});
-		this.drawService.initalizeLayer();
+		this.drawService.initializeLayer();
 		this.map.addLayer(this.drawService.getVectorLayer());
 	}
 
@@ -66,8 +67,8 @@ export class DrawComponent implements OnInit {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
 			if (
-				interaction.get("drawType") === DrawType.Draw ||
-				interaction.get("drawType") === DrawType.Measurement
+				interaction.get("sidenavTool") === SidenavTools.Draw ||
+				interaction.get("sidenavTool") === SidenavTools.Measurement
 			) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
@@ -87,8 +88,8 @@ export class DrawComponent implements OnInit {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
 			if (
-				interaction.get("drawType") === DrawType.Draw ||
-				interaction.get("drawType") === DrawType.Measurement
+				interaction.get("sidenavTool") === SidenavTools.Draw ||
+				interaction.get("sidenavTool") === SidenavTools.Measurement
 			) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
@@ -108,8 +109,8 @@ export class DrawComponent implements OnInit {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
 			if (
-				interaction.get("drawType") === DrawType.Draw ||
-				interaction.get("drawType") === DrawType.Measurement
+				interaction.get("sidenavTool") === SidenavTools.Draw ||
+				interaction.get("sidenavTool") === SidenavTools.Measurement
 			) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
@@ -129,8 +130,8 @@ export class DrawComponent implements OnInit {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
 			if (
-				interaction.get("drawType") === DrawType.Draw ||
-				interaction.get("drawType") === DrawType.Measurement
+				interaction.get("sidenavTool") === SidenavTools.Draw ||
+				interaction.get("sidenavTool") === SidenavTools.Measurement
 			) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
@@ -150,8 +151,8 @@ export class DrawComponent implements OnInit {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
 			if (
-				interaction.get("drawType") === DrawType.Draw ||
-				interaction.get("drawType") === DrawType.Measurement
+				interaction.get("sidenavTool") === SidenavTools.Draw ||
+				interaction.get("sidenavTool") === SidenavTools.Measurement
 			) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
@@ -170,7 +171,10 @@ export class DrawComponent implements OnInit {
 		this.drawService.removeGlobalInteraction(this.map, this.activeInteraction);
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
-			if (interaction.get("drawType") === DrawType.Measurement) {
+			if (
+				interaction.get("sidenavTool") === SidenavTools.Draw ||
+				interaction.get("sidenavTool") === SidenavTools.Measurement
+			) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
 		});

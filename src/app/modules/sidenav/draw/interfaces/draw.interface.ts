@@ -1,5 +1,6 @@
 import { Stroke, Fill } from "ol/style";
 import ImageStyle from "ol/style/Image";
+
 export interface DrawTools {
 	[index: string]: boolean;
 	drawPoint: boolean;
@@ -12,11 +13,18 @@ export interface DrawTools {
 
 export type DrawToolKey = keyof DrawTools;
 
-export type style = string | undefined;
-export type strokeStyle = string | null | undefined;
-export type fillStyle = CanvasPattern | null | undefined;
-export type fillColor = string | undefined;
-export type lineDash = Array<number> | undefined;
+export type DrawToolOptions =
+	| DrawPoint
+	| DrawLine
+	| DrawPolygon
+	| DrawFigure
+	| undefined;
+
+export type Style = string | undefined;
+export type StrokeStyle = string | null | undefined;
+export type FillStyle = CanvasPattern | null | undefined;
+export type FillColor = string | undefined;
+export type LineDash = Array<number> | undefined;
 
 export interface DrawOptions {
 	stroke?: Stroke;
@@ -26,47 +34,47 @@ export interface DrawOptions {
 
 export interface DrawPoint {
 	size: number;
-	style: style;
+	shape: Style;
 	color: string;
 }
 
 export interface DrawLine {
 	size: number;
-	style: style;
+	strokeStyle: StrokeStyle;
 	color: string;
-	dash: lineDash;
+	dash: LineDash;
 }
 
 export interface DrawPolygon {
 	size: number;
-	fillStyle: fillStyle;
-	strokeStyle: strokeStyle;
+	fillStyle: FillStyle;
+	strokeStyle: StrokeStyle;
 	color: string;
 	fillColor: string;
 	strokeColor: string;
 	pattern: string;
-	dash: lineDash;
+	dash: LineDash;
 }
 
 export interface DrawFigure {
 	size: number;
-	fillStyle: fillStyle;
-	strokeStyle: strokeStyle;
+	fillStyle: FillStyle;
+	strokeStyle: StrokeStyle;
 	color: string;
 	fillColor: string;
 	strokeColor: string;
 	pattern: string;
-	dash: lineDash;
+	dash: LineDash;
 }
 
-export type strokeStyles =
+export type StrokeStyles =
 	| "Solid"
 	| "Dotted"
 	| "Dashed"
 	| "DashDot"
 	| "DashDotDot";
 
-export type fillStyles =
+export type FillStyles =
 	| "Solid"
 	| "VerticalHatching"
 	| "HorizontalHatching"
@@ -75,8 +83,8 @@ export type fillStyles =
 	| "ReverseDiagonalHatching"
 	| "DiagonalCrossHatching";
 
-export type pointStyles = "Circle" | "Cross" | "Square" | "Diamond" | "Cancel";
+export type PointStyles = "Circle" | "Cross" | "Square" | "Diamond" | "Cancel";
 
-export type DrawStrokeStyles = Array<strokeStyles>;
-export type DrawFillStyles = Array<fillStyles>;
-export type DrawPointStyles = Array<pointStyles>
+export type DrawStrokeStyles = Array<StrokeStyles>;
+export type DrawFillStyles = Array<FillStyles>;
+export type DrawPointStyles = Array<PointStyles>;

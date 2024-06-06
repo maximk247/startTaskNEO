@@ -1,25 +1,29 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import VectorSource from "ol/source/Vector";
 import Map from "ol/Map";
-import { MeasurementLine } from "../../interfaces/measurement.interface";
+import {
+	MeasurementComponentBase,
+	MeasurementLine,
+	MeasurementType,
+} from "../../interfaces/measurement.interface";
 import { Feature } from "ol";
 import { LineString } from "ol/geom";
 import { Draw } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
 import { DrawService } from "../../../draw/draw.service";
 import { getLength } from "ol/sphere";
-import { DrawType } from "../../../draw/enum/draw.enum";
 import { MeasurementService } from "../../measurement.service";
+import { SidenavTools } from "../../../interfaces/sidenav.interfaces";
 
 @Component({
 	selector: "app-measurement-line",
 	templateUrl: "./line.component.html",
 	styleUrls: ["./line.component.scss"],
 })
-export class LineComponent implements OnInit {
+export class LineComponent implements OnInit, MeasurementComponentBase {
 	@Input() public map: Map;
 	@Input() public vectorSource: VectorSource;
-	@Output() public linesChange = new EventEmitter<any>();
+	@Output() public lineChange = new EventEmitter<MeasurementType>();
 
 	public lines: Array<MeasurementLine> = [];
 	public lineCounter = 1;
@@ -36,7 +40,7 @@ export class LineComponent implements OnInit {
 	public ngOnInit(): void {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
-			if (interaction.get("drawType") === DrawType.Measurement) {
+			if (interaction.get("sidenavTool") === SidenavTools.Measurement) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
 		});
@@ -57,7 +61,7 @@ export class LineComponent implements OnInit {
 		this.drawService.addGlobalInteraction(this.map, this.draw);
 
 		let lastPointCount = 0;
-		this.draw.set("drawType", DrawType.Measurement);
+		this.draw.set("sidenavTool", SidenavTools.Measurement);
 		this.draw.on("drawstart", (evt) => {
 			const geometry = evt.feature.getGeometry() as LineString;
 			lastPointCount = geometry.getCoordinates().length;
@@ -82,7 +86,7 @@ export class LineComponent implements OnInit {
 
 		this.draw.on("drawend", (evt) => {
 			const feature = evt.feature as Feature<LineString>;
-			feature.set("drawType", "measurement");
+			feature.set("sidenavTool", "measurement");
 			const geometry = evt.feature.getGeometry() as LineString;
 			const length = this.calculateLength(geometry);
 
@@ -99,17 +103,14 @@ export class LineComponent implements OnInit {
 			};
 			this.lines.push(newLine);
 			this.lastLineLength = length;
-			const obj = { lines: this.lines, vectorSource: this.vectorSource };
+			const lastLine = this.lines.slice(-1)[0];
 			this.measurementService.setLastId("line", lineId);
-			this.linesChange.emit(obj);
+			this.lineChange.emit(lastLine);
 		});
 	}
 
 	public resetLine() {
-		this.linesChange.emit({
-			lines: null,
-			vectorSource: this.vectorSource,
-		});
+		this.lineChange.emit(null);
 		this.lines = [];
 		this.lineCounter = 0;
 		this.currentLength = 0;

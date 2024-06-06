@@ -1,8 +1,9 @@
-import { Component, EventEmitter, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { MapService } from "src/app/modules/map/map.service";
 import { DrawService } from "../../../draw.service";
 import { Map } from "ol";
-import { DrawType } from "../../../enum/draw.enum";
+import { SidenavTools } from "src/app/modules/sidenav/interfaces/sidenav.interfaces";
+import { Draw } from "ol/interaction";
 
 @Component({
 	selector: "app-draw-delete",
@@ -20,27 +21,19 @@ export class DrawDeleteComponent implements OnInit {
 
 	public ngOnInit() {
 		this.map = this.mapService.getMap();
-		this.drawService.initalizeLayer();
-		this.map.addLayer(this.drawService.getVectorLayer());
 	}
 	public deleteOnMouseClick() {
-		this.drawService.removeGlobalInteraction(this.map);
-		const interactions = this.map.getInteractions().getArray();
-		interactions.forEach((interaction) => {
-			if (interaction.get("drawType") === "figure") {
-				this.drawService.removeGlobalInteraction(this.map, interaction);
-			}
-		});
 		const vectorLayer = this.drawService.getVectorLayer();
 		const source = this.drawService.getVectorSource();
+		console.log(source.getFeatures());
 		if (vectorLayer && source) {
-			this.mapService.removeFeatureOnMouseClick(this.map, vectorLayer);
+			this.mapService.removeFeatureOnMouseClick(this.map);
 		}
 		this.interactionDeleted.emit();
 	}
 
 	public deleteAll() {
-		this.mapService.removeAllFeatures(DrawType.Draw)
-		this.interactionDeleted.emit();
+		this.mapService.removeAllFeatures(SidenavTools.Draw);
+		
 	}
 }

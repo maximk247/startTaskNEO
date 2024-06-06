@@ -1,11 +1,14 @@
 import { Injectable } from "@angular/core";
-import { MeasurementMode } from "./interfaces/measurement.interface";
+import {
+	MeasurementMode,
+	MeasurementType,
+} from "./interfaces/measurement.interface";
 
 @Injectable({
 	providedIn: "root",
 })
 export class MeasurementService {
-	private measurements: Array<any> = [];
+	private measurements: Array<MeasurementType> = [];
 	private lastId: Record<MeasurementMode, number> = {
 		point: 0,
 		line: 0,
@@ -17,7 +20,7 @@ export class MeasurementService {
 		return this.measurements;
 	}
 
-	public setMeasurements(measurements: Array<any>) {
+	public setMeasurements(measurements: Array<MeasurementType>) {
 		this.measurements = measurements;
 	}
 
@@ -26,7 +29,7 @@ export class MeasurementService {
 	}
 
 	public getLastId() {
-		return this.lastId
+		return this.lastId;
 	}
 
 	public setLastId(type: MeasurementMode, id: number) {

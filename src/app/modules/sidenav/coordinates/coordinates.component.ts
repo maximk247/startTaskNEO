@@ -11,8 +11,7 @@ import { TranslocoService } from "@ngneat/transloco";
 import * as proj4x from "proj4";
 import { register } from "ol/proj/proj4";
 import { ProjectionType } from "../draw/modules/draw-options/enum/draw-options.enum";
-import { map } from "rxjs";
-import { DrawType } from "../draw/enum/draw.enum";
+import { SidenavTools } from "../interfaces/sidenav.interfaces";
 
 @Component({
 	selector: "app-coordinates",
@@ -116,7 +115,7 @@ export class CoordinatesComponent implements OnInit {
 	public addPointToMap(coordinates: Array<number>) {
 		const point = new Point(coordinates);
 		const feature = new Feature(point);
-		feature.set('drawType', 'coordinates')
+		feature.set("sidenavTool", "coordinates");
 		this.pointLayer.getSource()?.addFeature(feature);
 	}
 
@@ -131,6 +130,6 @@ export class CoordinatesComponent implements OnInit {
 	}
 
 	public removeAllCoordinates() {
-		this.mapService.removeAllFeatures(DrawType.Coordinates)
+		this.mapService.removeAllFeatures(SidenavTools.Coordinates);
 	}
 }

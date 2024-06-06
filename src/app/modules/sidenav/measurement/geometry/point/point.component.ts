@@ -10,27 +10,31 @@ import { Feature, Overlay } from "ol";
 import { Draw } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { MeasurementPoint } from "../../interfaces/measurement.interface";
+import {
+	MeasurementComponentBase,
+	MeasurementPoint,
+	MeasurementType,
+} from "../../interfaces/measurement.interface";
 import { Point } from "ol/geom";
 import { TranslocoService } from "@ngneat/transloco";
-import { DrawType } from "../../../draw/enum/draw.enum";
-import { HeightService } from "src/app/modules/shared/height.service";
-import { style } from "@angular/animations";
+import { ElevationService } from "src/app/modules/shared/elevation.service";
 import { Style } from "ol/style";
 import { Coordinate, toStringHDMS } from "ol/coordinate";
 import { MeasurementService } from "../../measurement.service";
+import { ElevationArray } from "src/app/modules/shared/interfaces/elevation.interfaces";
+import { SidenavTools } from "../../../interfaces/sidenav.interfaces";
 @Component({
 	selector: "app-measurement-point",
 	templateUrl: "./point.component.html",
 	styleUrls: ["./point.component.scss"],
 })
-export class PointComponent implements OnInit {
+export class PointComponent implements OnInit, MeasurementComponentBase {
 	@Input() public map: MapOpen;
 	@Input() public vectorSource: VectorSource;
-	@Output() public pointsChange = new EventEmitter<any>();
+	@Output() public pointChange = new EventEmitter<MeasurementType>();
 
 	public showCoordinates: boolean;
-	public showHeight: boolean;
+	public showElevation: boolean;
 
 	public spatialReferences: Array<SpatialReference> = [];
 
@@ -38,10 +42,10 @@ export class PointComponent implements OnInit {
 	private newProjection: SpatialReference;
 	private draw: Draw;
 
-	public height: any;
+	public elevation: number;
 
 	private measureTooltips: Map<number, Overlay> = new Map();
-	public points: Array<MeasurementPoint> = [];
+	public point: Array<MeasurementPoint> = [];
 	public pointCounter = 1;
 	public latitudeDegrees: string;
 	public longitudeDegrees: string;
@@ -50,14 +54,14 @@ export class PointComponent implements OnInit {
 		private spatialReferenceService: SpatialReferenceService,
 		private drawService: DrawService,
 		private translocoService: TranslocoService,
-		private heightService: HeightService,
+		private elevationService: ElevationService,
 		private measurementService: MeasurementService,
 	) {}
 
 	public ngOnInit(): void {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
-			if (interaction.get("drawType") === DrawType.Measurement) {
+			if (interaction.get("sidenavTool") === SidenavTools.Measurement) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
 		});
@@ -88,11 +92,11 @@ export class PointComponent implements OnInit {
 		);
 	}
 
-	private getHeight(coordinates: any): Promise<void> {
+	private getElevation(coordinates: Coordinate): Promise<void> {
 		return new Promise<void>((resolve, reject) => {
-			this.heightService.postCoordinates(coordinates).subscribe(
-				(data: any) => {
-					this.height = data.results[0].elevation;
+			this.elevationService.getCoordinates(coordinates).subscribe(
+				(data: ElevationArray) => {
+					this.elevation = data.results[0].elevation;
 					resolve();
 				},
 				(error) => {
@@ -109,11 +113,11 @@ export class PointComponent implements OnInit {
 			type: "Point",
 		});
 		this.drawService.addGlobalInteraction(this.map, this.draw);
-		this.pointCounter = this.measurementService.getLastIdMeasurement("point") ;
-		this.draw.set("drawType", DrawType.Measurement);
+		this.pointCounter = this.measurementService.getLastIdMeasurement("point");
+		this.draw.set("sidenavTool", SidenavTools.Measurement);
 		this.draw.on("drawend", async (evt) => {
 			const feature = evt.feature as Feature<Point>;
-			feature.set("drawType", "measurement");
+			feature.set("sidenavTool", "measurement");
 			const geometry = evt.feature.getGeometry() as Point;
 
 			const coordinates = this.calculateCoordinates(geometry);
@@ -121,9 +125,9 @@ export class PointComponent implements OnInit {
 
 			const pointId = ++this.pointCounter;
 
-			if (this.showHeight) {
-				await this.getHeight(coordinates);
-				transformedCoordinates.push(this.height);
+			if (this.showElevation) {
+				await this.getElevation(coordinates);
+				transformedCoordinates.push(this.elevation);
 			}
 
 			if (this.showCoordinates) {
@@ -148,30 +152,23 @@ export class PointComponent implements OnInit {
 					return coordinate;
 				},
 			);
-			this.points?.push({
-				type: 'point',
+			this.point?.push({
+				type: "point",
 				id: pointId,
 				feature,
 				coordinates: fullCoordinates,
+				measureTooltips: this.measureTooltips,
 			});
 
-			const obj = {
-				points: this.points,
-				vectorSource: this.vectorSource,
-				overlay: this.measureTooltips,
-			};
+			const lastPoint = this.point.slice(-1)[0];
 			this.measurementService.setLastId("point", pointId);
-			this.pointsChange.emit(obj);
+			this.pointChange.emit(lastPoint);
 		});
 	}
 
 	public resetPoint() {
-		this.pointsChange.emit({
-			points: null,
-			vectorSource: this.vectorSource,
-			measureTooltips: this.measureTooltips,
-		});
-		this.points = [];
+		this.pointChange.emit(null);
+		this.point = [];
 		this.pointCounter = 0;
 	}
 
@@ -191,7 +188,7 @@ export class PointComponent implements OnInit {
 		return coordinates;
 	}
 
-	private transformCoordinates(coordinates: Array<number>) {
+	private transformCoordinates(coordinates: Coordinate) {
 		const proj4 = (proj4x as any).default;
 		const transformedCoordinates = proj4(
 			this.currentProjection.name,
@@ -230,7 +227,7 @@ export class PointComponent implements OnInit {
 		}
 	}
 
-	public createPointTooltip(id: number, coordinates: Array<number>) {
+	public createPointTooltip(id: number, coordinates: Coordinate) {
 		const tooltipElement = document.createElement("div");
 
 		const [x, y, z = 0] = coordinates;
@@ -238,7 +235,7 @@ export class PointComponent implements OnInit {
 		tooltipElement.innerHTML = `
         <div class="centered-text">Широта (Y): ${y} (${this.latitudeDegrees})</div>
         <div class="centered-text">Долгота(X): ${x} (${this.longitudeDegrees})</div>
-        ${(z || z === 0) && this.showHeight ? `<div class="centered-text">Высота(Z): ${z} м</div>` : ""}
+        ${(z || z === 0) && this.showElevation ? `<div class="centered-text">Высота(Z): ${z} м</div>` : ""}
     `;
 
 		const measureTooltip = new Overlay({
@@ -261,10 +258,10 @@ export class PointComponent implements OnInit {
 		this.measureTooltips.set(id, measureTooltip);
 	}
 	public removePoint(id: number) {
-		const point = this.points?.find((point) => point.id === id);
+		const point = this.point?.find((point) => point.id === id);
 		if (point) {
 			this.vectorSource.removeFeature(point.feature);
-			this.points = this.points.filter((p) => p.id !== id);
+			this.point = this.point.filter((p) => p.id !== id);
 		}
 		const tooltip = this.measureTooltips.get(id);
 		if (tooltip) {

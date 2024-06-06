@@ -1,5 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { MeasurementCircle } from "../../interfaces/measurement.interface";
+import {
+	MeasurementCircle,
+	MeasurementComponentBase,
+	MeasurementType,
+} from "../../interfaces/measurement.interface";
 import VectorSource from "ol/source/Vector";
 import Map from "ol/Map";
 import { Draw } from "ol/interaction";
@@ -8,18 +12,18 @@ import { Feature } from "ol";
 import { Circle, LineString } from "ol/geom";
 import { getLength } from "ol/sphere";
 import VectorLayer from "ol/layer/Vector";
-import { DrawType } from "../../../draw/enum/draw.enum";
 import { MeasurementService } from "../../measurement.service";
+import { SidenavTools } from "../../../interfaces/sidenav.interfaces";
 
 @Component({
 	selector: "app-measurement-circle",
 	templateUrl: "./circle.component.html",
 	styleUrls: ["./circle.component.scss"],
 })
-export class CircleComponent implements OnInit {
+export class CircleComponent implements OnInit, MeasurementComponentBase {
 	@Input() public map: Map;
 	@Input() public vectorSource: VectorSource;
-	@Output() public circlesChange = new EventEmitter<any>();
+	@Output() public circleChange = new EventEmitter<MeasurementType>();
 
 	public circles: Array<MeasurementCircle> = [];
 	public circleCounter = 1;
@@ -37,7 +41,7 @@ export class CircleComponent implements OnInit {
 	public ngOnInit(): void {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
-			if (interaction.get("drawType") === DrawType.Measurement) {
+			if (interaction.get("sidenavTool") === SidenavTools.Measurement) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
 		});
@@ -53,7 +57,7 @@ export class CircleComponent implements OnInit {
 		this.circleCounter = this.measurementService.getLastIdMeasurement("circle");
 		this.drawService.addGlobalInteraction(this.map, this.draw);
 
-		this.draw.set("drawType", DrawType.Measurement);
+		this.draw.set("sidenavTool", SidenavTools.Measurement);
 		this.draw.on("drawstart", (evt) => {
 			const geometry = evt.feature.getGeometry() as Circle;
 
@@ -71,7 +75,7 @@ export class CircleComponent implements OnInit {
 
 		this.draw.on("drawend", (evt) => {
 			const feature = evt.feature as Feature<Circle>;
-			feature.set("drawType", "measurement");
+			feature.set("sidenavTool", "measurement");
 			const formattedRadius = this.measurementService.formatMeasurement(
 				this.totalRadius,
 				this.selectedUnit,
@@ -84,22 +88,15 @@ export class CircleComponent implements OnInit {
 				feature,
 				radius: formattedRadius,
 			});
-
-			const obj = {
-				circles: this.circles,
-				vectorSource: this.vectorSource,
-			};
+			const lastCircle = this.circles.slice(-1)[0];
 			this.measurementService.setLastId("circle", circleId);
-			this.circlesChange.emit(obj);
+			this.circleChange.emit(lastCircle);
 		});
 	}
 
 	public resetCircle() {
 		this.circleCounter = 0;
-		this.circlesChange.emit({
-			circles: null,
-			vectorSource: this.vectorSource,
-		});
+		this.circleChange.emit(null);
 		this.totalRadius = 0;
 	}
 

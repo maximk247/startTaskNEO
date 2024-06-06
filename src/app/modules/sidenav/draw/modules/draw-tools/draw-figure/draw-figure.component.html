@@ -2,8 +2,8 @@
 <app-draw-shape></app-draw-shape>
 <div>
 	<p>{{ "outline" | transloco }}</p>
-	<select (change)="setLineStyle($event)">
-		<option *ngFor="let style of lineStyles" [value]="style">
+	<select (change)="setStrokeStyle($event)">
+		<option *ngFor="let style of strokeStyles" [value]="style">
 			{{ style }}
 		</option>
 	</select>

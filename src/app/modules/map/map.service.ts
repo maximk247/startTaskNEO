@@ -12,8 +12,8 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { ZoomSlider } from "ol/control";
 import { useGeographic } from "ol/proj";
-import { DrawType } from "../sidenav/draw/enum/draw.enum";
-import { Geometry } from "ol/geom";
+import { Circle, Geometry, LineString, Point, Polygon } from "ol/geom";
+import { SidenavTools } from "../sidenav/interfaces/sidenav.interfaces";
 
 @Injectable({
 	providedIn: "root",
@@ -79,37 +79,70 @@ export class MapService {
 		return projection.getCode();
 	}
 
-	public removeAllFeatures(drawType: DrawType) {
+	public removeAllFeatures(sidenavTool: SidenavTools) {
 		this.map.getLayers().forEach((layer) => {
 			if (layer instanceof VectorLayer) {
 				const source = layer.getSource();
 				if (source instanceof VectorSource) {
 					const featuresToRemove = source.getFeatures().filter((feature) => {
-						return feature.get("drawType") === drawType;
+						return feature.get("sidenavTool") === sidenavTool;
 					});
 					featuresToRemove.forEach((feature) => source.removeFeature(feature));
 				}
 			}
 		});
 	}
-	public removeFeatureOnMouseClick(
-		map: Map,
-		vectorLayer: VectorLayer<VectorSource>,
-	) {
+	public removeFeatureOnMouseClick(map: Map) {
 		map.on("click", (event) => {
 			const pixel = event.pixel;
+			const vectorForRemoveFeatures: Array<Feature<Geometry>> = [];
+
+			const forRemoveSources: Array<VectorSource> = [];
+			this.map.getLayers().forEach((layer) => {
+				if (layer instanceof VectorLayer) {
+					const source = layer.getSource();
+					if (source instanceof VectorSource) {
+						const featuresToRemove = source.getFeatures().filter((feature) => {
+							return feature.get("sidenavTool") === SidenavTools.Draw;
+						});
+						vectorForRemoveFeatures.push(...featuresToRemove);
+					}
+
+					forRemoveSources.push(source);
+				}
+			});
+
 			const features = map.getFeaturesAtPixel(pixel, {
 				hitTolerance: 5,
-				layerFilter: (layer) => layer === vectorLayer,
+				layerFilter: (layer) =>
+					layer instanceof VectorLayer &&
+					vectorForRemoveFeatures.some((feature) => {
+						const geometry = feature.getGeometry();
+						const coordinate = map.getCoordinateFromPixel(pixel);
+						if (geometry instanceof Point) {
+							return geometry.getClosestPoint(coordinate) !== undefined;
+						} else if (geometry instanceof LineString) {
+							return geometry.intersectsCoordinate(coordinate);
+						} else if (geometry instanceof Polygon) {
+							return geometry.intersectsCoordinate(coordinate);
+						} else if (geometry instanceof Circle) {
+							return geometry.intersectsCoordinate(coordinate);
+						} else {
+							return false;
+						}
+					}),
 			}) as Array<Feature<Geometry>> | undefined;
-
+			
 			const clickedFeature =
 				features?.find((feature) => feature instanceof Feature) || null;
 
 			if (clickedFeature) {
-				const source = vectorLayer.getSource();
+				const source = this.vectorLayer?.getSource();
+
 				if (source instanceof VectorSource) {
-					source.removeFeature(clickedFeature);
+					forRemoveSources.forEach((source) => {
+						source.removeFeature(clickedFeature);
+					});
 				}
 			}
 		});

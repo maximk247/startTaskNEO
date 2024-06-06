@@ -4,7 +4,7 @@
 	"degrees": "Градусы",
 	"minutes": "Минуты",
 	"seconds": "Секунды",
-	"height": "Высота",
+	"elevation": "Высота",
 	"goToCoordinates": "Перейти к координатам",
 	"showPoint": "Нанести точку на карту",
 	"addPoint": "Добавить точку на карту",
@@ -49,5 +49,5 @@
 	"perimeter": "Периметр",
 	"area": "Площадь",
 	"showCoordinates": "Показать координаты на карте",
-	"showHeightFromCoordinates": "Показать высоту по координатам"
+	"showElevationFromCoordinates": "Показать высоту по координатам"
 }

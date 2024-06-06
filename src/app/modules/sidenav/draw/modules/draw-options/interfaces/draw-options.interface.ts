@@ -1,6 +1,6 @@
-export interface Coordinate {
-    x: number;
-    y: number;
+export interface CoordinateForDraw {
+	x: number;
+	y: number;
 }
 
-export type Coordinates = Array<Array<number>>
+export type CoordinatesForDraw = Array<Array<number>>;

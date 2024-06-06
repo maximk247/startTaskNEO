@@ -13,7 +13,7 @@ import { TranslocoModule, provideTransloco } from "@ngneat/transloco";
 import { TranslocoHttpLoader } from "./modules/shared/transloco.service";
 import { MapModule } from "./modules/map/map.module";
 import { ModalModule } from "./modules/modal/modal.module";
-import { DialogModule } from "./modules/dialog/dialog.module";
+
 import { SidenavModule } from "./modules/sidenav/sidenav.module";
 
 function initializeKeycloak(keycloak: KeycloakService) {
@@ -39,7 +39,6 @@ function initializeKeycloak(keycloak: KeycloakService) {
 		MapModule,
 		SidenavModule,
 		ModalModule,
-		DialogModule,
 		AppRoutingModule,
 		BrowserAnimationsModule,
 		MatSidenavModule,

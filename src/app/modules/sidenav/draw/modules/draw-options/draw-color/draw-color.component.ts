@@ -1,6 +1,6 @@
 import { Component, Input } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
-import { DialogComponent } from "src/app/modules/dialog/dialog.component";
+import { DialogComponent } from "src/app/modules/sidenav/draw/modules/dialog/dialog.component";
 
 @Component({
 	selector: "app-draw-color",

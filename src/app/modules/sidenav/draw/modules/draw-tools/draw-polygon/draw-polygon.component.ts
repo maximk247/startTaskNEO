@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { DrawService } from "../../../draw.service";
-import { FILL_STYLES, LINE_STYLES } from "../../../consts/draw-consts.consts";
+import { FILL_STYLES, STROKE_STYLES } from "../../../consts/draw-consts.consts";
 
 @Component({
 	selector: "app-draw-polygon",
@@ -15,7 +15,7 @@ export class DrawPolygonComponent implements OnInit {
 	@Output() public polygonSizeChange: EventEmitter<number> =
 		new EventEmitter<number>();
 	public type = "polygon";
-	public lineStyles = LINE_STYLES;
+	public strokeStyles = STROKE_STYLES;
 
 	public polygonFillStyles = FILL_STYLES;
 
@@ -25,7 +25,7 @@ export class DrawPolygonComponent implements OnInit {
 		await this.drawService.setFill(this.tool, style);
 	}
 
-	public async setLineStyle(event: Event) {
+	public async setStrokeStyle(event: Event) {
 		const target = event.target as HTMLSelectElement;
 		const style = target.value;
 		this.drawService.setStrokeStyle(this.tool, style);

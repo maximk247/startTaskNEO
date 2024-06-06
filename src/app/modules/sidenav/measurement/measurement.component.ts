@@ -10,7 +10,6 @@ import {
 	MeasurementCircle,
 	MeasurementType,
 	MeasurementMode,
-	PointsChangeEvent,
 } from "./interfaces/measurement.interface";
 import { MapService } from "../../map/map.service";
 import { DrawService } from "../draw/draw.service";
@@ -19,7 +18,7 @@ import { LineComponent } from "./geometry/line/line.component";
 import { CircleComponent } from "./geometry/circle/circle.component";
 import { PolygonComponent } from "./geometry/polygon/polygon.component";
 import { MeasurementService } from "./measurement.service";
-import { DrawType } from "../draw/enum/draw.enum";
+import { SidenavTools } from "../interfaces/sidenav.interfaces";
 
 @Component({
 	selector: "app-measurement",
@@ -67,47 +66,35 @@ export class MeasurementComponent implements OnInit {
 		}
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
-			if (interaction.get("drawType")) {
+			if (interaction.get("sidenavTool")) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
 		});
 	}
 
-	public onPointsChange(obj: PointsChangeEvent) {
-		if (obj.points) {
-			const lastPoint = obj.points.slice(-1)[0];
-			this.allMeasurements.push({
-				...lastPoint,
-				type: "point",
-				measureTooltips: obj.overlay,
-			});
-			this.vectorSource = obj.vectorSource;
+	public onPointChange(point: MeasurementType) {
+		if (point) {
+			this.allMeasurements.push(point);
 			this.saveMeasurements();
 		}
 	}
-	public onLinesChange(obj: any) {
-		if (obj.lines) {
-			const lastLine = obj.lines.slice(-1)[0];
-			this.allMeasurements.push({ ...lastLine, type: "line" });
-			this.vectorSource = obj.vectorSource;
+	public onLineChange(line: MeasurementType) {
+		if (line) {
+			this.allMeasurements.push(line);
 			this.saveMeasurements();
 		}
 	}
 
-	public onPolygonsChange(obj: any) {
-		if (obj.polygons) {
-			const lastPolygon = obj.polygons.slice(-1)[0];
-			this.allMeasurements.push({ ...lastPolygon, type: "polygon" });
-			this.vectorSource = obj.vectorSource;
+	public onPolygonChange(polygon: MeasurementType) {
+		if (polygon) {
+			this.allMeasurements.push(polygon);
 			this.saveMeasurements();
 		}
 	}
 
-	public onCirclesChange(obj: any) {
-		if (obj.circles) {
-			const lastCircle = obj.circles.slice(-1)[0];
-			this.allMeasurements.push({ ...lastCircle, type: "circle" });
-			this.vectorSource = obj.vectorSource;
+	public onCircleChange(circle: MeasurementType) {
+		if (circle) {
+			this.allMeasurements.push(circle);
 			this.saveMeasurements();
 		}
 	}
@@ -115,16 +102,16 @@ export class MeasurementComponent implements OnInit {
 	public removeMeasurement(measurement: MeasurementType) {
 		this.allMeasurements = this.allMeasurements.filter((m) => {
 			const shouldKeep = !(
-				m.id === measurement.id && m.type === measurement.type
+				m?.id === measurement?.id && m?.type === measurement?.type
 			);
-			if (!shouldKeep && "measureTooltips" in m) {
+			if (!shouldKeep && "measureTooltips" in m!) {
 				const tooltip = m.measureTooltips?.get(m.id);
 				if (tooltip) {
 					this.map.removeOverlay(tooltip);
 					m.measureTooltips?.delete(m.id);
 				}
 			}
-			this.vectorSource.removeFeature(measurement.feature);
+			this.vectorSource.removeFeature(measurement!.feature);
 			return shouldKeep;
 		});
 
@@ -148,7 +135,7 @@ export class MeasurementComponent implements OnInit {
 		resetMethod: string,
 	) {
 		const measurementsLeft = this.allMeasurements.filter(
-			(m) => m.type === type,
+			(m) => m?.type === type,
 		);
 
 		if (measurementsLeft.length === 0 && component) {
@@ -160,7 +147,7 @@ export class MeasurementComponent implements OnInit {
 		this.allMeasurements.forEach((measurement) => {
 			this.removeMeasurement(measurement);
 		});
-		this.mapService.removeAllFeatures(DrawType.Measurement);
+		this.mapService.removeAllFeatures(SidenavTools.Measurement);
 		this.measurementService.clearMeasurements();
 	}
 	private saveMeasurements() {
@@ -169,10 +156,10 @@ export class MeasurementComponent implements OnInit {
 
 	private loadMeasurements() {
 		this.allMeasurements.forEach((measurement) => {
-			if (measurement.feature) {
+			if (measurement?.feature) {
 				this.vectorSource.addFeature(measurement.feature);
 			}
-			if (measurement.measureTooltips) {
+			if (measurement?.measureTooltips) {
 				measurement.measureTooltips.forEach((overlay: Overlay) => {
 					this.map.addOverlay(overlay);
 				});
@@ -183,22 +170,22 @@ export class MeasurementComponent implements OnInit {
 	public isPoint(
 		measurement: MeasurementType,
 	): measurement is MeasurementPoint {
-		return measurement.type === "point";
+		return measurement?.type === "point";
 	}
 
 	public isLine(measurement: MeasurementType): measurement is MeasurementLine {
-		return measurement.type === "line";
+		return measurement?.type === "line";
 	}
 
 	public isPolygon(
 		measurement: MeasurementType,
 	): measurement is MeasurementPolygon {
-		return measurement.type === "polygon";
+		return measurement?.type === "polygon";
 	}
 
 	public isCircle(
 		measurement: MeasurementType,
 	): measurement is MeasurementCircle {
-		return measurement.type === "circle";
+		return measurement?.type === "circle";
 	}
 }
