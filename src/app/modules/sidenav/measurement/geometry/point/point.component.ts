@@ -23,6 +23,7 @@ import { Coordinate, toStringHDMS } from "ol/coordinate";
 import { MeasurementService } from "../../measurement.service";
 import { ElevationArray } from "src/app/modules/shared/interfaces/elevation.interfaces";
 import { SidenavTools } from "../../../interfaces/sidenav.interfaces";
+import { MeasurementMode } from "../../enums/measurement.enums";
 @Component({
 	selector: "app-measurement-point",
 	templateUrl: "./point.component.html",
@@ -33,8 +34,8 @@ export class PointComponent implements OnInit, MeasurementComponentBase {
 	@Input() public vectorSource: VectorSource;
 	@Output() public pointChange = new EventEmitter<MeasurementType>();
 
-	public showCoordinates: boolean;
-	public showElevation: boolean;
+	public showCoordinates = true;
+	public showElevation = true;
 
 	public spatialReferences: Array<SpatialReference> = [];
 
@@ -92,6 +93,10 @@ export class PointComponent implements OnInit, MeasurementComponentBase {
 		);
 	}
 
+	public onSelectedReferenceChange(selectedReference: SpatialReference): void {
+		this.newProjection = selectedReference;
+	}
+
 	private getElevation(coordinates: Coordinate): Promise<void> {
 		return new Promise<void>((resolve, reject) => {
 			this.elevationService.getCoordinates(coordinates).subscribe(
@@ -113,7 +118,9 @@ export class PointComponent implements OnInit, MeasurementComponentBase {
 			type: "Point",
 		});
 		this.drawService.addGlobalInteraction(this.map, this.draw);
-		this.pointCounter = this.measurementService.getLastIdMeasurement("point");
+		this.pointCounter = this.measurementService.getLastIdMeasurement(
+			MeasurementMode.Point,
+		);
 		this.draw.set("sidenavTool", SidenavTools.Measurement);
 		this.draw.on("drawend", async (evt) => {
 			const feature = evt.feature as Feature<Point>;
@@ -153,7 +160,7 @@ export class PointComponent implements OnInit, MeasurementComponentBase {
 				},
 			);
 			this.point?.push({
-				type: "point",
+				type: MeasurementMode.Point,
 				id: pointId,
 				feature,
 				coordinates: fullCoordinates,
@@ -161,7 +168,7 @@ export class PointComponent implements OnInit, MeasurementComponentBase {
 			});
 
 			const lastPoint = this.point.slice(-1)[0];
-			this.measurementService.setLastId("point", pointId);
+			this.measurementService.setLastId(MeasurementMode.Point, pointId);
 			this.pointChange.emit(lastPoint);
 		});
 	}

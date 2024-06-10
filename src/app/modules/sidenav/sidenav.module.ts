@@ -18,6 +18,7 @@ import { CoordinatesModule } from "./coordinates/coordinates.module";
 		MenuModule,
 		DrawModule,
 		CoordinatesModule,
+		
 	],
 	exports: [
 		MenuComponent,

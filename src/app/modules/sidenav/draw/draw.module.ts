@@ -14,7 +14,7 @@ import { DialogModule } from "./modules/dialog/dialog.module";
 		DrawToolsModule,
 		DrawOptionsModule,
 		DrawEditingModule,
-		DialogModule
+		DialogModule,
 	],
 	exports: [DrawComponent],
 })

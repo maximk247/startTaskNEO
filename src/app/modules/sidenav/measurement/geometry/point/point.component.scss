@@ -1,3 +1,56 @@
 ::ng-deep .centered-text {
 	text-align: center;
 }
+
+.container {
+	display: flex;
+	flex-direction: column;
+
+	&__coordinates {
+		display: flex;
+		flex-direction: column;
+		font-size: 12px;
+
+		&_item {
+			display: flex;
+			justify-content: space-between;
+			margin: 0;
+			margin-bottom: 5px;
+		}
+	}
+
+	&-text {
+		margin-bottom: 0.8333rem;
+		font-size: 10px;
+		text-transform: uppercase;
+	}
+
+	&__options {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		padding: 0;
+		font-size: 12px;
+		line-height: 2rem;
+		cursor: pointer;
+
+		&_item {
+			display: flex;
+			gap: 5px;
+			align-items: center;
+			justify-content: center;
+		}
+
+		&_item > input {
+			margin: 0;
+		}
+	}
+
+	&__header {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		width: 100%;
+	}
+}
+

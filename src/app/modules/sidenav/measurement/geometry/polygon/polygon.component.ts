@@ -13,6 +13,7 @@ import { Polygon } from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
 import { MeasurementService } from "../../measurement.service";
 import { SidenavTools } from "../../../interfaces/sidenav.interfaces";
+import { MeasurementMode } from "../../enums/measurement.enums";
 
 @Component({
 	selector: "app-measurement-polygon",
@@ -61,8 +62,9 @@ export class PolygonComponent implements OnInit, MeasurementComponentBase {
 		});
 
 		this.drawService.addGlobalInteraction(this.map, this.draw);
-		this.polygonCounter =
-			this.measurementService.getLastIdMeasurement("polygon");
+		this.polygonCounter = this.measurementService.getLastIdMeasurement(
+			MeasurementMode.Polygon,
+		);
 
 		this.draw.set("sidenavTool", SidenavTools.Measurement);
 		this.draw.on("drawstart", (evt) => {
@@ -87,20 +89,21 @@ export class PolygonComponent implements OnInit, MeasurementComponentBase {
 
 			const polygonId = ++this.polygonCounter;
 			this.polygons.push({
-				type: "polygon",
+				type: MeasurementMode.Polygon,
 				id: polygonId,
 				feature,
 				area: formattedArea,
 				perimeter: formattedPerimeter,
 			});
 			const lastPolygon = this.polygons.slice(-1)[0];
-			this.measurementService.setLastId("polygon", polygonId);
+			this.measurementService.setLastId(MeasurementMode.Polygon, polygonId);
 			this.polygonChange.emit(lastPolygon);
 		});
 	}
 
 	public resetPolygon() {
 		this.polygonCounter = 0;
+		this.polygons = [];
 		this.polygonChange.emit(null);
 		this.totalArea = 0;
 		this.totalPerimeter = 0;
@@ -120,18 +123,6 @@ export class PolygonComponent implements OnInit, MeasurementComponentBase {
 			.transform("EPSG:4326", "EPSG:3857");
 		const perimeter = getLength(transformedGeometry);
 		return perimeter;
-	}
-
-	public removePolygon(id: number) {
-		const polygon = this.polygons.find((polygon) => polygon.id === id);
-		if (polygon) {
-			this.vectorSource.removeFeature(polygon.feature);
-			this.polygons = this.polygons.filter((p) => p.id !== id);
-		}
-
-		if (this.polygons.length === 0) {
-			this.polygonCounter = 1;
-		}
 	}
 
 	public formatPerimeter(perimeter: number) {

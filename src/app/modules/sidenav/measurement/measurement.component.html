@@ -1,5 +1,5 @@
-<div>
-	<select [(ngModel)]="mode">
+<div class="header">
+	<select [(ngModel)]="mode" class="header__select">
 		<option value="point">{{ "pointCoordinates" | transloco }}</option>
 		<option value="line">{{ "measurementLine" | transloco }}</option>
 		<option value="polygon">{{ "measurementPolygon" | transloco }}</option>
@@ -35,30 +35,69 @@
 </ng-container>
 
 <div class="measurement-result">
-	<div *ngFor="let measurement of allMeasurements">
-		<ng-container *ngIf="isPoint(measurement)">
-			<div>{{ "point" | transloco }} {{ measurement.id }}</div>
-			X: {{ measurement.coordinates[0] }}, Y: {{ measurement.coordinates[1] }}
-			<span *ngIf="measurement.coordinates[2]"
-				>Z: {{ measurement.coordinates[2] }}</span
-			>
-		</ng-container>
-		<ng-container *ngIf="isLine(measurement)">
-			<div>{{ "line" | transloco }} {{ measurement.id }}</div>
-			{{ measurement.length }}
-		</ng-container>
-		<ng-container *ngIf="isPolygon(measurement)">
-			<div>{{ "polygon" | transloco }} {{ measurement.id }}</div>
-			{{ measurement.area }} {{ measurement.perimeter }}
-		</ng-container>
-		<ng-container *ngIf="isCircle(measurement)">
-			<div>{{ "circle" | transloco }} {{ measurement.id }}</div>
-			{{ measurement.radius }}
-		</ng-container>
-		<button type="button" (click)="removeMeasurement(measurement)">
-			{{ "delete" | transloco }}
-		</button>
-	</div>
+	<ul class="measurement-result__list">
+		<div
+			*ngFor="let measurement of allMeasurements"
+		>
+			<ng-container *ngIf="isPoint(measurement)">
+				<li class="measurement-result__item">
+					<div>{{ "point" | transloco }} {{ measurement.id }}</div>
+					<div class="measurement-result__details">
+						<div class="measurement-result__details_calculated">
+							<span> {{ measurement.coordinates[0] }}</span>
+							<span>{{ measurement.coordinates[1] }}</span>
+							<span *ngIf="measurement.coordinates[2]">
+								{{ measurement.coordinates[2] }}
+							</span>
+						</div>
+						<button type="button" (click)="removeMeasurement(measurement)">
+							{{ "delete" | transloco }}
+						</button>
+					</div>
+				</li>
+			</ng-container>
+			<ng-container *ngIf="isLine(measurement)">
+				<li class="measurement-result__item">
+					<div>{{ "line" | transloco }} {{ measurement.id }}</div>
+					<div class="measurement-result__details">
+						<div class="measurement-result__details_calculated">
+							<span>{{ measurement.length }}</span>
+						</div>
+						<button type="button" (click)="removeMeasurement(measurement)">
+							{{ "delete" | transloco }}
+						</button>
+					</div>
+				</li>
+			</ng-container>
+			<ng-container *ngIf="isPolygon(measurement)">
+				<li class="measurement-result__item">
+					<div>{{ "polygon" | transloco }} {{ measurement.id }}</div>
+					<div class="measurement-result__details">
+						<div class="measurement-result__details_calculated">
+							<span>{{ measurement.area }}</span>
+							<span>{{ measurement.perimeter }}</span>
+						</div>
+						<button type="button" (click)="removeMeasurement(measurement)">
+							{{ "delete" | transloco }}
+						</button>
+					</div>
+				</li>
+			</ng-container>
+			<ng-container *ngIf="isCircle(measurement)">
+				<li class="measurement-result__item">
+					<div>{{ "circle" | transloco }} {{ measurement.id }}</div>
+					<div class="measurement-result__details">
+						<div class="measurement-result__details_calculated">
+							<span>{{ measurement.radius }}</span>
+						</div>
+						<button type="button" (click)="removeMeasurement(measurement)">
+							{{ "delete" | transloco }}
+						</button>
+					</div>
+				</li>
+			</ng-container>
+		</div>
+	</ul>
 </div>
 
 <button type="button" (click)="removeAllMeasurement()">

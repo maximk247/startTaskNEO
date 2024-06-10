@@ -1,12 +1,9 @@
 <div>
-	<select (change)="onChange($event)">
-		<option
-			*ngFor="let spatialReference of spatialReferences"
-			[value]="spatialReference.id"
-		>
-			{{ spatialReference.name }}
-		</option>
-	</select>
+	<app-coordinate-system
+		[spatialReferences]="spatialReferences"
+		(selectedReferenceChange)="onSelectedReferenceChange($event)"
+	>
+	</app-coordinate-system>
 	<div *ngFor="let point of points; let i = index" class="coordinate-input">
 		<label [for]="'y' + i">{{ "latitude" | transloco }} (Y):</label>
 		<input type="number" [(ngModel)]="point.y" [id]="'y' + i" placeholder="Y" />

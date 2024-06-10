@@ -1,8 +1,6 @@
 import { Injectable } from "@angular/core";
-import {
-	MeasurementMode,
-	MeasurementType,
-} from "./interfaces/measurement.interface";
+import { MeasurementType } from "./interfaces/measurement.interface";
+import { MeasurementMode } from "./enums/measurement.enums";
 
 @Injectable({
 	providedIn: "root",
@@ -24,16 +22,16 @@ export class MeasurementService {
 		this.measurements = measurements;
 	}
 
-	public getLastIdMeasurement(type: MeasurementMode) {
-		return this.lastId[type];
+	public getLastIdMeasurement(mode: MeasurementMode) {
+		return this.lastId[mode];
 	}
 
 	public getLastId() {
 		return this.lastId;
 	}
 
-	public setLastId(type: MeasurementMode, id: number) {
-		this.lastId[type] = id;
+	public setLastId(mode: MeasurementMode, id: number) {
+		this.lastId[mode] = id;
 	}
 
 	public clearMeasurements() {

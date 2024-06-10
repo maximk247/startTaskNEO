@@ -9,7 +9,6 @@ import {
 	MeasurementPolygon,
 	MeasurementCircle,
 	MeasurementType,
-	MeasurementMode,
 } from "./interfaces/measurement.interface";
 import { MapService } from "../../map/map.service";
 import { DrawService } from "../draw/draw.service";
@@ -19,6 +18,7 @@ import { CircleComponent } from "./geometry/circle/circle.component";
 import { PolygonComponent } from "./geometry/polygon/polygon.component";
 import { MeasurementService } from "./measurement.service";
 import { SidenavTools } from "../interfaces/sidenav.interfaces";
+import { MeasurementMode } from "./enums/measurement.enums";
 
 @Component({
 	selector: "app-measurement",
@@ -28,7 +28,7 @@ import { SidenavTools } from "../interfaces/sidenav.interfaces";
 export class MeasurementComponent implements OnInit {
 	public map: MapOpen;
 	public vectorSource: VectorSource;
-	public mode: MeasurementMode = "point";
+	public mode = MeasurementMode.Point;
 	public lastId = {
 		point: 0,
 		line: 0,
@@ -170,22 +170,22 @@ export class MeasurementComponent implements OnInit {
 	public isPoint(
 		measurement: MeasurementType,
 	): measurement is MeasurementPoint {
-		return measurement?.type === "point";
+		return measurement?.type === MeasurementMode.Point;
 	}
 
 	public isLine(measurement: MeasurementType): measurement is MeasurementLine {
-		return measurement?.type === "line";
+		return measurement?.type === MeasurementMode.Line;
 	}
 
 	public isPolygon(
 		measurement: MeasurementType,
 	): measurement is MeasurementPolygon {
-		return measurement?.type === "polygon";
+		return measurement?.type === MeasurementMode.Polygon;
 	}
 
 	public isCircle(
 		measurement: MeasurementType,
 	): measurement is MeasurementCircle {
-		return measurement?.type === "circle";
+		return measurement?.type === MeasurementMode.Circle;
 	}
 }

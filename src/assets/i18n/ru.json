@@ -49,5 +49,6 @@
 	"perimeter": "Периметр",
 	"area": "Площадь",
 	"showCoordinates": "Показать координаты на карте",
-	"showElevationFromCoordinates": "Показать высоту по координатам"
+	"showElevationFromCoordinates": "Показать высоту по координатам",
+	"logout": "Выйти"
 }

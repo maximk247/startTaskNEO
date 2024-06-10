@@ -1,7 +1,47 @@
 .measurement-result {
+	&__list {
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+		max-height: 8.3333rem;
+		padding: 0;
+		margin: 0;
+		overflow-y: auto;
+		list-style-type: none;
+	}
+
+	&__item {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	&__details {
+		display: flex;
+		flex-direction: row;
+
+		&_calculated {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-end;
+		}
+	}
+}
+
+.header {
 	display: flex;
 	flex-direction: column;
-	gap: 2rem;
-	margin-top: 3rem;
-	margin-bottom: 1rem;
+	align-items: flex-start;
+
+	&__select {
+		width: 100%;
+		height: 30px;
+		min-height: 30px;
+		padding: 0 1em;
+		margin-bottom: 1.7vh;
+		cursor: pointer;
+		background: var(--accent-200);
+		border: 1px solid transparent;
+		border-radius: 5em;
+	}
 }

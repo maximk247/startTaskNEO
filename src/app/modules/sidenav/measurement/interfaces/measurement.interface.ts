@@ -37,7 +37,7 @@ export interface MeasurementCircle extends Measurement<Circle> {
 	radius: string;
 }
 
-export type MeasurementMode = "point" | "line" | "polygon" | "circle";
+// export type MeasurementMode = "point" | "line" | "polygon" | "circle";
 
 export type MeasurementType =
 	| MeasurementPoint

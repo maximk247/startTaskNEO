@@ -5,13 +5,11 @@ import { Point } from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { Feature } from "ol";
-import { SpatialReferenceService } from "../../shared/spatial-reference.service";
 import { SpatialReference } from "../../shared/interfaces/spatial-reference.interfaces";
-import { TranslocoService } from "@ngneat/transloco";
 import * as proj4x from "proj4";
-import { register } from "ol/proj/proj4";
 import { ProjectionType } from "../draw/modules/draw-options/enum/draw-options.enum";
 import { SidenavTools } from "../interfaces/sidenav.interfaces";
+import { Coordinate } from "ol/coordinate";
 
 @Component({
 	selector: "app-coordinates",
@@ -32,53 +30,20 @@ export class CoordinatesComponent implements OnInit {
 	private pointLayer: VectorLayer<VectorSource>;
 	public spatialReferences: Array<SpatialReference> = [];
 
-	private defaultDegreeProjection: SpatialReference;
+	private currentProjection: SpatialReference;
 	public newProjection: SpatialReference;
 
-	public constructor(
-		private mapService: MapService,
-		private spatialReferenceService: SpatialReferenceService,
-		private translocoService: TranslocoService,
-	) {}
+	public constructor(private mapService: MapService) {}
 	public ngOnInit() {
 		this.map = this.mapService.getMap();
 		this.pointLayer = new VectorLayer({
 			source: new VectorSource(),
 		});
 		this.map.addLayer(this.pointLayer);
-		this.getSpatialReferences();
-	}
-	private getSpatialReferences(): void {
-		this.spatialReferenceService.getSpatialReferences().subscribe(
-			(data: Array<SpatialReference>) => {
-				this.spatialReferences = data;
-				this.registerProjections();
-				this.setDefaultProjection();
-			},
-
-			(error) => {
-				const errorMessage = this.translocoService.translate(
-					"errorDueToSpecialReference",
-				);
-				console.error(errorMessage, error);
-			},
-		);
 	}
 
-	private registerProjections(): void {
-		const proj4 = (proj4x as any).default;
-		this.spatialReferences.forEach((ref) => {
-			proj4.defs(ref.name, ref.definition);
-		});
-		register(proj4);
-	}
-
-	private setDefaultProjection(): void {
-		if (this.spatialReferences.length > 0) {
-			const [firstProjection] = this.spatialReferences;
-			this.defaultDegreeProjection = firstProjection;
-			this.newProjection = firstProjection;
-		}
+	public onSelectedReferenceChange(selectedReference: SpatialReference): void {
+		this.newProjection = selectedReference;
 	}
 
 	public goToCoordinates() {
@@ -95,12 +60,13 @@ export class CoordinatesComponent implements OnInit {
 				Number(this.longitudeSeconds) / 3600;
 
 			const coordinates = [longitude, latitude];
-			transformCoordinates = proj4(this.defaultDegreeProjection.name).forward(
+			transformCoordinates = proj4(this.newProjection.name).forward(
 				coordinates,
 			);
 		} else if (this.newProjection.type === ProjectionType.Metric) {
 			const x = Number(this.x);
 			const y = Number(this.y);
+
 			transformCoordinates = proj4(this.newProjection.name, "EPSG:4326", [
 				x,
 				y,
@@ -112,10 +78,10 @@ export class CoordinatesComponent implements OnInit {
 		}
 		this.map.getView().setCenter(transformCoordinates);
 	}
-	public addPointToMap(coordinates: Array<number>) {
+	public addPointToMap(coordinates: Coordinate) {
 		const point = new Point(coordinates);
 		const feature = new Feature(point);
-		feature.set("sidenavTool", "coordinates");
+		feature.set("sidenavTool", SidenavTools.Coordinates);
 		this.pointLayer.getSource()?.addFeature(feature);
 	}
 

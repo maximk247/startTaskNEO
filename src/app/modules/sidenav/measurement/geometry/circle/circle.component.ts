@@ -14,6 +14,7 @@ import { getLength } from "ol/sphere";
 import VectorLayer from "ol/layer/Vector";
 import { MeasurementService } from "../../measurement.service";
 import { SidenavTools } from "../../../interfaces/sidenav.interfaces";
+import { MeasurementMode } from "../../enums/measurement.enums";
 
 @Component({
 	selector: "app-measurement-circle",
@@ -35,7 +36,7 @@ export class CircleComponent implements OnInit, MeasurementComponentBase {
 
 	public constructor(
 		private drawService: DrawService,
-		private measurementService: MeasurementService,
+		public measurementService: MeasurementService,
 	) {}
 
 	public ngOnInit(): void {
@@ -54,7 +55,9 @@ export class CircleComponent implements OnInit, MeasurementComponentBase {
 			source: this.vectorSource,
 			type: "Circle",
 		});
-		this.circleCounter = this.measurementService.getLastIdMeasurement("circle");
+		this.circleCounter = this.measurementService.getLastIdMeasurement(
+			MeasurementMode.Circle,
+		);
 		this.drawService.addGlobalInteraction(this.map, this.draw);
 
 		this.draw.set("sidenavTool", SidenavTools.Measurement);
@@ -83,13 +86,13 @@ export class CircleComponent implements OnInit, MeasurementComponentBase {
 
 			const circleId = ++this.circleCounter;
 			this.circles.push({
-				type: "circle",
+				type: MeasurementMode.Circle,
 				id: circleId,
 				feature,
 				radius: formattedRadius,
 			});
 			const lastCircle = this.circles.slice(-1)[0];
-			this.measurementService.setLastId("circle", circleId);
+			this.measurementService.setLastId(MeasurementMode.Circle, circleId);
 			this.circleChange.emit(lastCircle);
 		});
 	}
@@ -98,6 +101,7 @@ export class CircleComponent implements OnInit, MeasurementComponentBase {
 		this.circleCounter = 0;
 		this.circleChange.emit(null);
 		this.totalRadius = 0;
+		this.currentRadius = 0;
 	}
 
 	private calculateRadius(geometry: LineString) {
@@ -106,18 +110,6 @@ export class CircleComponent implements OnInit, MeasurementComponentBase {
 			.transform("EPSG:4326", "EPSG:3857");
 		const radius = getLength(transformedGeometry);
 		return radius;
-	}
-
-	public removeCircle(id: number) {
-		const circle = this.circles.find((circle) => circle.id === id);
-		if (circle) {
-			this.vectorSource.removeFeature(circle.feature);
-			this.circles = this.circles.filter((c) => c.id !== id);
-		}
-
-		if (this.circles.length === 0) {
-			this.circleCounter = 1;
-		}
 	}
 
 	public formatRadius(radius: number) {

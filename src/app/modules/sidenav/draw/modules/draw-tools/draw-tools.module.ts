@@ -6,12 +6,12 @@ import { DrawFreePolygonComponent } from "./draw-free-polygon/draw-free-polygon.
 import { DrawLineComponent } from "./draw-line/draw-line.component";
 import { DrawPointComponent } from "./draw-point/draw-point.component";
 import { DrawPolygonComponent } from "./draw-polygon/draw-polygon.component";
-import { TranslocoModule } from "@ngneat/transloco";
 
 import { DrawOptionsModule } from "../draw-options/draw-options.module";
 import { MatSliderModule } from "@angular/material/slider";
 
 import { FormsModule } from "@angular/forms";
+import { SharedModule } from "src/app/modules/shared/shared.module";
 
 @NgModule({
 	declarations: [
@@ -24,7 +24,7 @@ import { FormsModule } from "@angular/forms";
 	],
 	imports: [
 		CommonModule,
-		TranslocoModule,
+		SharedModule,
 		DrawOptionsModule,
 		MatSliderModule,
 		FormsModule,

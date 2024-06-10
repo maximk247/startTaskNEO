@@ -14,6 +14,7 @@ import { DrawService } from "../../../draw/draw.service";
 import { getLength } from "ol/sphere";
 import { MeasurementService } from "../../measurement.service";
 import { SidenavTools } from "../../../interfaces/sidenav.interfaces";
+import { MeasurementMode } from "../../enums/measurement.enums";
 
 @Component({
 	selector: "app-measurement-line",
@@ -34,7 +35,7 @@ export class LineComponent implements OnInit, MeasurementComponentBase {
 
 	public constructor(
 		private drawService: DrawService,
-		private measurementService: MeasurementService,
+		public measurementService: MeasurementService,
 	) {}
 
 	public ngOnInit(): void {
@@ -57,7 +58,9 @@ export class LineComponent implements OnInit, MeasurementComponentBase {
 			source: this.vectorSource,
 			type: "LineString",
 		});
-		this.lineCounter = this.measurementService.getLastIdMeasurement("line");
+		this.lineCounter = this.measurementService.getLastIdMeasurement(
+			MeasurementMode.Line,
+		);
 		this.drawService.addGlobalInteraction(this.map, this.draw);
 
 		let lastPointCount = 0;
@@ -96,7 +99,7 @@ export class LineComponent implements OnInit, MeasurementComponentBase {
 				this.selectedUnit,
 			);
 			const newLine: MeasurementLine = {
-				type: "line",
+				type: MeasurementMode.Line,
 				id: lineId,
 				feature,
 				length: formattedLength,
@@ -104,7 +107,7 @@ export class LineComponent implements OnInit, MeasurementComponentBase {
 			this.lines.push(newLine);
 			this.lastLineLength = length;
 			const lastLine = this.lines.slice(-1)[0];
-			this.measurementService.setLastId("line", lineId);
+			this.measurementService.setLastId(MeasurementMode.Line, lineId);
 			this.lineChange.emit(lastLine);
 		});
 	}

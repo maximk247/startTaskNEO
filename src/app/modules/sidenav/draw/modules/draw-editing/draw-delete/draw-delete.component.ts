@@ -25,7 +25,6 @@ export class DrawDeleteComponent implements OnInit {
 	public deleteOnMouseClick() {
 		const vectorLayer = this.drawService.getVectorLayer();
 		const source = this.drawService.getVectorSource();
-		console.log(source.getFeatures());
 		if (vectorLayer && source) {
 			this.mapService.removeFeatureOnMouseClick(this.map);
 		}

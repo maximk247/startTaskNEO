@@ -1,11 +1,8 @@
-<select (change)="onChange($event)">
-	<option
-		*ngFor="let spatialReference of spatialReferences"
-		[ngValue]="spatialReference.id"
-	>
-		{{ spatialReference.name }}
-	</option>
-</select>
+<app-coordinate-system
+	[spatialReferences]="spatialReferences"
+	(selectedReferenceChange)="onSelectedReferenceChange($event)"
+>
+</app-coordinate-system>
 
 <div [ngSwitch]="newProjection?.type">
 	<div *ngSwitchCase="'degree'">
@@ -43,4 +40,6 @@
 	<input type="checkbox" [(ngModel)]="showPoint" />
 </div>
 
-<button type="button" (click)="removeAllCoordinates()">Очистить</button>
+<button type="button" (click)="removeAllCoordinates()">
+	{{ "clear" | transloco }}
+</button>
