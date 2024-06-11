@@ -1,0 +1,21 @@
+.row-container {
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	padding: 1.25rem;
+	margin: 0 -1.25rem 1.0833rem;
+	font-size: 12px;
+	background: var(--accent-200);
+
+	img {
+		height: 16px;
+		margin-right: 15px;
+	}
+
+	p {
+		flex: 1;
+		margin: 0;
+		text-align: justify;
+	}
+}

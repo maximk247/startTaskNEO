@@ -28,13 +28,15 @@ import { MeasurementMode } from "./enums/measurement.enums";
 export class MeasurementComponent implements OnInit {
 	public map: MapOpen;
 	public vectorSource: VectorSource;
-	public mode = MeasurementMode.Point;
+	public mode = MeasurementMode.Line;
 	public lastId = {
 		point: 0,
 		line: 0,
 		polygon: 0,
 		circle: 0,
 	};
+
+	public text = "Укажите точку на карте.";
 
 	public allMeasurements: Array<MeasurementType> = [];
 	@ViewChild(PointComponent) public pointComponent: PointComponent;
@@ -70,6 +72,29 @@ export class MeasurementComponent implements OnInit {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
 		});
+	}
+
+	public onModeChange(event: Event) {
+		const target = event.target as HTMLSelectElement;
+		const value = target.value;
+		switch (value) {
+			case MeasurementMode.Point:
+				this.text = "Укажите точку на карте.";
+				break;
+			case MeasurementMode.Line:
+				this.text =
+					"Укажите узлы измеряемой линии на карте. Завершите измерение, дважды щелкнув по карте левой кнопкой мыши.";
+				break;
+			case MeasurementMode.Circle:
+				this.text =
+					"Укажите точку на карте. Завершите измерение, дважды щелкнув по карте левой кнопкой мыши.";
+				break;
+
+			case MeasurementMode.Polygon:
+				this.text =
+					"Укажите узлы измеряемой фигуры на карте. Завершите измерение, дважды щелкнув по карте левой кнопкой мыши.";
+				break;
+		}
 	}
 
 	public onPointChange(point: MeasurementType) {

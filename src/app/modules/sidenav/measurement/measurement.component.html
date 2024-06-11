@@ -1,5 +1,9 @@
 <div class="header">
-	<select [(ngModel)]="mode" class="header__select">
+	<select
+		[(ngModel)]="mode"
+		class="header__select"
+		(change)="onModeChange($event)"
+	>
 		<option value="point">{{ "pointCoordinates" | transloco }}</option>
 		<option value="line">{{ "measurementLine" | transloco }}</option>
 		<option value="polygon">{{ "measurementPolygon" | transloco }}</option>
@@ -34,11 +38,11 @@
 	></app-measurement-circle>
 </ng-container>
 
+<app-explanation [text]="text"></app-explanation>
+
 <div class="measurement-result">
 	<ul class="measurement-result__list">
-		<div
-			*ngFor="let measurement of allMeasurements"
-		>
+		<div *ngFor="let measurement of allMeasurements">
 			<ng-container *ngIf="isPoint(measurement)">
 				<li class="measurement-result__item">
 					<div>{{ "point" | transloco }} {{ measurement.id }}</div>
@@ -100,6 +104,10 @@
 	</ul>
 </div>
 
-<button type="button" (click)="removeAllMeasurement()">
+<button
+	type="button"
+	(click)="removeAllMeasurement()"
+	class="button button--rounded"
+>
 	{{ "clear" | transloco }}
 </button>

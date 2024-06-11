@@ -1,9 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { SpatialReference } from "src/app/modules/shared/interfaces/spatial-reference.interfaces";
-import { SpatialReferenceService } from "src/app/modules/shared/spatial-reference.service";
 import * as proj4x from "proj4";
-import { register } from "ol/proj/proj4";
-
 import { DrawService } from "../../../draw/draw.service";
 import MapOpen from "ol/Map";
 import { Feature, Overlay } from "ol";
@@ -16,7 +13,6 @@ import {
 	MeasurementType,
 } from "../../interfaces/measurement.interface";
 import { Point } from "ol/geom";
-import { TranslocoService } from "@ngneat/transloco";
 import { ElevationService } from "src/app/modules/shared/elevation.service";
 import { Style } from "ol/style";
 import { Coordinate, toStringHDMS } from "ol/coordinate";
@@ -39,11 +35,11 @@ export class PointComponent implements OnInit, MeasurementComponentBase {
 
 	public spatialReferences: Array<SpatialReference> = [];
 
-	private currentProjection: SpatialReference;
 	private newProjection: SpatialReference;
 	private draw: Draw;
 
 	public elevation: number;
+	
 
 	private measureTooltips: Map<number, Overlay> = new Map();
 	public point: Array<MeasurementPoint> = [];
@@ -52,11 +48,9 @@ export class PointComponent implements OnInit, MeasurementComponentBase {
 	public longitudeDegrees: string;
 
 	public constructor(
-		private spatialReferenceService: SpatialReferenceService,
 		private drawService: DrawService,
-		private translocoService: TranslocoService,
 		private elevationService: ElevationService,
-		private measurementService: MeasurementService,
+		public measurementService: MeasurementService,
 	) {}
 
 	public ngOnInit(): void {
@@ -66,7 +60,6 @@ export class PointComponent implements OnInit, MeasurementComponentBase {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
 		});
-		this.getSpatialReferences();
 
 		this.map.addLayer(
 			new VectorLayer({
@@ -74,23 +67,6 @@ export class PointComponent implements OnInit, MeasurementComponentBase {
 			}),
 		);
 		this.addPointInteraction();
-	}
-
-	private getSpatialReferences(): void {
-		this.spatialReferenceService.getSpatialReferences().subscribe(
-			(data: Array<SpatialReference>) => {
-				this.spatialReferences = data;
-				this.registerProjections();
-				this.setDefaultProjection();
-			},
-
-			(error) => {
-				const errorMessage = this.translocoService.translate(
-					"errorDueToSpecialReference",
-				);
-				console.error(errorMessage, error);
-			},
-		);
 	}
 
 	public onSelectedReferenceChange(selectedReference: SpatialReference): void {
@@ -105,7 +81,6 @@ export class PointComponent implements OnInit, MeasurementComponentBase {
 					resolve();
 				},
 				(error) => {
-					console.log(error);
 					reject(error);
 				},
 			);
@@ -197,31 +172,11 @@ export class PointComponent implements OnInit, MeasurementComponentBase {
 
 	private transformCoordinates(coordinates: Coordinate) {
 		const proj4 = (proj4x as any).default;
-		const transformedCoordinates = proj4(
-			this.currentProjection.name,
-			this.newProjection.name,
-			coordinates,
-		);
+		const transformedCoordinates = proj4(this.newProjection.name, coordinates);
 		for (let i = 0; i < transformedCoordinates.length; i++) {
 			transformedCoordinates[i] = Number(transformedCoordinates[i].toFixed(5));
 		}
 		return transformedCoordinates;
-	}
-
-	private registerProjections(): void {
-		const proj4 = (proj4x as any).default;
-		this.spatialReferences.forEach((ref) => {
-			proj4.defs(ref.name, ref.definition);
-		});
-		register(proj4);
-	}
-
-	private setDefaultProjection(): void {
-		if (this.spatialReferences.length > 0) {
-			const firstProjection = this.spatialReferences[0];
-			this.currentProjection = firstProjection;
-			this.newProjection = firstProjection;
-		}
 	}
 
 	public onChange(event: Event): void {
@@ -263,17 +218,5 @@ export class PointComponent implements OnInit, MeasurementComponentBase {
 
 		this.map.addOverlay(measureTooltip);
 		this.measureTooltips.set(id, measureTooltip);
-	}
-	public removePoint(id: number) {
-		const point = this.point?.find((point) => point.id === id);
-		if (point) {
-			this.vectorSource.removeFeature(point.feature);
-			this.point = this.point.filter((p) => p.id !== id);
-		}
-		const tooltip = this.measureTooltips.get(id);
-		if (tooltip) {
-			this.map.removeOverlay(tooltip);
-			this.measureTooltips.delete(id);
-		}
 	}
 }

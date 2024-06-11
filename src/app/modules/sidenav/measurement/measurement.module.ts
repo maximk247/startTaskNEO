@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MeasurementComponent } from "./measurement.component";
-
+import { MatButtonModule } from "@angular/material/button";
 import { FormsModule } from "@angular/forms";
 import { PointComponent } from "./geometry/point/point.component";
 import { LineComponent } from "./geometry/line/line.component";
@@ -27,6 +27,7 @@ import { SharedModule } from "../../shared/shared.module";
 		MatFormFieldModule,
 		MatInputModule,
 		SharedModule,
+		MatButtonModule,
 	],
 	exports: [MeasurementComponent],
 })

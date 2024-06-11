@@ -4,7 +4,7 @@
 >
 </app-coordinate-system>
 
-<div [ngSwitch]="newProjection?.type">
+<div *ngIf="newProjection" [ngSwitch]="newProjection.type">
 	<div *ngSwitchCase="'degree'">
 		<div>
 			<h2>{{ "latitude" | transloco }}:</h2>
@@ -40,6 +40,10 @@
 	<input type="checkbox" [(ngModel)]="showPoint" />
 </div>
 
-<button type="button" (click)="removeAllCoordinates()">
+<button
+	type="button"
+	(click)="removeAllCoordinates()"
+	class="button button--rounded"
+>
 	{{ "clear" | transloco }}
 </button>
