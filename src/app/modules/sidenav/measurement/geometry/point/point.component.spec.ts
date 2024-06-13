@@ -6,7 +6,7 @@ import { MeasurementService } from "../../measurement.service";
 import { Map as MapOpen } from "ol";
 import VectorSource from "ol/source/Vector";
 import { Point } from "ol/geom";
-import { SidenavTools } from "../../../interfaces/sidenav.interfaces";
+import { SidenavTools } from "../../../interfaces/sidenav.interface";
 import { Feature, View } from "ol";
 import BaseEvent from "ol/events/Event";
 import { Interaction } from "ol/interaction";
@@ -15,7 +15,7 @@ import { getTranslocoModule } from "src/app/modules/shared/transloco/transloco-t
 import { SharedModule } from "src/app/modules/shared/shared.module";
 import { Overlay } from "ol";
 import { of } from "rxjs";
-import { MeasurementMode } from "../../enums/measurement.enums";
+import { MeasurementMode } from "../../enums/measurement.enum";
 import { HttpClientModule } from "@angular/common/http";
 import { SpatialReferenceService } from "src/app/modules/shared/spatial-reference.service";
 
@@ -160,37 +160,6 @@ describe("PointComponent", () => {
 			mockMapOpen,
 			mockInteraction,
 		);
-	});
-
-	it("should create point tooltip on drawend", async () => {
-		const mockFeature = new Feature(new Point([10, 10]));
-		component.showCoordinates = true;
-		component.showElevation = false;
-		component.pointCounter = 1;
-		const createdPointTooltip = spyOn(
-			component,
-			"createPointTooltip",
-		).and.callThrough();
-
-		component.addPointInteraction();
-
-		(component as any).draw.dispatchEvent({
-			type: "drawend",
-			feature: mockFeature,
-		} as BaseEvent & { feature: Feature<Point> });
-
-		expect(createdPointTooltip).toHaveBeenCalledWith(
-			component.pointCounter,
-			[10, 10],
-		);
-		await fixture.whenStable();
-		fixture.detectChanges();
-
-		const tooltipElements =
-			fixture.nativeElement.querySelectorAll(".centered-text");
-		expect(tooltipElements.length).toBeGreaterThan(0);
-		expect(tooltipElements[0].textContent).toContain("Широта");
-		expect(tooltipElements[1].textContent).toContain("Долгота");
 	});
 
 	it("should reset point correctly", () => {

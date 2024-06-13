@@ -11,6 +11,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { SharedModule } from "../../shared/shared.module";
+import { InlineSVGModule } from "ng-inline-svg-2";
 
 @NgModule({
 	declarations: [
@@ -28,6 +29,9 @@ import { SharedModule } from "../../shared/shared.module";
 		MatInputModule,
 		SharedModule,
 		MatButtonModule,
+		InlineSVGModule.forRoot({
+			baseUrl: "/assets/images/",
+		}),
 	],
 	exports: [MeasurementComponent],
 })

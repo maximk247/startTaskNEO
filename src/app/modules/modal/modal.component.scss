@@ -1,11 +1,10 @@
 .modal-container {
 	position: absolute;
-	z-index: 3;
+	z-index: 1000;
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
-	min-width: 164px;
-	max-width: 315px;
+	width: 315px;
 	text-align: center;
 	background: var(--primary-100);
 	box-shadow: 1px 0 10px var(--accent-400);
@@ -22,7 +21,7 @@
 	}
 
 	&__content {
-		padding: 1.25rem;
+		padding: 15px;
 	}
 
 	&__content:has(.menu) {

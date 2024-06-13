@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { MapService } from "src/app/modules/map/map.service";
 import { DrawService } from "../../../draw.service";
 import { Map } from "ol";
-import { SidenavTools } from "src/app/modules/sidenav/interfaces/sidenav.interfaces";
+import { SidenavTools } from "src/app/modules/sidenav/interfaces/sidenav.interface";
 import { Draw } from "ol/interaction";
 
 @Component({
@@ -33,6 +33,5 @@ export class DrawDeleteComponent implements OnInit {
 
 	public deleteAll() {
 		this.mapService.removeAllFeatures(SidenavTools.Draw);
-		
 	}
 }

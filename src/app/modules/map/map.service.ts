@@ -13,7 +13,7 @@ import VectorSource from "ol/source/Vector";
 import { ZoomSlider } from "ol/control";
 import { useGeographic } from "ol/proj";
 import { Circle, Geometry, LineString, Point, Polygon } from "ol/geom";
-import { SidenavTools } from "../sidenav/interfaces/sidenav.interfaces";
+import { SidenavTools } from "../sidenav/interfaces/sidenav.interface";
 
 @Injectable({
 	providedIn: "root",
@@ -34,9 +34,10 @@ export class MapService {
 
 			view: new View({
 				center: [0, 0],
-				zoom: 0,
-				minZoom: 0,
+				zoom: 2.6,
+				minZoom: 2.6,
 				maxZoom: 15,
+				extent: [-400, -86, 400, 86],
 			}),
 			layers: [
 				new TileLayer({
@@ -67,6 +68,32 @@ export class MapService {
 			source: new VectorSource(),
 		});
 		this.map.addLayer(this.vectorLayer);
+	}
+
+	public addCursorToMap(mode = "") {
+		let url: string;
+		switch (mode) {
+			case "Measurement":
+				url = "assets/images/cursor/ruler.cur";
+				break;
+			case "DrawPoint":
+				url = "assets/images/cursor/point.cur";
+				break;
+			case "DrawLine":
+				url = "assets/images/cursor/polyline.cur";
+				break;
+			case "DrawPolygon":
+				url = "assets/images/cursor/polygon.cur";
+				break;
+			default:
+				url = "";
+				break;
+		}
+		this.map.on("pointermove", (evt) => {
+			if (!evt.dragging) {
+				this.map.getTargetElement().style.cursor = `url(${url}), auto`;
+			}
+		});
 	}
 
 	public addFeatureToMap(feature: Feature) {
@@ -132,7 +159,7 @@ export class MapService {
 						}
 					}),
 			}) as Array<Feature<Geometry>> | undefined;
-			
+
 			const clickedFeature =
 				features?.find((feature) => feature instanceof Feature) || null;
 

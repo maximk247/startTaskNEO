@@ -8,8 +8,9 @@ import { Feature } from "ol";
 import { SpatialReference } from "../../shared/interfaces/spatial-reference.interfaces";
 import * as proj4x from "proj4";
 import { ProjectionType } from "../draw/modules/draw-options/enum/draw-options.enum";
-import { SidenavTools } from "../interfaces/sidenav.interfaces";
+import { SidenavTools } from "../interfaces/sidenav.interface";
 import { Coordinate } from "ol/coordinate";
+import { Icon, Style } from "ol/style";
 
 @Component({
 	selector: "app-coordinates",
@@ -30,7 +31,6 @@ export class CoordinatesComponent implements OnInit {
 	private pointLayer: VectorLayer<VectorSource>;
 	public spatialReferences: Array<SpatialReference> = [];
 
-	private currentProjection: SpatialReference;
 	public newProjection: SpatialReference;
 
 	public constructor(private mapService: MapService) {}
@@ -40,6 +40,7 @@ export class CoordinatesComponent implements OnInit {
 			source: new VectorSource(),
 		});
 		this.map.addLayer(this.pointLayer);
+		this.mapService.addCursorToMap()
 	}
 
 	public onSelectedReferenceChange(selectedReference: SpatialReference): void {
@@ -82,6 +83,13 @@ export class CoordinatesComponent implements OnInit {
 		const point = new Point(coordinates);
 		const feature = new Feature(point);
 		feature.set("sidenavTool", SidenavTools.Coordinates);
+		const iconStyle = new Icon({
+			src: "assets/images/marker-big.png",
+		});
+		const pointStyle = new Style({
+			image: iconStyle,
+		});
+		feature.setStyle(pointStyle);
 		this.pointLayer.getSource()?.addFeature(feature);
 	}
 

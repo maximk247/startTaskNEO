@@ -5,9 +5,9 @@ import { MeasurementService } from "../../measurement.service";
 import { Map, View } from "ol";
 import VectorSource from "ol/source/Vector";
 import { LineString, Circle } from "ol/geom";
-import { SidenavTools } from "../../../interfaces/sidenav.interfaces";
+import { SidenavTools } from "../../../interfaces/sidenav.interface";
 import { Feature } from "ol";
-import { MeasurementMode } from "../../enums/measurement.enums";
+import { MeasurementMode } from "../../enums/measurement.enum";
 import BaseEvent from "ol/events/Event";
 import { Interaction } from "ol/interaction";
 import { FormsModule } from "@angular/forms";
@@ -33,13 +33,15 @@ describe("CircleComponent", () => {
 			"setLastId",
 		]);
 
-    (mockMeasurementService.formatMeasurement as jasmine.Spy).and.callFake((measure: number, unit: string) => {
-			if (unit === "kilometers") {
-				return `${measure / 1000} km`;
-			} else {
-				return `${measure} м`;
-			}
-		});
+		(mockMeasurementService.formatMeasurement as jasmine.Spy).and.callFake(
+			(measure: number, unit: string) => {
+				if (unit === "kilometers") {
+					return `${measure / 1000} km`;
+				} else {
+					return `${measure} м`;
+				}
+			},
+		);
 
 		TestBed.configureTestingModule({
 			declarations: [CircleComponent],
@@ -68,12 +70,12 @@ describe("CircleComponent", () => {
 	});
 
 	it("should return correct formatted radius", () => {
-		expect(component.formatRadius(component.currentRadius)).toBe(10);
+		expect(component.formatRadius(component.currentRadius)).toBe("10");
 	});
 
 	it("should format radius correctly for kilometers", () => {
 		component.selectedUnit = "kilometers";
-		expect(component.formatRadius(10000)).toBe(10);
+		expect(component.formatRadius(10000)).toBe("10");
 	});
 
 	it("should reset radius", () => {

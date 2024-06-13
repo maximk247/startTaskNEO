@@ -46,7 +46,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
 		SharedModule,
 		HttpClientModule,
 		InlineSVGModule.forRoot({
-			baseUrl: "../../../assets/images/",
+			baseUrl: "/assets/images/",
 		}),
 	],
 	providers: [

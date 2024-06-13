@@ -1,6 +1,8 @@
 import { Injectable } from "@angular/core";
 import { MeasurementType } from "./interfaces/measurement.interface";
-import { MeasurementMode } from "./enums/measurement.enums";
+import { MeasurementMode } from "./enums/measurement.enum";
+import { Style, Fill, Stroke } from "ol/style";
+import { Feature } from "ol";
 
 @Injectable({
 	providedIn: "root",
@@ -49,7 +51,7 @@ export class MeasurementService {
 			return "";
 		}
 		if (unit === "kilometers") {
-			return Math.round((measure / 1000) * 100) / 100 + " km";
+			return Math.round((measure / 1000) * 100) / 100 + " км";
 		} else {
 			return Math.round(measure * 100) / 100 + " м";
 		}
@@ -60,9 +62,23 @@ export class MeasurementService {
 			return "";
 		}
 		if (unit === "squareKilometers") {
-			return Math.round((measure / 1000000) * 100) / 100 + " km\xB2";
+			return Math.round((measure / 1000000) * 100) / 100 + " км\xB2";
 		} else {
 			return Math.round(measure * 100) / 100 + " м\xB2";
 		}
+	}
+
+	public setStyle(feature: Feature, strokeColor: string, fillColor?: string) {
+		feature.setStyle(
+			new Style({
+				fill: new Fill({
+					color: fillColor,
+				}),
+				stroke: new Stroke({
+					color: strokeColor,
+					width: 5,
+				}),
+			}),
+		);
 	}
 }

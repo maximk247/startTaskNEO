@@ -12,8 +12,10 @@ import { getArea, getLength } from "ol/sphere";
 import { Polygon } from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
 import { MeasurementService } from "../../measurement.service";
-import { SidenavTools } from "../../../interfaces/sidenav.interfaces";
-import { MeasurementMode } from "../../enums/measurement.enums";
+import { SidenavTools } from "../../../interfaces/sidenav.interface";
+import { MeasurementMode } from "../../enums/measurement.enum";
+import { Fill, Stroke, Style } from "ol/style";
+import { CustomDraw } from "src/app/modules/shared/classes/draw-interaction.class";
 
 @Component({
 	selector: "app-measurement-polygon",
@@ -27,7 +29,7 @@ export class PolygonComponent implements OnInit, MeasurementComponentBase {
 
 	public polygons: Array<MeasurementPolygon> = [];
 	public polygonCounter = 1;
-	public draw: Draw;
+	public draw: CustomDraw;
 
 	public selectedAreaUnit = "squareMeters";
 	public selectedUnit = "meters";
@@ -56,7 +58,7 @@ export class PolygonComponent implements OnInit, MeasurementComponentBase {
 	}
 
 	public addPolygonInteraction() {
-		this.draw = new Draw({
+		this.draw = new CustomDraw({
 			source: this.vectorSource,
 			type: "Polygon",
 		});
@@ -68,7 +70,10 @@ export class PolygonComponent implements OnInit, MeasurementComponentBase {
 
 		this.draw.set("sidenavTool", SidenavTools.Measurement);
 		this.draw.on("drawstart", (evt) => {
-			const geometry = evt.feature.getGeometry() as Polygon;
+			this.draw.flag = true;
+			const feature = evt.feature;
+			const geometry = feature.getGeometry() as Polygon;
+			this.measurementService.setStyle(feature, "#1082fc", "#7fa9d9");
 
 			geometry.on("change", () => {
 				this.totalArea = this.calculateArea(geometry);
@@ -78,6 +83,8 @@ export class PolygonComponent implements OnInit, MeasurementComponentBase {
 		this.draw.on("drawend", (evt) => {
 			const feature = evt.feature as Feature<Polygon>;
 			feature.set("sidenavTool", "measurement");
+			this.draw.flag = false;
+
 			const formattedArea = this.measurementService.formatMeasurementSquare(
 				this.totalArea,
 				this.selectedAreaUnit,
@@ -138,12 +145,14 @@ export class PolygonComponent implements OnInit, MeasurementComponentBase {
 
 	public formatArea(area: number) {
 		if (!area) {
-			return 0;
+			return "0.00";
 		}
+		let formattedLength: number;
 		if (this.selectedAreaUnit === "squareKilometers") {
-			return Math.round((area / 1000000) * 100) / 100;
+			formattedLength = Math.round((area / 1000000) * 100) / 100;
 		} else {
-			return Math.round(area * 100) / 100;
+			formattedLength = Math.round(area * 100) / 100;
 		}
+		return formattedLength.toFixed(2);
 	}
 }

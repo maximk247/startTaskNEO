@@ -13,8 +13,9 @@ import { Circle, LineString } from "ol/geom";
 import { getLength } from "ol/sphere";
 import VectorLayer from "ol/layer/Vector";
 import { MeasurementService } from "../../measurement.service";
-import { SidenavTools } from "../../../interfaces/sidenav.interfaces";
-import { MeasurementMode } from "../../enums/measurement.enums";
+import { SidenavTools } from "../../../interfaces/sidenav.interface";
+import { MeasurementMode } from "../../enums/measurement.enum";
+import { CustomDraw } from "src/app/modules/shared/classes/draw-interaction.class";
 
 @Component({
 	selector: "app-measurement-circle",
@@ -28,7 +29,7 @@ export class CircleComponent implements OnInit, MeasurementComponentBase {
 
 	public circles: Array<MeasurementCircle> = [];
 	public circleCounter = 1;
-	public draw: Draw;
+	public draw: CustomDraw;
 
 	public selectedUnit = "meters";
 	public currentRadius: number;
@@ -51,7 +52,7 @@ export class CircleComponent implements OnInit, MeasurementComponentBase {
 	}
 
 	public addCircleInteraction() {
-		this.draw = new Draw({
+		this.draw = new CustomDraw({
 			source: this.vectorSource,
 			type: "Circle",
 		});
@@ -62,7 +63,10 @@ export class CircleComponent implements OnInit, MeasurementComponentBase {
 
 		this.draw.set("sidenavTool", SidenavTools.Measurement);
 		this.draw.on("drawstart", (evt) => {
-			const geometry = evt.feature.getGeometry() as Circle;
+			this.draw.flag = true;
+			const feature = evt.feature;
+			const geometry = feature.getGeometry() as Circle;
+			this.measurementService.setStyle(feature, "#1082fc", "#7fa9d9");
 
 			geometry.on("change", () => {
 				const centerCoords = geometry.getCenter();
@@ -77,6 +81,7 @@ export class CircleComponent implements OnInit, MeasurementComponentBase {
 		});
 
 		this.draw.on("drawend", (evt) => {
+			this.draw.flag = false;
 			const feature = evt.feature as Feature<Circle>;
 			feature.set("sidenavTool", "measurement");
 			const formattedRadius = this.measurementService.formatMeasurement(
@@ -114,12 +119,15 @@ export class CircleComponent implements OnInit, MeasurementComponentBase {
 
 	public formatRadius(radius: number) {
 		if (!radius) {
-			return 0;
+			return "0.00";
 		}
+		let formattedLength: number;
 		if (this.selectedUnit === "kilometers") {
-			return Math.round((radius / 1000) * 100) / 100;
+			formattedLength = Math.round((radius / 1000) * 100) / 100;
 		} else {
-			return Math.round(radius * 100) / 100;
+			formattedLength = Math.round(radius * 100) / 100;
 		}
+
+		return formattedLength.toFixed(2);
 	}
 }

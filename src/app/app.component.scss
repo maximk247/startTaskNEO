@@ -21,14 +21,14 @@
 		background-color: var(--primary-900);
 		border: none;
 		outline: none;
-	}
 
-	&__button:hover {
-		background-color: var(--primary-a100);
-	}
+		&:hover {
+			background-color: var(--primary-a100);
+		}
 
-	&__button.active {
-		background-color: var(--primary-a100);
+		&.active {
+			background-color: var(--primary-a100);
+		}
 	}
 }
 
@@ -53,4 +53,3 @@
 ::ng-deep .mat-drawer-side {
 	border: none !important;
 }
-

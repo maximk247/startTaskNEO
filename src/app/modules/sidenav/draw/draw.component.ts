@@ -5,7 +5,7 @@ import { DrawService } from "./draw.service";
 import { Draw } from "ol/interaction";
 import { DrawToolKey, DrawTools } from "./interfaces/draw.interface";
 import { TOOLS } from "./consts/draw-consts.consts";
-import { SidenavTools } from "../interfaces/sidenav.interfaces";
+import { SidenavTools } from "../interfaces/sidenav.interface";
 
 @Component({
 	selector: "app-draw",
@@ -34,6 +34,7 @@ export class DrawComponent implements OnInit {
 		});
 		this.drawService.initializeLayer();
 		this.map.addLayer(this.drawService.getVectorLayer());
+		this.mapService.addCursorToMap();
 	}
 
 	public componentVisibility: DrawTools = {
@@ -76,6 +77,7 @@ export class DrawComponent implements OnInit {
 		const drawPoint = this.drawService.initializePoint(this.map);
 		this.activeInteraction = drawPoint;
 		this.drawService.addGlobalInteraction(this.map, drawPoint);
+		this.mapService.addCursorToMap("DrawPoint");
 	}
 
 	public drawLine() {
@@ -97,6 +99,7 @@ export class DrawComponent implements OnInit {
 		const drawLine = this.drawService.initializeLine(this.map);
 		this.activeInteraction = drawLine;
 		this.drawService.addGlobalInteraction(this.map, drawLine);
+		this.mapService.addCursorToMap("DrawLine");
 	}
 
 	public drawPolygon() {
@@ -118,6 +121,7 @@ export class DrawComponent implements OnInit {
 		const drawPolygon = this.drawService.initializePolygon(this.map);
 		this.activeInteraction = drawPolygon;
 		this.drawService.addGlobalInteraction(this.map, drawPolygon);
+		this.mapService.addCursorToMap("DrawPolygon");
 	}
 
 	public drawFreeLine() {
@@ -139,6 +143,7 @@ export class DrawComponent implements OnInit {
 		const drawFreeLine = this.drawService.initalizeFreeLine(this.map);
 		this.activeInteraction = drawFreeLine;
 		this.drawService.addGlobalInteraction(this.map, drawFreeLine);
+		this.mapService.addCursorToMap("DrawLine");
 	}
 
 	public drawFreePolygon() {
@@ -160,6 +165,7 @@ export class DrawComponent implements OnInit {
 		const drawFreePolygon = this.drawService.initalizeFreePolygon(this.map);
 		this.activeInteraction = drawFreePolygon;
 		this.drawService.addGlobalInteraction(this.map, drawFreePolygon);
+		this.mapService.addCursorToMap("DrawPolygon");
 	}
 
 	public drawFigure() {
@@ -181,5 +187,6 @@ export class DrawComponent implements OnInit {
 		const drawFigure = this.drawService.initializeFigure(this.map, "Circle");
 		this.activeInteraction = drawFigure;
 		this.drawService.addGlobalInteraction(this.map, drawFigure);
+		this.mapService.addCursorToMap("DrawPolygon");
 	}
 }

@@ -6,7 +6,7 @@ import { ExplanationComponent } from "./components/explanation/explanation.compo
 
 @NgModule({
 	declarations: [CoordinateSystemComponent, ExplanationComponent],
-	imports: [CommonModule, TranslocoRootModule],
+	imports: [CommonModule, TranslocoRootModule, ],
 	exports: [
 		CoordinateSystemComponent,
 		TranslocoRootModule,

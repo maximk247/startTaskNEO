@@ -5,7 +5,7 @@ import { MeasurementService } from "../../measurement.service";
 import { Map, View, Feature } from "ol";
 import VectorSource from "ol/source/Vector";
 import { Polygon } from "ol/geom";
-import { SidenavTools } from "../../../interfaces/sidenav.interfaces";
+import { SidenavTools } from "../../../interfaces/sidenav.interface";
 import BaseEvent from "ol/events/Event";
 import { Interaction } from "ol/interaction";
 import { FormsModule } from "@angular/forms";
@@ -13,7 +13,7 @@ import { getTranslocoModule } from "src/app/modules/shared/transloco/transloco-t
 import { SharedModule } from "src/app/modules/shared/shared.module";
 import VectorLayer from "ol/layer/Vector";
 import { of } from "rxjs";
-import { MeasurementMode } from "../../enums/measurement.enums";
+import { MeasurementMode } from "../../enums/measurement.enum";
 
 describe("PolygonComponent", () => {
 	let component: PolygonComponent;

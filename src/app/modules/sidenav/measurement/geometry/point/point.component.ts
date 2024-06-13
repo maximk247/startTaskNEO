@@ -3,7 +3,7 @@ import { SpatialReference } from "src/app/modules/shared/interfaces/spatial-refe
 import * as proj4x from "proj4";
 import { DrawService } from "../../../draw/draw.service";
 import MapOpen from "ol/Map";
-import { Feature, Overlay } from "ol";
+import { Feature, MapBrowserEvent, Overlay } from "ol";
 import { Draw } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
@@ -14,12 +14,14 @@ import {
 } from "../../interfaces/measurement.interface";
 import { Point } from "ol/geom";
 import { ElevationService } from "src/app/modules/shared/elevation.service";
-import { Style } from "ol/style";
+import { Fill, Icon, Style, Text } from "ol/style";
 import { Coordinate, toStringHDMS } from "ol/coordinate";
 import { MeasurementService } from "../../measurement.service";
 import { ElevationArray } from "src/app/modules/shared/interfaces/elevation.interfaces";
-import { SidenavTools } from "../../../interfaces/sidenav.interfaces";
-import { MeasurementMode } from "../../enums/measurement.enums";
+import { SidenavTools } from "../../../interfaces/sidenav.interface";
+import { MeasurementMode } from "../../enums/measurement.enum";
+import { CustomDraw } from "src/app/modules/shared/classes/draw-interaction.class";
+
 @Component({
 	selector: "app-measurement-point",
 	templateUrl: "./point.component.html",
@@ -36,12 +38,10 @@ export class PointComponent implements OnInit, MeasurementComponentBase {
 	public spatialReferences: Array<SpatialReference> = [];
 
 	private newProjection: SpatialReference;
-	private draw: Draw;
+	private draw: CustomDraw;
 
 	public elevation: number;
-	
 
-	private measureTooltips: Map<number, Overlay> = new Map();
 	public point: Array<MeasurementPoint> = [];
 	public pointCounter = 1;
 	public latitudeDegrees: string;
@@ -88,16 +88,19 @@ export class PointComponent implements OnInit, MeasurementComponentBase {
 	}
 
 	public addPointInteraction() {
-		this.draw = new Draw({
+		this.draw = new CustomDraw({
 			source: this.vectorSource,
 			type: "Point",
 		});
+
 		this.drawService.addGlobalInteraction(this.map, this.draw);
 		this.pointCounter = this.measurementService.getLastIdMeasurement(
 			MeasurementMode.Point,
 		);
 		this.draw.set("sidenavTool", SidenavTools.Measurement);
+		
 		this.draw.on("drawend", async (evt) => {
+	
 			const feature = evt.feature as Feature<Point>;
 			feature.set("sidenavTool", "measurement");
 			const geometry = evt.feature.getGeometry() as Point;
@@ -113,7 +116,7 @@ export class PointComponent implements OnInit, MeasurementComponentBase {
 			}
 
 			if (this.showCoordinates) {
-				this.createPointTooltip(pointId, transformedCoordinates);
+				this.createPointTooltip(transformedCoordinates, feature);
 			} else {
 				feature.setStyle(
 					new Style({
@@ -139,7 +142,6 @@ export class PointComponent implements OnInit, MeasurementComponentBase {
 				id: pointId,
 				feature,
 				coordinates: fullCoordinates,
-				measureTooltips: this.measureTooltips,
 			});
 
 			const lastPoint = this.point.slice(-1)[0];
@@ -164,9 +166,8 @@ export class PointComponent implements OnInit, MeasurementComponentBase {
 				}
 				return true;
 			});
-
-		this.latitudeDegrees = degreesCoordinates.slice(0, 3).join(" ");
-		this.longitudeDegrees = degreesCoordinates.slice(3, 6).join(" ");
+		this.longitudeDegrees = degreesCoordinates.slice(0, 3).join(" ");
+		this.latitudeDegrees = degreesCoordinates.slice(3, 6).join(" ");
 		return coordinates;
 	}
 
@@ -189,34 +190,29 @@ export class PointComponent implements OnInit, MeasurementComponentBase {
 		}
 	}
 
-	public createPointTooltip(id: number, coordinates: Coordinate) {
-		const tooltipElement = document.createElement("div");
-
+	public createPointTooltip(coordinates: Coordinate, feature: Feature<Point>) {
 		const [x, y, z = 0] = coordinates;
+		const textStyle = new Text({
+			text: `Широта (Y): ${y} (${this.latitudeDegrees}),\n Долгота (X): ${x} (${this.longitudeDegrees}),\n ${this.showElevation ? `Высота (Z): ${z} м` : ""}`,
+			font: "12px Calibri,sans-serif",
+			fill: new Fill({
+				color: "#000",
+			}),
+			offsetX: 0,
+			offsetY: 20,
 
-		tooltipElement.innerHTML = `
-        <div class="centered-text">Широта (Y): ${y} (${this.latitudeDegrees})</div>
-        <div class="centered-text">Долгота(X): ${x} (${this.longitudeDegrees})</div>
-        ${(z || z === 0) && this.showElevation ? `<div class="centered-text">Высота(Z): ${z} м</div>` : ""}
-    `;
-
-		const measureTooltip = new Overlay({
-			element: tooltipElement,
-			offset: [0, -25],
-			positioning: "bottom-center",
+			padding: [2, 2, 2, 2],
 		});
 
-		const proj4 = (proj4x as any).default;
-		const clonedCoordinates = JSON.parse(JSON.stringify(coordinates)); // proj4 менял исходные координаты, а он (proj4) не учитывал Z координаты
-		const transformedCoordinatesToDegrees = proj4(
-			this.newProjection.name,
-			"EPSG:4326",
-			clonedCoordinates,
-		);
+		const iconStyle = new Icon({
+			src: "assets/images/marker-big.png",
+		});
 
-		measureTooltip.setPosition(transformedCoordinatesToDegrees);
+		const pointStyle = new Style({
+			text: textStyle,
+			image: iconStyle,
+		});
 
-		this.map.addOverlay(measureTooltip);
-		this.measureTooltips.set(id, measureTooltip);
+		feature.setStyle(pointStyle);
 	}
 }

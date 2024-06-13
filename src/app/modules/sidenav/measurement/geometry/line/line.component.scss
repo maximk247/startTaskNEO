@@ -1,4 +1,17 @@
-.container {
+.measurement-line {
 	display: flex;
-	flex-direction: row;
+	justify-content: space-between;
+	font-size: 12px;
+
+	&__result {
+		width: 56%;
+
+		&_item {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			height: 30px;
+			margin-right: 0.8333rem;
+		}
+	}
 }

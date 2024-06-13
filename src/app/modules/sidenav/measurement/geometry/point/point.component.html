@@ -1,35 +1,34 @@
-<div class="container">
+<div class="measurement-point">
 	<app-coordinate-system
 		[spatialReferences]="spatialReferences"
 		(selectedReferenceChange)="onSelectedReferenceChange($event)"
 	>
 	</app-coordinate-system>
 
-	<div *ngIf="point[point.length - 1]" class="container__coordinates">
-		<p class="container__coordinates_item">
+	<div *ngIf="point[point.length - 1]" class="measurement-point__coordinates">
+		<p class="measurement-point__coordinates_item">
 			<strong>{{ "latitude" | transloco }}(Y):</strong>
 			<span>{{ point[point.length - 1].coordinates[1] }} </span>
 		</p>
-		<p class="container__coordinates_item">
+		<p class="measurement-point__coordinates_item">
 			<strong>{{ "longitude" | transloco }}(X):</strong>
 			<span>{{ point[point.length - 1].coordinates[0] }} </span>
 		</p>
-		<p *ngIf="showElevation" class="container__coordinates_item">
+		<p *ngIf="showElevation" class="measurement-point__coordinates_item">
 			<strong>{{ "elevation" | transloco }}(Z):</strong>
 			<span>{{ point[point.length - 1].coordinates[2] }}</span>
 		</p>
 	</div>
 
-	<div class="container__options">
-		<label class="container__options_item">
+	<div class="measurement-point__options">
+		<label class="measurement-point__options_item">
 			<input type="checkbox" [(ngModel)]="showCoordinates" />
 			<span>{{ "showCoordinates" | transloco }}</span>
 		</label>
 
-		<label class="container__options_item">
+		<label class="measurement-point__options_item">
 			<input type="checkbox" [(ngModel)]="showElevation" />
 			<span>{{ "showElevationFromCoordinates" | transloco }}</span>
 		</label>
 	</div>
-
 </div>

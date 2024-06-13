@@ -13,8 +13,9 @@ import VectorLayer from "ol/layer/Vector";
 import { DrawService } from "../../../draw/draw.service";
 import { getLength } from "ol/sphere";
 import { MeasurementService } from "../../measurement.service";
-import { SidenavTools } from "../../../interfaces/sidenav.interfaces";
-import { MeasurementMode } from "../../enums/measurement.enums";
+import { SidenavTools } from "../../../interfaces/sidenav.interface";
+import { MeasurementMode } from "../../enums/measurement.enum";
+import { CustomDraw } from "src/app/modules/shared/classes/draw-interaction.class";
 
 @Component({
 	selector: "app-measurement-line",
@@ -28,7 +29,7 @@ export class LineComponent implements OnInit, MeasurementComponentBase {
 
 	public lines: Array<MeasurementLine> = [];
 	public lineCounter = 1;
-	public draw: Draw;
+	public draw: CustomDraw;
 	public currentLength: number;
 	public lastLineLength: number;
 	public selectedUnit = "meters";
@@ -54,7 +55,7 @@ export class LineComponent implements OnInit, MeasurementComponentBase {
 	}
 
 	public addLineInteraction() {
-		this.draw = new Draw({
+		this.draw = new CustomDraw({
 			source: this.vectorSource,
 			type: "LineString",
 		});
@@ -66,9 +67,12 @@ export class LineComponent implements OnInit, MeasurementComponentBase {
 		let lastPointCount = 0;
 		this.draw.set("sidenavTool", SidenavTools.Measurement);
 		this.draw.on("drawstart", (evt) => {
-			const geometry = evt.feature.getGeometry() as LineString;
+			this.draw.flag = true;
+			const feature = evt.feature
+			const geometry = feature.getGeometry() as LineString;
 			lastPointCount = geometry.getCoordinates().length;
 
+			this.measurementService.setStyle(feature, "#1082fc");
 			geometry.on("change", () => {
 				const currentPointCount = geometry.getCoordinates().length;
 				const coordinates = geometry.getCoordinates();
@@ -88,10 +92,12 @@ export class LineComponent implements OnInit, MeasurementComponentBase {
 		});
 
 		this.draw.on("drawend", (evt) => {
+			this.draw.flag = false;
 			const feature = evt.feature as Feature<LineString>;
 			feature.set("sidenavTool", "measurement");
 			const geometry = evt.feature.getGeometry() as LineString;
 			const length = this.calculateLength(geometry);
+			
 
 			const lineId = ++this.lineCounter;
 			const formattedLength = this.measurementService.formatMeasurement(
@@ -129,25 +135,16 @@ export class LineComponent implements OnInit, MeasurementComponentBase {
 		return length;
 	}
 
-	public removeLine(id: number) {
-		const line = this.lines.find((line) => line.id === id);
-		if (line) {
-			this.vectorSource.removeFeature(line.feature);
-			this.lines = this.lines.filter((l) => l.id !== id);
-		}
-		if (this.lines.length === 0) {
-			this.lineCounter = 1;
-		}
-	}
-
 	public formatLength(length: number) {
 		if (!length) {
-			return 0;
+			return "0.00";
 		}
+		let formattedLength: number;
 		if (this.selectedUnit === "kilometers") {
-			return Math.round((length / 1000) * 100) / 100;
+			formattedLength = Math.round((length / 1000) * 100) / 100;
 		} else {
-			return Math.round(length * 100) / 100;
+			formattedLength = Math.round(length * 100) / 100;
 		}
+		return formattedLength.toFixed(2);
 	}
 }

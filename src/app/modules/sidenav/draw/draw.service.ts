@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Type } from "ol/geom/Geometry";
-import { Draw, Interaction } from "ol/interaction";
+import { Interaction } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
 import Map from "ol/Map";
 import VectorSource from "ol/source/Vector";
@@ -27,7 +27,8 @@ import {
 	StrokeStyles,
 	Tools,
 } from "./enum/draw.enum";
-import { SidenavTools } from "../interfaces/sidenav.interfaces";
+import { SidenavTools } from "../interfaces/sidenav.interface";
+import { CustomDraw } from "../../shared/classes/draw-interaction.class";
 
 @Injectable({
 	providedIn: "root",
@@ -167,7 +168,7 @@ export class DrawService {
 		geometryFunction?: GeometryFunction | undefined,
 	) {
 		map.addLayer(vector);
-		const draw = new Draw({
+		const draw = new CustomDraw({
 			source: source,
 			type: type,
 			freehand: freehand,
@@ -210,9 +211,17 @@ export class DrawService {
 		);
 		draw.set("sidenavTool", SidenavTools.Draw);
 		draw.on("drawstart", async (event) => {
+			if (tool !== Tools.Point) {
+				draw.flag = true;
+			}
 			event.feature.set("sidenavTool", SidenavTools.Draw);
 			event.feature.setStyle(await this.getStyle(tool));
 		});
+
+		draw.on("drawend", () => {
+			draw.flag = false;
+		});
+
 		return draw;
 	}
 

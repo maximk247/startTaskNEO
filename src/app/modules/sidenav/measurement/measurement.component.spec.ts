@@ -10,8 +10,8 @@ import { PointComponent } from "./geometry/point/point.component";
 import { LineComponent } from "./geometry/line/line.component";
 import { CircleComponent } from "./geometry/circle/circle.component";
 import { PolygonComponent } from "./geometry/polygon/polygon.component";
-import { MeasurementMode } from "./enums/measurement.enums";
-import { SidenavTools } from "../interfaces/sidenav.interfaces";
+import { MeasurementMode } from "./enums/measurement.enum";
+import { SidenavTools } from "../interfaces/sidenav.interface";
 import {
 	MeasurementPoint,
 	MeasurementLine,
@@ -50,8 +50,6 @@ describe("MeasurementComponent", () => {
 			"getLastId",
 			"getLastIdMeasurement",
 		]);
-
-        
 
 		(mockMapService.getMap as jasmine.Spy).and.returnValue(
 			new MapOpen({ view: new View({ center: [0, 0], zoom: 2 }) }),
@@ -299,9 +297,9 @@ describe("MeasurementComponent", () => {
 		).and.callThrough();
 
 		(component as any).loadMeasurements();
-	
+
 		expect(spyAddOverlay).toHaveBeenCalledWith(point.measureTooltips!.get(1)!);
-	
+
 		expect(spyAddFeature).toHaveBeenCalledWith(point.feature!);
 		expect(component.allMeasurements).toContain(point);
 	});

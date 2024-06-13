@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import MapOpen from "ol/Map";
-import { Overlay } from "ol";
+
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import {
@@ -17,8 +17,9 @@ import { LineComponent } from "./geometry/line/line.component";
 import { CircleComponent } from "./geometry/circle/circle.component";
 import { PolygonComponent } from "./geometry/polygon/polygon.component";
 import { MeasurementService } from "./measurement.service";
-import { SidenavTools } from "../interfaces/sidenav.interfaces";
-import { MeasurementMode } from "./enums/measurement.enums";
+import { SidenavTools } from "../interfaces/sidenav.interface";
+import { MeasurementMode } from "./enums/measurement.enum";
+import { StyleLike } from "ol/style/Style";
 
 @Component({
 	selector: "app-measurement",
@@ -28,7 +29,7 @@ import { MeasurementMode } from "./enums/measurement.enums";
 export class MeasurementComponent implements OnInit {
 	public map: MapOpen;
 	public vectorSource: VectorSource;
-	public mode = MeasurementMode.Line;
+	public mode = MeasurementMode.Polygon;
 	public lastId = {
 		point: 0,
 		line: 0,
@@ -36,9 +37,11 @@ export class MeasurementComponent implements OnInit {
 		circle: 0,
 	};
 
-	public text = "Укажите точку на карте.";
+	public text: string;
 
 	public allMeasurements: Array<MeasurementType> = [];
+	public originalStyles = new Map<MeasurementType, StyleLike>();
+
 	@ViewChild(PointComponent) public pointComponent: PointComponent;
 	@ViewChild(LineComponent) public lineComponent: LineComponent;
 	@ViewChild(PolygonComponent) public polygonComponent: PolygonComponent;
@@ -54,12 +57,13 @@ export class MeasurementComponent implements OnInit {
 		this.vectorSource = new VectorSource();
 
 		this.map = this.mapService.getMap();
-
+		this.mapService.addCursorToMap('Measurement')
 		this.map.addLayer(
 			new VectorLayer({
 				source: this.vectorSource,
 			}),
 		);
+
 		const savedMeasurements = this.measurementService.getMeasurements();
 
 		if (savedMeasurements.length > 0) {
@@ -72,12 +76,11 @@ export class MeasurementComponent implements OnInit {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
 		});
+		this.setTextBasedOnMode(this.mode);
 	}
 
-	public onModeChange(event: Event) {
-		const target = event.target as HTMLSelectElement;
-		const value = target.value;
-		switch (value) {
+	private setTextBasedOnMode(mode: MeasurementMode) {
+		switch (mode) {
 			case MeasurementMode.Point:
 				this.text = "Укажите точку на карте.";
 				break;
@@ -95,6 +98,12 @@ export class MeasurementComponent implements OnInit {
 					"Укажите узлы измеряемой фигуры на карте. Завершите измерение, дважды щелкнув по карте левой кнопкой мыши.";
 				break;
 		}
+	}
+
+	public onModeChange(event: Event) {
+		const target = event.target as HTMLSelectElement;
+		const value = target.value;
+		this.setTextBasedOnMode(value as MeasurementMode);
 	}
 
 	public onPointChange(point: MeasurementType) {
@@ -129,13 +138,6 @@ export class MeasurementComponent implements OnInit {
 			const shouldKeep = !(
 				m?.id === measurement?.id && m?.type === measurement?.type
 			);
-			if (!shouldKeep && "measureTooltips" in m!) {
-				const tooltip = m.measureTooltips?.get(m.id);
-				if (tooltip) {
-					this.map.removeOverlay(tooltip);
-					m.measureTooltips?.delete(m.id);
-				}
-			}
 			this.vectorSource.removeFeature(measurement!.feature);
 			return shouldKeep;
 		});
@@ -153,6 +155,26 @@ export class MeasurementComponent implements OnInit {
 			"resetCircle",
 		);
 		this.saveMeasurements();
+	}
+
+	public showMeasurement(measurement: MeasurementType) {
+		this.allMeasurements.forEach((m) => {
+			if (m === measurement && measurement) {
+				if (m?.feature) {
+					this.originalStyles.set(m, m.feature.getStyle()!);
+				}
+				this.measurementService.setStyle(
+					measurement.feature,
+					"#1aa522",
+					"#86ca85",
+				);
+			} else {
+				const originalStyle = this.originalStyles.get(m);
+				if (originalStyle) {
+					m!.feature.setStyle(originalStyle);
+				}
+			}
+		});
 	}
 	private checkAndResetMeasurement(
 		type: string,
@@ -183,11 +205,6 @@ export class MeasurementComponent implements OnInit {
 		this.allMeasurements.forEach((measurement) => {
 			if (measurement?.feature) {
 				this.vectorSource.addFeature(measurement.feature);
-			}
-			if (measurement?.measureTooltips) {
-				measurement.measureTooltips.forEach((overlay: Overlay) => {
-					this.map.addOverlay(overlay);
-				});
 			}
 		});
 		this.lastId = this.measurementService.getLastId();
