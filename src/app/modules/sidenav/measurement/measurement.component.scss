@@ -25,6 +25,7 @@
 			align-items: center;
 			justify-content: space-between;
 			width: 100%;
+			line-height: 1.1667rem;
 
 			&:hover {
 				color: var(--primary-100);
@@ -48,6 +49,11 @@
 				display: flex;
 				flex-direction: column;
 				align-items: flex-end;
+			}
+
+			/* stylelint-disable-next-line selector-class-pattern */
+			& > .button__icon {
+				width: 30px;
 			}
 		}
 	}

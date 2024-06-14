@@ -14,7 +14,7 @@ import {
 } from "../../interfaces/measurement.interface";
 import { Point } from "ol/geom";
 import { ElevationService } from "src/app/modules/shared/elevation.service";
-import { Fill, Icon, Style, Text } from "ol/style";
+import { Fill, Icon, Stroke, Style, Text } from "ol/style";
 import { Coordinate, toStringHDMS } from "ol/coordinate";
 import { MeasurementService } from "../../measurement.service";
 import { ElevationArray } from "src/app/modules/shared/interfaces/elevation.interfaces";
@@ -98,9 +98,8 @@ export class PointComponent implements OnInit, MeasurementComponentBase {
 			MeasurementMode.Point,
 		);
 		this.draw.set("sidenavTool", SidenavTools.Measurement);
-		
+
 		this.draw.on("drawend", async (evt) => {
-	
 			const feature = evt.feature as Feature<Point>;
 			feature.set("sidenavTool", "measurement");
 			const geometry = evt.feature.getGeometry() as Point;
@@ -166,17 +165,35 @@ export class PointComponent implements OnInit, MeasurementComponentBase {
 				}
 				return true;
 			});
-		this.longitudeDegrees = degreesCoordinates.slice(0, 3).join(" ");
-		this.latitudeDegrees = degreesCoordinates.slice(3, 6).join(" ");
+
+		const longitudeSign = coordinates[0] < 0 ? "-" : "";
+		const latitudeSign = coordinates[1] < 0 ? "-" : "";
+		console.log(coordinates, degreesCoordinates);
+		this.longitudeDegrees =
+			longitudeSign + degreesCoordinates.slice(0, 3).join(" ");
+		this.latitudeDegrees =
+			latitudeSign + degreesCoordinates.slice(3, 6).join(" ");
 		return coordinates;
 	}
 
 	private transformCoordinates(coordinates: Coordinate) {
 		const proj4 = (proj4x as any).default;
+
+		const longitudeSign = coordinates[0] < 0 ? "-" : "";
+		const latitudeSign = coordinates[1] < 0 ? "-" : "";
 		const transformedCoordinates = proj4(this.newProjection.name, coordinates);
 		for (let i = 0; i < transformedCoordinates.length; i++) {
-			transformedCoordinates[i] = Number(transformedCoordinates[i].toFixed(5));
+			transformedCoordinates[i] = Number(transformedCoordinates[i]).toFixed(5);
+
+			if (i === 0 && longitudeSign) {
+				transformedCoordinates[i] = "-" + Math.abs(transformedCoordinates[i]);
+			} else if (i === 1 && latitudeSign) {
+				transformedCoordinates[i] = "-" + Math.abs(transformedCoordinates[i]);
+			}
+
+			console.log(transformedCoordinates[i]);
 		}
+
 		return transformedCoordinates;
 	}
 
@@ -196,11 +213,14 @@ export class PointComponent implements OnInit, MeasurementComponentBase {
 			text: `Широта (Y): ${y} (${this.latitudeDegrees}),\n Долгота (X): ${x} (${this.longitudeDegrees}),\n ${this.showElevation ? `Высота (Z): ${z} м` : ""}`,
 			font: "12px Calibri,sans-serif",
 			fill: new Fill({
-				color: "#000",
+				color: "#fff",
 			}),
 			offsetX: 0,
 			offsetY: 20,
-
+			stroke: new Stroke({
+				color: "#000",
+				width: 3,
+			}),
 			padding: [2, 2, 2, 2],
 		});
 

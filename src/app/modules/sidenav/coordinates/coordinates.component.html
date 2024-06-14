@@ -1,49 +1,120 @@
-<app-coordinate-system
-	[spatialReferences]="spatialReferences"
-	(selectedReferenceChange)="onSelectedReferenceChange($event)"
->
-</app-coordinate-system>
-
-<div *ngIf="newProjection" [ngSwitch]="newProjection.type">
-	<div *ngSwitchCase="'degree'">
-		<div>
-			<h2>{{ "latitude" | transloco }}:</h2>
-			<input type="text" [(ngModel)]="latitudeDegrees" />
-			<input type="text" [(ngModel)]="latitudeMinutes" />
-			<input type="text" [(ngModel)]="latitudeSeconds" />
-		</div>
-		<div>
-			<h2>{{ "longitude" | transloco }}:</h2>
-			<input type="text" [(ngModel)]="longitudeDegrees" />
-			<input type="text" [(ngModel)]="longitudeMinutes" />
-			<input type="text" [(ngModel)]="longitudeSeconds" />
-		</div>
+<div class="coordinates-container">
+	<div class="coordinates-container__header">
+		<app-coordinate-system
+			[spatialReferences]="spatialReferences"
+			(selectedReferenceChange)="onSelectedReferenceChange($event)"
+		>
+		</app-coordinate-system>
 	</div>
-	<div *ngSwitchCase="'metric'">
-		<div>
-			<h2>X</h2>
-			<input type="text" [(ngModel)]="x" />
-		</div>
+	<div class="coordinates-container__main">
+		<form
+			*ngIf="newProjection"
+			[ngSwitch]="newProjection.type"
+			class="location-form"
+			[formGroup]="coordinatesForm"
+		>
+			<ng-container *ngSwitchCase="'degree'">
+				<span class="location-form__label"> {{ "latitude" | transloco }}:</span>
+				<div class="location-form__row">
+					<section class="location-form__section">
+						<input
+							type="text"
+							formControlName="latitudeDegrees"
+							class="location-form__field"
+						/>
+						<span class="location-form__col-name">{{
+							"degrees" | transloco
+						}}</span>
+					</section>
+					<section class="location-form__section">
+						<input
+							type="text"
+							formControlName="latitudeMinutes"
+							class="location-form__field"
+						/>
+						<span class="location-form__col-name">{{
+							"minutes" | transloco
+						}}</span>
+					</section>
+					<section class="location-form__section">
+						<input
+							type="text"
+							formControlName="latitudeSeconds"
+							class="location-form__field"
+						/>
+						<span class="location-form__col-name">{{
+							"seconds" | transloco
+						}}</span>
+					</section>
+				</div>
+				<span class="location-form__label">{{ "longitude" | transloco }}:</span>
+				<div class="location-form__row">
+					<section class="location-form__section">
+						<input
+							type="text"
+							formControlName="longitudeDegrees"
+							class="location-form__field"
+						/>
+						<span class="location-form__col-name">{{
+							"degrees" | transloco
+						}}</span>
+					</section>
+					<section class="location-form__section">
+						<input
+							type="text"
+							formControlName="longitudeMinutes"
+							class="location-form__field"
+						/>
+						<span class="location-form__col-name">{{
+							"minutes" | transloco
+						}}</span>
+					</section>
+					<section class="location-form__section">
+						<input
+							type="text"
+							formControlName="longitudeSeconds"
+							class="location-form__field"
+						/>
+						<span class="location-form__col-name">{{
+							"seconds" | transloco
+						}}</span>
+					</section>
+				</div>
+			</ng-container>
+			<ng-container *ngSwitchCase="'metric'">
+				<span class="location-form__label">Метры</span>
+				<section class="location-form__section">
+					<span class="location-form__coordinate">X</span>
+					<input type="text" formControlName="x" class="location-form__field" />
+				</section>
 
-		<div>
-			<h2>Y</h2>
-			<input type="text" [(ngModel)]="y" />
-		</div>
+				<section class="location-form__section">
+					<span class="location-form__coordinate">Y</span>
+					<input type="text" formControlName="y" class="location-form__field" />
+				</section>
+			</ng-container>
+			<label class="location-form__checkbox" for="checkbox">
+				<input type="checkbox" formControlName="showPoint" id="checkbox" />
+				<span>{{ "showPoint" | transloco }}</span>
+			</label>
+		</form>
+	</div>
+
+	<div class="coordinates-container__footer">
+		<button
+			type="button"
+			(click)="goToCoordinates()"
+			class="button button--rounded"
+			[disabled]="!coordinatesForm.valid"
+		>
+			{{ "goToCoordinates" | transloco }}:
+		</button>
+		<button
+			type="button"
+			(click)="removeAllCoordinates()"
+			class="button button--rounded"
+		>
+			{{ "clear" | transloco }}
+		</button>
 	</div>
 </div>
-
-<button (click)="goToCoordinates()">
-	{{ "goToCoordinates" | transloco }}:
-</button>
-<div>
-	<h2>{{ "showPoint" | transloco }}</h2>
-	<input type="checkbox" [(ngModel)]="showPoint" />
-</div>
-
-<button
-	type="button"
-	(click)="removeAllCoordinates()"
-	class="button button--rounded"
->
-	{{ "clear" | transloco }}
-</button>
