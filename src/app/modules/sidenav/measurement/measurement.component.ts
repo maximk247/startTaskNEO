@@ -19,7 +19,9 @@ import { PolygonComponent } from "./geometry/polygon/polygon.component";
 import { MeasurementService } from "./measurement.service";
 import { SidenavTools } from "../interfaces/sidenav.interface";
 import { MeasurementMode } from "./enums/measurement.enum";
-import { StyleLike } from "ol/style/Style";
+import Style, { StyleLike } from "ol/style/Style";
+import { Feature } from "ol";
+import { Icon } from "ol/style";
 
 @Component({
 	selector: "app-measurement",
@@ -29,7 +31,7 @@ import { StyleLike } from "ol/style/Style";
 export class MeasurementComponent implements OnInit {
 	public map: MapOpen;
 	public vectorSource: VectorSource;
-	public mode = MeasurementMode.Polygon;
+	public mode = MeasurementMode.Point;
 	public lastId = {
 		point: 0,
 		line: 0,
@@ -57,7 +59,7 @@ export class MeasurementComponent implements OnInit {
 		this.vectorSource = new VectorSource();
 
 		this.map = this.mapService.getMap();
-		this.mapService.addCursorToMap('Measurement')
+		this.mapService.addCursorToMap("Measurement");
 		this.map.addLayer(
 			new VectorLayer({
 				source: this.vectorSource,
@@ -159,19 +161,31 @@ export class MeasurementComponent implements OnInit {
 
 	public showMeasurement(measurement: MeasurementType) {
 		this.allMeasurements.forEach((m) => {
-			if (m === measurement && measurement) {
-				if (m?.feature) {
-					this.originalStyles.set(m, m.feature.getStyle()!);
+			if (m?.feature) {
+				const originalStyle = m.feature.getStyle() as Style;
+				if (!this.originalStyles.has(m)) {
+					this.originalStyles.set(m, originalStyle!);
 				}
-				this.measurementService.setStyle(
-					measurement.feature,
-					"#1aa522",
-					"#86ca85",
-				);
-			} else {
-				const originalStyle = this.originalStyles.get(m);
-				if (originalStyle) {
-					m!.feature.setStyle(originalStyle);
+				if (m === measurement && measurement) {
+					if (measurement.type === MeasurementMode.Point) {
+						const newStyle = originalStyle.clone();
+						newStyle.setImage(
+							new Icon({
+								src: "assets/images/marker-big-green.png",
+							}),
+						);
+						m.feature.setStyle(newStyle);
+					} else {
+						this.measurementService.setStyle(
+							measurement.feature,
+							"#1aa522",
+							"#86ca85",
+						);
+					}
+				} else {
+					if (this.originalStyles.has(m)) {
+						m.feature.setStyle(this.originalStyles.get(m));
+					}
 				}
 			}
 		});
