@@ -3,7 +3,7 @@
 		class="modal-container"
 		cdkDragBoundary=".box-boundary"
 		cdkDrag
-		[ngClass]="{'turn': turn}"
+		[ngClass]="{ turn: turn, 'menu-width': mode === 'menu' }"
 	>
 		<header class="modal-container__header" cdkDragHandle>
 			<div class="header__title" [ngSwitch]="mode">
