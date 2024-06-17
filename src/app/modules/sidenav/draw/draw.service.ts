@@ -27,7 +27,7 @@ import {
 	StrokeStyles,
 	Tools,
 } from "./enum/draw.enum";
-import { SidenavTools } from "../interfaces/sidenav.interface";
+import { SidenavTools } from "../enums/sidenav.enums";
 import { CustomDraw } from "../../shared/classes/draw-interaction.class";
 
 @Injectable({

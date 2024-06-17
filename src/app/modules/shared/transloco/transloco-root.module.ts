@@ -10,7 +10,6 @@ import { TranslocoHttpLoader } from "./transloco.service";
 			config: {
 				availableLangs: ["en", "ru"],
 				defaultLang: "ru",
-				// Remove this option if your application doesn't support changing language in runtime.
 				reRenderOnLangChange: true,
 				prodMode: !isDevMode(),
 			},

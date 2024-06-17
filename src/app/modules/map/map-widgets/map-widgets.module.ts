@@ -13,7 +13,7 @@ import { SliderComponent } from "./slider/slider.component";
 		CommonModule,
 		TranslocoModule,
 		InlineSVGModule.forRoot({
-			baseUrl: "../../../assets/images/",
+			baseUrl: "/assets/images/",
 		}),
 	],
 	exports: [ControlsComponent, ScaleBarComponent, SliderComponent],

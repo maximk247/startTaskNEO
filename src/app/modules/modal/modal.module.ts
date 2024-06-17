@@ -13,7 +13,7 @@ import { SharedModule } from "../shared/shared.module";
 		SharedModule,
 		SidenavModule,
 		InlineSVGModule.forRoot({
-			baseUrl: "../../../assets/images/",
+			baseUrl: "/assets/images/",
 		}),
 		CdkDrag,
 		DragDropModule,

@@ -18,7 +18,7 @@ import { Fill, Icon, Stroke, Style, Text } from "ol/style";
 import { Coordinate, toStringHDMS } from "ol/coordinate";
 import { MeasurementService } from "../../measurement.service";
 import { ElevationArray } from "src/app/modules/shared/interfaces/elevation.interfaces";
-import { SidenavTools } from "../../../interfaces/sidenav.interface";
+import { SidenavTools } from "../../../enums/sidenav.enums";
 import { MeasurementMode } from "../../enums/measurement.enum";
 import { CustomDraw } from "src/app/modules/shared/classes/draw-interaction.class";
 
@@ -92,7 +92,7 @@ export class PointComponent implements OnInit, MeasurementComponentBase {
 			source: this.vectorSource,
 			type: "Point",
 		});
-
+		
 		this.drawService.addGlobalInteraction(this.map, this.draw);
 		this.pointCounter = this.measurementService.getLastIdMeasurement(
 			MeasurementMode.Point,

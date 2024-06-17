@@ -5,7 +5,7 @@ import { MeasurementService } from "../../measurement.service";
 import { Map, View } from "ol";
 import VectorSource from "ol/source/Vector";
 import { LineString } from "ol/geom";
-import { SidenavTools } from "../../../interfaces/sidenav.interface";
+import { SidenavTools } from "../../../enums/sidenav.enums";
 import { Feature } from "ol";
 import BaseEvent from "ol/events/Event";
 import { Interaction } from "ol/interaction";

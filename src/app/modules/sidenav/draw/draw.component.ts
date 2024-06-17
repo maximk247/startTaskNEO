@@ -5,7 +5,7 @@ import { DrawService } from "./draw.service";
 import { Draw } from "ol/interaction";
 import { DrawToolKey, DrawTools } from "./interfaces/draw.interface";
 import { TOOLS } from "./consts/draw-consts.consts";
-import { SidenavTools } from "../interfaces/sidenav.interface";
+import { SidenavTools } from "../enums/sidenav.enums";
 
 @Component({
 	selector: "app-draw",
@@ -18,6 +18,7 @@ export class DrawComponent implements OnInit {
 
 	private activeInteraction: Draw | null = null;
 	public signal = false;
+	public svg: any
 
 	public constructor(
 		private mapService: MapService,
@@ -35,6 +36,10 @@ export class DrawComponent implements OnInit {
 		this.drawService.initializeLayer();
 		this.map.addLayer(this.drawService.getVectorLayer());
 		this.mapService.addCursorToMap();
+		this.svg = {
+			width: '16px',
+			height: '16px'
+		}
 	}
 
 	public componentVisibility: DrawTools = {

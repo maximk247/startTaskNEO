@@ -1,9 +1,9 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { MapService } from "src/app/modules/map/map.service";
 import { DrawService } from "../../../draw.service";
 import { Map } from "ol";
-import { SidenavTools } from "src/app/modules/sidenav/interfaces/sidenav.interface";
-import { Draw } from "ol/interaction";
+
+import { SidenavTools } from "src/app/modules/sidenav/enums/sidenav.enums";
 
 @Component({
 	selector: "app-draw-delete",

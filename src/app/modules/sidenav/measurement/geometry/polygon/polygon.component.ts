@@ -6,15 +6,13 @@ import {
 	MeasurementType,
 } from "../../interfaces/measurement.interface";
 import { Feature, Map } from "ol";
-import { Draw } from "ol/interaction";
 import { DrawService } from "../../../draw/draw.service";
 import { getArea, getLength } from "ol/sphere";
 import { Polygon } from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
 import { MeasurementService } from "../../measurement.service";
-import { SidenavTools } from "../../../interfaces/sidenav.interface";
+import { SidenavTools } from "../../../enums/sidenav.enums";
 import { MeasurementMode } from "../../enums/measurement.enum";
-import { Fill, Stroke, Style } from "ol/style";
 import { CustomDraw } from "src/app/modules/shared/classes/draw-interaction.class";
 
 @Component({

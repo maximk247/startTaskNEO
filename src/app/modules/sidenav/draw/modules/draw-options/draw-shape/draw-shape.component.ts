@@ -10,7 +10,7 @@ import { DrawService } from "../../../draw.service";
 import { MapService } from "src/app/modules/map/map.service";
 import { Coordinate } from "ol/coordinate";
 import { DrawShapes } from "../enum/draw-options.enum";
-import { SidenavTools } from "src/app/modules/sidenav/interfaces/sidenav.interface";
+import { SidenavTools } from "src/app/modules/sidenav/enums/sidenav.enums";
 
 @Component({
 	selector: "app-draw-shape",

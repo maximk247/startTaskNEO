@@ -51,5 +51,7 @@
 	"showCoordinates": "Показать координаты на карте",
 	"showElevationFromCoordinates": "Показать высоту по координатам",
 	"logout": "Выйти",
-	"measurementResult": "Сохраненные измерения"
+	"measurementResult": "Сохраненные измерения",
+	"x": "X",
+	"y": "Y"
 }

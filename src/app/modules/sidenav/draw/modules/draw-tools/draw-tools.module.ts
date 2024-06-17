@@ -12,6 +12,7 @@ import { MatSliderModule } from "@angular/material/slider";
 
 import { FormsModule } from "@angular/forms";
 import { SharedModule } from "src/app/modules/shared/shared.module";
+import { InlineSVGModule } from "ng-inline-svg-2";
 
 @NgModule({
 	declarations: [
@@ -28,6 +29,9 @@ import { SharedModule } from "src/app/modules/shared/shared.module";
 		DrawOptionsModule,
 		MatSliderModule,
 		FormsModule,
+		InlineSVGModule.forRoot({
+			baseUrl: "/assets/images/",
+		}),
 	],
 	exports: [
 		DrawFigureComponent,

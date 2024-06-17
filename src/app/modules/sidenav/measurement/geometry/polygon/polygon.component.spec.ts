@@ -5,7 +5,7 @@ import { MeasurementService } from "../../measurement.service";
 import { Map, View, Feature } from "ol";
 import VectorSource from "ol/source/Vector";
 import { Polygon } from "ol/geom";
-import { SidenavTools } from "../../../interfaces/sidenav.interface";
+import { SidenavTools } from "../../../enums/sidenav.enums";
 import BaseEvent from "ol/events/Event";
 import { Interaction } from "ol/interaction";
 import { FormsModule } from "@angular/forms";

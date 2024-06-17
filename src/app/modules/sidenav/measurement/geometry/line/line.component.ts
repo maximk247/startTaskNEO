@@ -13,7 +13,7 @@ import VectorLayer from "ol/layer/Vector";
 import { DrawService } from "../../../draw/draw.service";
 import { getLength } from "ol/sphere";
 import { MeasurementService } from "../../measurement.service";
-import { SidenavTools } from "../../../interfaces/sidenav.interface";
+import { SidenavTools } from "../../../enums/sidenav.enums";
 import { MeasurementMode } from "../../enums/measurement.enum";
 import { CustomDraw } from "src/app/modules/shared/classes/draw-interaction.class";
 
@@ -68,7 +68,7 @@ export class LineComponent implements OnInit, MeasurementComponentBase {
 		this.draw.set("sidenavTool", SidenavTools.Measurement);
 		this.draw.on("drawstart", (evt) => {
 			this.draw.flag = true;
-			const feature = evt.feature
+			const feature = evt.feature;
 			const geometry = feature.getGeometry() as LineString;
 			lastPointCount = geometry.getCoordinates().length;
 
@@ -97,7 +97,6 @@ export class LineComponent implements OnInit, MeasurementComponentBase {
 			feature.set("sidenavTool", "measurement");
 			const geometry = evt.feature.getGeometry() as LineString;
 			const length = this.calculateLength(geometry);
-			
 
 			const lineId = ++this.lineCounter;
 			const formattedLength = this.measurementService.formatMeasurement(

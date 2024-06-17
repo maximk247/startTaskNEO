@@ -13,7 +13,7 @@ import { Circle, LineString } from "ol/geom";
 import { getLength } from "ol/sphere";
 import VectorLayer from "ol/layer/Vector";
 import { MeasurementService } from "../../measurement.service";
-import { SidenavTools } from "../../../interfaces/sidenav.interface";
+import { SidenavTools } from "../../../enums/sidenav.enums";
 import { MeasurementMode } from "../../enums/measurement.enum";
 import { CustomDraw } from "src/app/modules/shared/classes/draw-interaction.class";
 

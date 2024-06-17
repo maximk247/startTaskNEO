@@ -17,7 +17,7 @@ import { LineComponent } from "./geometry/line/line.component";
 import { CircleComponent } from "./geometry/circle/circle.component";
 import { PolygonComponent } from "./geometry/polygon/polygon.component";
 import { MeasurementService } from "./measurement.service";
-import { SidenavTools } from "../interfaces/sidenav.interface";
+import { SidenavTools } from "../enums/sidenav.enums";
 import { MeasurementMode } from "./enums/measurement.enum";
 import Style, { StyleLike } from "ol/style/Style";
 import { Feature } from "ol";

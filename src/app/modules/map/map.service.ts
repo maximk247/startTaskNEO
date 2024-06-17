@@ -13,7 +13,8 @@ import VectorSource from "ol/source/Vector";
 import { ZoomSlider } from "ol/control";
 import { useGeographic } from "ol/proj";
 import { Circle, Geometry, LineString, Point, Polygon } from "ol/geom";
-import { SidenavTools } from "../sidenav/interfaces/sidenav.interface";
+import { SidenavTools } from "../sidenav/enums/sidenav.enums";
+import { CURSOR_URLS } from "./consts/map-consts.consts";
 
 @Injectable({
 	providedIn: "root",
@@ -71,24 +72,7 @@ export class MapService {
 	}
 
 	public addCursorToMap(mode = "") {
-		let url: string;
-		switch (mode) {
-			case "Measurement":
-				url = "assets/images/cursor/ruler.cur";
-				break;
-			case "DrawPoint":
-				url = "assets/images/cursor/point.cur";
-				break;
-			case "DrawLine":
-				url = "assets/images/cursor/polyline.cur";
-				break;
-			case "DrawPolygon":
-				url = "assets/images/cursor/polygon.cur";
-				break;
-			default:
-				url = "";
-				break;
-		}
+		const url: string = CURSOR_URLS.get(mode) ?? "";
 		this.map.on("pointermove", (evt) => {
 			if (!evt.dragging) {
 				this.map.getTargetElement().style.cursor = `url(${url}), auto`;

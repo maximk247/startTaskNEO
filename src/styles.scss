@@ -85,7 +85,10 @@ button.button {
 }
 
 button.button:disabled {
+	color: var(--accent-400);
 	cursor: auto;
+	background-color: var(--accent-200);
+	border: none;
 	opacity: 0.5;
 }
 

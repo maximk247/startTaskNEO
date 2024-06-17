@@ -8,7 +8,7 @@ import { Feature } from "ol";
 import { SpatialReference } from "../../shared/interfaces/spatial-reference.interfaces";
 import * as proj4x from "proj4";
 import { ProjectionType } from "../draw/modules/draw-options/enum/draw-options.enum";
-import { SidenavTools } from "../interfaces/sidenav.interface";
+import { SidenavTools } from "../enums/sidenav.enums";
 import { Coordinate } from "ol/coordinate";
 import { Icon, Style } from "ol/style";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
@@ -148,5 +148,22 @@ export class CoordinatesComponent implements OnInit {
 	public removeAllCoordinates() {
 		this.mapService.removeAllFeatures(SidenavTools.Coordinates);
 		this.resetFormFields();
+	}
+	public get isAnyFieldFilled(): boolean | undefined {
+		if (this.newProjection) {
+			if (this.newProjection.type === ProjectionType.Metric) {
+				return !!this.coordinatesForm.value.x || !!this.coordinatesForm.value.y;
+			} else if (this.newProjection.type === ProjectionType.Degree) {
+				return (
+					!!this.coordinatesForm.value.latitudeDegrees ||
+					!!this.coordinatesForm.value.latitudeMinutes ||
+					!!this.coordinatesForm.value.latitudeSeconds ||
+					!!this.coordinatesForm.value.longitudeDegrees ||
+					!!this.coordinatesForm.value.longitudeMinutes ||
+					!!this.coordinatesForm.value.longitudeSeconds
+				);
+			}
+			return false;
+		}
 	}
 }

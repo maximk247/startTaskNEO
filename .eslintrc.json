@@ -53,7 +53,8 @@
 					{
 						"allowList": ["appTooltipLabel", "ariaLabel"]
 					}
-				]
+				],
+				"@angular-eslint/template/elements-content": ["error"]
 			}
 		}
 	]
