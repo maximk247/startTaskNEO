@@ -1,18 +1,17 @@
-import { Component, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { MapService } from "../../map/map.service";
 import Map from "ol/Map";
 import { Point } from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { Feature } from "ol";
-import { SpatialReferenceService } from "../../shared/spatial-reference.service";
 import { SpatialReference } from "../../shared/interfaces/spatial-reference.interfaces";
-import { TranslocoService } from "@ngneat/transloco";
 import * as proj4x from "proj4";
-import { register } from "ol/proj/proj4";
 import { ProjectionType } from "../draw/modules/draw-options/enum/draw-options.enum";
-import { map } from "rxjs";
-import { DrawType } from "../draw/enum/draw.enum";
+import { SidenavTools } from "../enums/sidenav.enums";
+import { Coordinate } from "ol/coordinate";
+import { Icon, Style } from "ol/style";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 
 @Component({
 	selector: "app-coordinates",
@@ -20,66 +19,68 @@ import { DrawType } from "../draw/enum/draw.enum";
 	styleUrls: ["./coordinates.component.scss"],
 })
 export class CoordinatesComponent implements OnInit {
-	public latitudeDegrees = 0;
-	public latitudeMinutes = 0;
-	public latitudeSeconds = 0;
-	public longitudeDegrees = 0;
-	public longitudeMinutes = 0;
-	public longitudeSeconds = 0;
-	public x = 0;
-	public y = 0;
 	private map: Map;
-	public showPoint = false;
 	private pointLayer: VectorLayer<VectorSource>;
 	public spatialReferences: Array<SpatialReference> = [];
-
-	private defaultDegreeProjection: SpatialReference;
 	public newProjection: SpatialReference;
+	public coordinatesForm: FormGroup;
 
 	public constructor(
 		private mapService: MapService,
-		private spatialReferenceService: SpatialReferenceService,
-		private translocoService: TranslocoService,
+		private fb: FormBuilder,
+		private cdr: ChangeDetectorRef,
 	) {}
+
 	public ngOnInit() {
 		this.map = this.mapService.getMap();
 		this.pointLayer = new VectorLayer({
 			source: new VectorSource(),
 		});
 		this.map.addLayer(this.pointLayer);
-		this.getSpatialReferences();
-	}
-	private getSpatialReferences(): void {
-		this.spatialReferenceService.getSpatialReferences().subscribe(
-			(data: Array<SpatialReference>) => {
-				this.spatialReferences = data;
-				this.registerProjections();
-				this.setDefaultProjection();
-			},
-
-			(error) => {
-				const errorMessage = this.translocoService.translate(
-					"errorDueToSpecialReference",
-				);
-				console.error(errorMessage, error);
-			},
-		);
-	}
-
-	private registerProjections(): void {
-		const proj4 = (proj4x as any).default;
-		this.spatialReferences.forEach((ref) => {
-			proj4.defs(ref.name, ref.definition);
+		this.mapService.addCursorToMap();
+		this.coordinatesForm = this.fb.group({
+			x: [""],
+			y: [""],
+			latitudeDegrees: [""],
+			latitudeMinutes: [""],
+			latitudeSeconds: [""],
+			longitudeDegrees: [""],
+			longitudeMinutes: [""],
+			longitudeSeconds: [""],
+			showPoint: [false],
 		});
-		register(proj4);
 	}
 
-	private setDefaultProjection(): void {
-		if (this.spatialReferences.length > 0) {
-			const [firstProjection] = this.spatialReferences;
-			this.defaultDegreeProjection = firstProjection;
-			this.newProjection = firstProjection;
+	public onSelectedReferenceChange(selectedReference: SpatialReference): void {
+		this.newProjection = selectedReference;
+		this.resetFormFields();
+		this.setValidators();
+		this.cdr.detectChanges();
+	}
+
+	private clearValidators(fields: Array<string>) {
+		fields.forEach((field) => {
+			this.coordinatesForm.controls[field].clearValidators();
+			this.coordinatesForm.controls[field].updateValueAndValidity();
+		});
+	}
+
+	private setValidators() {
+		if (this.newProjection.type === ProjectionType.Metric) {
+			this.coordinatesForm.controls["x"].setValidators(Validators.required);
+			this.coordinatesForm.controls["y"].setValidators(Validators.required);
+			this.clearValidators(["latitudeDegrees", "longitudeDegrees"]);
+		} else if (this.newProjection.type === ProjectionType.Degree) {
+			this.coordinatesForm.controls["latitudeDegrees"].setValidators(
+				Validators.required,
+			);
+			this.coordinatesForm.controls["longitudeDegrees"].setValidators(
+				Validators.required,
+			);
+			this.clearValidators(["x", "y"]);
 		}
+		this.coordinatesForm.updateValueAndValidity();
+		this.cdr.detectChanges();
 	}
 
 	public goToCoordinates() {
@@ -87,36 +88,44 @@ export class CoordinatesComponent implements OnInit {
 		let transformCoordinates;
 		if (this.newProjection.type === ProjectionType.Degree) {
 			const latitude =
-				Number(this.latitudeDegrees) +
-				Number(this.latitudeMinutes) / 60 +
-				Number(this.latitudeSeconds) / 3600;
+				Number(this.coordinatesForm.value.latitudeDegrees) +
+				Number(this.coordinatesForm.value.latitudeMinutes) / 60 +
+				Number(this.coordinatesForm.value.latitudeSeconds) / 3600;
 			const longitude =
-				Number(this.longitudeDegrees) +
-				Number(this.longitudeMinutes) / 60 +
-				Number(this.longitudeSeconds) / 3600;
+				Number(this.coordinatesForm.value.longitudeDegrees) +
+				Number(this.coordinatesForm.value.longitudeMinutes) / 60 +
+				Number(this.coordinatesForm.value.longitudeSeconds) / 3600;
 
 			const coordinates = [longitude, latitude];
-			transformCoordinates = proj4(this.defaultDegreeProjection.name).forward(
+			transformCoordinates = proj4(this.newProjection.name).forward(
 				coordinates,
 			);
 		} else if (this.newProjection.type === ProjectionType.Metric) {
-			const x = Number(this.x);
-			const y = Number(this.y);
+			const x = Number(this.coordinatesForm.value.x);
+			const y = Number(this.coordinatesForm.value.y);
+
 			transformCoordinates = proj4(this.newProjection.name, "EPSG:4326", [
 				x,
 				y,
 			]);
 		}
-
-		if (this.showPoint) {
+		if (this.coordinatesForm.value.showPoint) {
 			this.addPointToMap(transformCoordinates);
 		}
 		this.map.getView().setCenter(transformCoordinates);
 	}
-	public addPointToMap(coordinates: Array<number>) {
+
+	public addPointToMap(coordinates: Coordinate) {
 		const point = new Point(coordinates);
 		const feature = new Feature(point);
-		feature.set('drawType', 'coordinates')
+		feature.set("sidenavTool", SidenavTools.Coordinates);
+		const iconStyle = new Icon({
+			src: "assets/images/marker-big.png",
+		});
+		const pointStyle = new Style({
+			image: iconStyle,
+		});
+		feature.setStyle(pointStyle);
 		this.pointLayer.getSource()?.addFeature(feature);
 	}
 
@@ -130,7 +139,31 @@ export class CoordinatesComponent implements OnInit {
 		}
 	}
 
+	private resetFormFields() {
+		Object.keys(this.coordinatesForm.controls).forEach((key) => {
+			this.coordinatesForm.controls[key].reset();
+		});
+	}
+
 	public removeAllCoordinates() {
-		this.mapService.removeAllFeatures(DrawType.Coordinates)
+		this.mapService.removeAllFeatures(SidenavTools.Coordinates);
+		this.resetFormFields();
+	}
+	public get isAnyFieldFilled(): boolean | undefined {
+		if (this.newProjection) {
+			if (this.newProjection.type === ProjectionType.Metric) {
+				return !!this.coordinatesForm.value.x || !!this.coordinatesForm.value.y;
+			} else if (this.newProjection.type === ProjectionType.Degree) {
+				return (
+					!!this.coordinatesForm.value.latitudeDegrees ||
+					!!this.coordinatesForm.value.latitudeMinutes ||
+					!!this.coordinatesForm.value.latitudeSeconds ||
+					!!this.coordinatesForm.value.longitudeDegrees ||
+					!!this.coordinatesForm.value.longitudeMinutes ||
+					!!this.coordinatesForm.value.longitudeSeconds
+				);
+			}
+			return false;
+		}
 	}
 }

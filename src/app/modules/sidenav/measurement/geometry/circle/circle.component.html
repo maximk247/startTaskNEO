@@ -1,12 +1,14 @@
-<div class="measurement-line-result">
-	<div class="measurement-line-result__item">
-		<strong>{{ "total" | transloco }}:</strong>
-		<span>{{ formatRadius(totalRadius) }}</span>
+<div class="measurement-circle">
+	<div class="measurement-circle__result">
+		<div class="measurement-circle__result_item">
+			<strong>{{ "total" | transloco }}:</strong>
+			<span>{{ formatRadius(totalRadius) }}</span>
+		</div>
 	</div>
-</div>
-<div>
-	<select id="unit-select" [(ngModel)]="selectedUnit">
-		<option value="meters">{{ "meters" | transloco }}</option>
-		<option value="kilometers">{{ "kilometers" | transloco }}</option>
-	</select>
+	<div class="measurement-circle__select">
+		<select [(ngModel)]="selectedUnit" class="select">
+			<option value="meters">{{ "meters" | transloco }}</option>
+			<option value="kilometers">{{ "kilometers" | transloco }}</option>
+		</select>
+	</div>
 </div>

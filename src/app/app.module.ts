@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, NgModule, isDevMode } from "@angular/core";
+import { APP_INITIALIZER, NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
@@ -9,12 +9,11 @@ import { HttpClientModule } from "@angular/common/http";
 import { InlineSVGModule } from "ng-inline-svg-2";
 import { FormsModule } from "@angular/forms";
 import { SpatialReferenceService } from "./modules/shared/spatial-reference.service";
-import { TranslocoModule, provideTransloco } from "@ngneat/transloco";
-import { TranslocoHttpLoader } from "./modules/shared/transloco.service";
 import { MapModule } from "./modules/map/map.module";
 import { ModalModule } from "./modules/modal/modal.module";
-import { DialogModule } from "./modules/dialog/dialog.module";
+
 import { SidenavModule } from "./modules/sidenav/sidenav.module";
+import { SharedModule } from "./modules/shared/shared.module";
 
 function initializeKeycloak(keycloak: KeycloakService) {
 	return () =>
@@ -39,16 +38,15 @@ function initializeKeycloak(keycloak: KeycloakService) {
 		MapModule,
 		SidenavModule,
 		ModalModule,
-		DialogModule,
 		AppRoutingModule,
 		BrowserAnimationsModule,
 		MatSidenavModule,
 		KeycloakAngularModule,
 		FormsModule,
-		TranslocoModule,
+		SharedModule,
 		HttpClientModule,
 		InlineSVGModule.forRoot({
-			baseUrl: "../../../assets/images/",
+			baseUrl: "/assets/images/",
 		}),
 	],
 	providers: [
@@ -59,15 +57,6 @@ function initializeKeycloak(keycloak: KeycloakService) {
 		// 	deps: [KeycloakService],
 		// },
 		SpatialReferenceService,
-		provideTransloco({
-			config: {
-				availableLangs: ["en", "ru"],
-				defaultLang: "ru",
-				reRenderOnLangChange: true,
-				prodMode: !isDevMode(),
-			},
-			loader: TranslocoHttpLoader,
-		}),
 	],
 	bootstrap: [AppComponent],
 })

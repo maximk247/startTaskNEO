@@ -1,9 +1,3 @@
-export enum DrawType {
-	Measurement = "measurement",
-	Draw = "draw",
-	Coordinates = "coordinates",
-}
-
 export enum ColorType {
 	Stroke = "stroke",
 	Fill = "fill",

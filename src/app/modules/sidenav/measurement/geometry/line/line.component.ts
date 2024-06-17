@@ -1,42 +1,48 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import VectorSource from "ol/source/Vector";
 import Map from "ol/Map";
-import { MeasurementLine } from "../../interfaces/measurement.interface";
+import {
+	MeasurementComponentBase,
+	MeasurementLine,
+	MeasurementType,
+} from "../../interfaces/measurement.interface";
 import { Feature } from "ol";
 import { LineString } from "ol/geom";
 import { Draw } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
 import { DrawService } from "../../../draw/draw.service";
 import { getLength } from "ol/sphere";
-import { DrawType } from "../../../draw/enum/draw.enum";
 import { MeasurementService } from "../../measurement.service";
+import { SidenavTools } from "../../../enums/sidenav.enums";
+import { MeasurementMode } from "../../enums/measurement.enum";
+import { CustomDraw } from "src/app/modules/shared/classes/draw-interaction.class";
 
 @Component({
 	selector: "app-measurement-line",
 	templateUrl: "./line.component.html",
 	styleUrls: ["./line.component.scss"],
 })
-export class LineComponent implements OnInit {
+export class LineComponent implements OnInit, MeasurementComponentBase {
 	@Input() public map: Map;
 	@Input() public vectorSource: VectorSource;
-	@Output() public linesChange = new EventEmitter<any>();
+	@Output() public lineChange = new EventEmitter<MeasurementType>();
 
 	public lines: Array<MeasurementLine> = [];
 	public lineCounter = 1;
-	public draw: Draw;
+	public draw: CustomDraw;
 	public currentLength: number;
 	public lastLineLength: number;
 	public selectedUnit = "meters";
 
 	public constructor(
 		private drawService: DrawService,
-		private measurementService: MeasurementService,
+		public measurementService: MeasurementService,
 	) {}
 
 	public ngOnInit(): void {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
-			if (interaction.get("drawType") === DrawType.Measurement) {
+			if (interaction.get("sidenavTool") === SidenavTools.Measurement) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
 		});
@@ -49,19 +55,24 @@ export class LineComponent implements OnInit {
 	}
 
 	public addLineInteraction() {
-		this.draw = new Draw({
+		this.draw = new CustomDraw({
 			source: this.vectorSource,
 			type: "LineString",
 		});
-		this.lineCounter = this.measurementService.getLastIdMeasurement("line");
+		this.lineCounter = this.measurementService.getLastIdMeasurement(
+			MeasurementMode.Line,
+		);
 		this.drawService.addGlobalInteraction(this.map, this.draw);
 
 		let lastPointCount = 0;
-		this.draw.set("drawType", DrawType.Measurement);
+		this.draw.set("sidenavTool", SidenavTools.Measurement);
 		this.draw.on("drawstart", (evt) => {
-			const geometry = evt.feature.getGeometry() as LineString;
+			this.draw.flag = true;
+			const feature = evt.feature;
+			const geometry = feature.getGeometry() as LineString;
 			lastPointCount = geometry.getCoordinates().length;
 
+			this.measurementService.setStyle(feature, "#1082fc");
 			geometry.on("change", () => {
 				const currentPointCount = geometry.getCoordinates().length;
 				const coordinates = geometry.getCoordinates();
@@ -81,8 +92,9 @@ export class LineComponent implements OnInit {
 		});
 
 		this.draw.on("drawend", (evt) => {
+			this.draw.flag = false;
 			const feature = evt.feature as Feature<LineString>;
-			feature.set("drawType", "measurement");
+			feature.set("sidenavTool", "measurement");
 			const geometry = evt.feature.getGeometry() as LineString;
 			const length = this.calculateLength(geometry);
 
@@ -92,24 +104,21 @@ export class LineComponent implements OnInit {
 				this.selectedUnit,
 			);
 			const newLine: MeasurementLine = {
-				type: "line",
+				type: MeasurementMode.Line,
 				id: lineId,
 				feature,
 				length: formattedLength,
 			};
 			this.lines.push(newLine);
 			this.lastLineLength = length;
-			const obj = { lines: this.lines, vectorSource: this.vectorSource };
-			this.measurementService.setLastId("line", lineId);
-			this.linesChange.emit(obj);
+			const lastLine = this.lines.slice(-1)[0];
+			this.measurementService.setLastId(MeasurementMode.Line, lineId);
+			this.lineChange.emit(lastLine);
 		});
 	}
 
 	public resetLine() {
-		this.linesChange.emit({
-			lines: null,
-			vectorSource: this.vectorSource,
-		});
+		this.lineChange.emit(null);
 		this.lines = [];
 		this.lineCounter = 0;
 		this.currentLength = 0;
@@ -125,25 +134,16 @@ export class LineComponent implements OnInit {
 		return length;
 	}
 
-	public removeLine(id: number) {
-		const line = this.lines.find((line) => line.id === id);
-		if (line) {
-			this.vectorSource.removeFeature(line.feature);
-			this.lines = this.lines.filter((l) => l.id !== id);
-		}
-		if (this.lines.length === 0) {
-			this.lineCounter = 1;
-		}
-	}
-
 	public formatLength(length: number) {
 		if (!length) {
-			return 0;
+			return "0.00";
 		}
+		let formattedLength: number;
 		if (this.selectedUnit === "kilometers") {
-			return Math.round((length / 1000) * 100) / 100;
+			formattedLength = Math.round((length / 1000) * 100) / 100;
 		} else {
-			return Math.round(length * 100) / 100;
+			formattedLength = Math.round(length * 100) / 100;
 		}
+		return formattedLength.toFixed(2);
 	}
 }

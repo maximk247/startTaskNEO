@@ -5,7 +5,7 @@ import {
 	DrawToolKey,
 } from "../interfaces/draw.interface";
 
-export const LINE_STYLES: DrawStrokeStyles = [
+export const STROKE_STYLES: DrawStrokeStyles = [
 	"Solid",
 	"Dotted",
 	"Dashed",
@@ -23,7 +23,7 @@ export const FILL_STYLES: DrawFillStyles = [
 	"DiagonalCrossHatching",
 ];
 
-export const POINT_STYLES: DrawPointStyles = [
+export const POINT_SHAPES: DrawPointStyles = [
 	"Circle",
 	"Cross",
 	"Square",

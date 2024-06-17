@@ -1,2 +1,7 @@
-<button (click)="deleteOnMouseClick()">{{"deleteOnClick" | transloco}}</button>
-<button (click)="deleteAll()">{{"deleteAll" | transloco}}</button>
+<!-- eslint-disable @angular-eslint/template/elements-content -->
+<button (click)="deleteOnMouseClick()">
+	<div [inlineSVG]="'editing/delete.svg'"></div>
+</button>
+<button (click)="deleteAll()">
+	<div [inlineSVG]="'editing/trash.svg'"></div>
+</button>

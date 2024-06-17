@@ -1,4 +1,3 @@
-// measurement.interface.ts
 
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
@@ -6,7 +5,11 @@ import LineString from "ol/geom/LineString";
 import Polygon from "ol/geom/Polygon";
 import Circle from "ol/geom/Circle";
 import { Overlay } from "ol";
-import VectorSource from "ol/source/Vector";
+import { CircleComponent } from "../geometry/circle/circle.component";
+import { LineComponent } from "../geometry/line/line.component";
+import { PointComponent } from "../geometry/point/point.component";
+import { PolygonComponent } from "../geometry/polygon/polygon.component";
+import { Coordinate } from "ol/coordinate";
 
 type MeasurementGeometry = Point | LineString | Polygon | Circle;
 
@@ -18,7 +21,7 @@ export interface Measurement<T extends MeasurementGeometry> {
 }
 
 export interface MeasurementPoint extends Measurement<Point> {
-	coordinates: Array<number>;
+	coordinates: Coordinate;
 }
 
 export interface MeasurementLine extends Measurement<LineString> {
@@ -34,16 +37,23 @@ export interface MeasurementCircle extends Measurement<Circle> {
 	radius: string;
 }
 
-export interface PointsChangeEvent {
-	points: Array<MeasurementPoint>;
-	vectorSource: VectorSource;
-	overlay: Map<number, Overlay>;
-}
-
-export type MeasurementMode = "point" | "line" | "polygon" | "circle";
+// export type MeasurementMode = "point" | "line" | "polygon" | "circle";
 
 export type MeasurementType =
 	| MeasurementPoint
 	| MeasurementLine
 	| MeasurementPolygon
-	| MeasurementCircle;
+	| MeasurementCircle | null;
+
+export type MeasurementComponent =
+	| PointComponent
+	| LineComponent
+	| PolygonComponent
+	| CircleComponent;
+
+export interface MeasurementComponentBase {
+	resetPoint?(): void;
+	resetLine?(): void;
+	resetPolygon?(): void;
+	resetCircle?(): void;
+}

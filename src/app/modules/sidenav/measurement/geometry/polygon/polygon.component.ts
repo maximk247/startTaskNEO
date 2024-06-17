@@ -1,28 +1,33 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import VectorSource from "ol/source/Vector";
-import { MeasurementPolygon } from "../../interfaces/measurement.interface";
+import {
+	MeasurementComponentBase,
+	MeasurementPolygon,
+	MeasurementType,
+} from "../../interfaces/measurement.interface";
 import { Feature, Map } from "ol";
-import { Draw } from "ol/interaction";
 import { DrawService } from "../../../draw/draw.service";
 import { getArea, getLength } from "ol/sphere";
 import { Polygon } from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
-import { DrawType } from "../../../draw/enum/draw.enum";
 import { MeasurementService } from "../../measurement.service";
+import { SidenavTools } from "../../../enums/sidenav.enums";
+import { MeasurementMode } from "../../enums/measurement.enum";
+import { CustomDraw } from "src/app/modules/shared/classes/draw-interaction.class";
 
 @Component({
 	selector: "app-measurement-polygon",
 	templateUrl: "./polygon.component.html",
 	styleUrls: ["./polygon.component.scss"],
 })
-export class PolygonComponent implements OnInit {
+export class PolygonComponent implements OnInit, MeasurementComponentBase {
 	@Input() public map: Map;
 	@Input() public vectorSource: VectorSource;
-	@Output() public polygonsChange = new EventEmitter<any>();
+	@Output() public polygonChange = new EventEmitter<MeasurementType>();
 
 	public polygons: Array<MeasurementPolygon> = [];
 	public polygonCounter = 1;
-	public draw: Draw;
+	public draw: CustomDraw;
 
 	public selectedAreaUnit = "squareMeters";
 	public selectedUnit = "meters";
@@ -38,7 +43,7 @@ export class PolygonComponent implements OnInit {
 	public ngOnInit(): void {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
-			if (interaction.get("drawType") === DrawType.Measurement) {
+			if (interaction.get("sidenavTool") === SidenavTools.Measurement) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
 		});
@@ -51,18 +56,22 @@ export class PolygonComponent implements OnInit {
 	}
 
 	public addPolygonInteraction() {
-		this.draw = new Draw({
+		this.draw = new CustomDraw({
 			source: this.vectorSource,
 			type: "Polygon",
 		});
 
 		this.drawService.addGlobalInteraction(this.map, this.draw);
-		this.polygonCounter =
-			this.measurementService.getLastIdMeasurement("polygon");
-	
-		this.draw.set("drawType", DrawType.Measurement);
+		this.polygonCounter = this.measurementService.getLastIdMeasurement(
+			MeasurementMode.Polygon,
+		);
+
+		this.draw.set("sidenavTool", SidenavTools.Measurement);
 		this.draw.on("drawstart", (evt) => {
-			const geometry = evt.feature.getGeometry() as Polygon;
+			this.draw.flag = true;
+			const feature = evt.feature;
+			const geometry = feature.getGeometry() as Polygon;
+			this.measurementService.setStyle(feature, "#1082fc", "#7fa9d9");
 
 			geometry.on("change", () => {
 				this.totalArea = this.calculateArea(geometry);
@@ -71,7 +80,9 @@ export class PolygonComponent implements OnInit {
 		});
 		this.draw.on("drawend", (evt) => {
 			const feature = evt.feature as Feature<Polygon>;
-			feature.set("drawType", "measurement");
+			feature.set("sidenavTool", "measurement");
+			this.draw.flag = false;
+
 			const formattedArea = this.measurementService.formatMeasurementSquare(
 				this.totalArea,
 				this.selectedAreaUnit,
@@ -83,24 +94,22 @@ export class PolygonComponent implements OnInit {
 
 			const polygonId = ++this.polygonCounter;
 			this.polygons.push({
-				type: 'polygon',
+				type: MeasurementMode.Polygon,
 				id: polygonId,
 				feature,
 				area: formattedArea,
 				perimeter: formattedPerimeter,
 			});
-			const obj = { polygons: this.polygons, vectorSource: this.vectorSource };
-			this.measurementService.setLastId("polygon", polygonId);
-			this.polygonsChange.emit(obj);
+			const lastPolygon = this.polygons.slice(-1)[0];
+			this.measurementService.setLastId(MeasurementMode.Polygon, polygonId);
+			this.polygonChange.emit(lastPolygon);
 		});
 	}
 
 	public resetPolygon() {
 		this.polygonCounter = 0;
-		this.polygonsChange.emit({
-			polygons: null,
-			vectorSource: this.vectorSource,
-		});
+		this.polygons = [];
+		this.polygonChange.emit(null);
 		this.totalArea = 0;
 		this.totalPerimeter = 0;
 	}
@@ -121,18 +130,6 @@ export class PolygonComponent implements OnInit {
 		return perimeter;
 	}
 
-	public removePolygon(id: number) {
-		const polygon = this.polygons.find((polygon) => polygon.id === id);
-		if (polygon) {
-			this.vectorSource.removeFeature(polygon.feature);
-			this.polygons = this.polygons.filter((p) => p.id !== id);
-		}
-
-		if (this.polygons.length === 0) {
-			this.polygonCounter = 1;
-		}
-	}
-
 	public formatPerimeter(perimeter: number) {
 		if (!perimeter) {
 			return 0;
@@ -146,12 +143,14 @@ export class PolygonComponent implements OnInit {
 
 	public formatArea(area: number) {
 		if (!area) {
-			return 0;
+			return "0.00";
 		}
+		let formattedLength: number;
 		if (this.selectedAreaUnit === "squareKilometers") {
-			return Math.round((area / 1000000) * 100) / 100;
+			formattedLength = Math.round((area / 1000000) * 100) / 100;
 		} else {
-			return Math.round(area * 100) / 100;
+			formattedLength = Math.round(area * 100) / 100;
 		}
+		return formattedLength.toFixed(2);
 	}
 }

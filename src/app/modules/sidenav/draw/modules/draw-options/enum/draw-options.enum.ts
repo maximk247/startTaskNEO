@@ -1,4 +1,4 @@
-export enum DrawOptionsTools {
+export enum DrawTools {
 	Point = "drawPoint",
 	Line = "drawLine",
 	Polygon = "drawPolygon",

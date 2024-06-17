@@ -1,16 +1,18 @@
-<div class="measurement-line-result">
-	<div class="measurement-line-result__item">
-		<strong>{{ "segment" | transloco }}:</strong>
-		<span>{{ formatLength(currentLength) }}</span>
+<div class="measurement-line">
+	<div class="measurement-line__result">
+		<div class="measurement-line__result_item">
+			<strong>{{ "segment" | transloco }}:</strong>
+			<span>{{ formatLength(currentLength) }}</span>
+		</div>
+		<div class="measurement-line__result_item">
+			<strong>{{ "total" | transloco }}:</strong>
+			<span>{{ formatLength(lastLineLength) }}</span>
+		</div>
 	</div>
-	<div class="measurement-line-result__item">
-		<strong>{{ "total" | transloco }}:</strong>
-		<span>{{ formatLength(lastLineLength) }}</span>
+	<div class="measurement-line__select">
+		<select [(ngModel)]="selectedUnit" class="select">
+			<option value="meters">{{ "meters" | transloco }}</option>
+			<option value="kilometers">{{ "kilometers" | transloco }}</option>
+		</select>
 	</div>
-</div>
-<div>
-	<select id="unit-select" [(ngModel)]="selectedUnit">
-		<option value="meters">{{ "meters" | transloco }}</option>
-		<option value="kilometers">{{ "kilometers" | transloco }}</option>
-	</select>
 </div>

@@ -1,7 +1,82 @@
 .measurement-result {
-	display: flex;
-	flex-direction: column;
-	gap: 2rem;
-	margin-top: 3rem;
-	margin-bottom: 1rem;
+	box-sizing: border-box;
+	margin-bottom: 2.6rem;
+
+	&__header {
+		display: flex;
+	}
+
+	&__main {
+		margin-top: 1.25rem;
+	}
+
+	&__list {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		max-height: 8.3333rem;
+		padding: 0;
+		margin: 0;
+		overflow-y: auto;
+		list-style-type: none;
+
+		&_item {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			width: 100%;
+			line-height: 1.1667rem;
+
+			&:hover {
+				color: var(--primary-100);
+				cursor: pointer;
+				background-color: var(--primary-a100);
+			}
+
+			&:hover .svg-icon {
+				fill: var(--primary-100);
+			}
+		}
+
+		&_details {
+			display: flex;
+			flex-direction: row;
+			gap: 0.5rem;
+			align-items: center;
+			font-size: 11px;
+
+			&-calculated {
+				display: flex;
+				flex-direction: column;
+				align-items: flex-end;
+			}
+
+			/* stylelint-disable-next-line selector-class-pattern */
+			& > .button__icon {
+				width: 30px;
+			}
+		}
+	}
+}
+
+.measurement-container {
+	font-size: 12px;
+
+	&__header {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		margin-bottom: 2rem;
+
+		&_select {
+			width: 100%;
+			height: 30px;
+			min-height: 30px;
+			padding: 0 1em;
+			cursor: pointer;
+			background: var(--accent-200);
+			border: 1px solid transparent;
+			border-radius: 5em;
+		}
+	}
 }

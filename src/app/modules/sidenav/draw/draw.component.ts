@@ -5,7 +5,7 @@ import { DrawService } from "./draw.service";
 import { Draw } from "ol/interaction";
 import { DrawToolKey, DrawTools } from "./interfaces/draw.interface";
 import { TOOLS } from "./consts/draw-consts.consts";
-import { DrawType } from "./enum/draw.enum";
+import { SidenavTools } from "../enums/sidenav.enums";
 
 @Component({
 	selector: "app-draw",
@@ -17,6 +17,8 @@ export class DrawComponent implements OnInit {
 	public tools = TOOLS;
 
 	private activeInteraction: Draw | null = null;
+	public signal = false;
+	public svg: any
 
 	public constructor(
 		private mapService: MapService,
@@ -27,12 +29,17 @@ export class DrawComponent implements OnInit {
 		this.map = this.mapService.getMap();
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
-			if (interaction.get("drawType") === DrawType.Measurement) {
+			if (interaction.get("sidenavTool") === SidenavTools.Measurement) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
 		});
-		this.drawService.initalizeLayer();
+		this.drawService.initializeLayer();
 		this.map.addLayer(this.drawService.getVectorLayer());
+		this.mapService.addCursorToMap();
+		this.svg = {
+			width: '16px',
+			height: '16px'
+		}
 	}
 
 	public componentVisibility: DrawTools = {
@@ -66,8 +73,8 @@ export class DrawComponent implements OnInit {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
 			if (
-				interaction.get("drawType") === DrawType.Draw ||
-				interaction.get("drawType") === DrawType.Measurement
+				interaction.get("sidenavTool") === SidenavTools.Draw ||
+				interaction.get("sidenavTool") === SidenavTools.Measurement
 			) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
@@ -75,6 +82,7 @@ export class DrawComponent implements OnInit {
 		const drawPoint = this.drawService.initializePoint(this.map);
 		this.activeInteraction = drawPoint;
 		this.drawService.addGlobalInteraction(this.map, drawPoint);
+		this.mapService.addCursorToMap("DrawPoint");
 	}
 
 	public drawLine() {
@@ -87,8 +95,8 @@ export class DrawComponent implements OnInit {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
 			if (
-				interaction.get("drawType") === DrawType.Draw ||
-				interaction.get("drawType") === DrawType.Measurement
+				interaction.get("sidenavTool") === SidenavTools.Draw ||
+				interaction.get("sidenavTool") === SidenavTools.Measurement
 			) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
@@ -96,6 +104,7 @@ export class DrawComponent implements OnInit {
 		const drawLine = this.drawService.initializeLine(this.map);
 		this.activeInteraction = drawLine;
 		this.drawService.addGlobalInteraction(this.map, drawLine);
+		this.mapService.addCursorToMap("DrawLine");
 	}
 
 	public drawPolygon() {
@@ -108,8 +117,8 @@ export class DrawComponent implements OnInit {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
 			if (
-				interaction.get("drawType") === DrawType.Draw ||
-				interaction.get("drawType") === DrawType.Measurement
+				interaction.get("sidenavTool") === SidenavTools.Draw ||
+				interaction.get("sidenavTool") === SidenavTools.Measurement
 			) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
@@ -117,6 +126,7 @@ export class DrawComponent implements OnInit {
 		const drawPolygon = this.drawService.initializePolygon(this.map);
 		this.activeInteraction = drawPolygon;
 		this.drawService.addGlobalInteraction(this.map, drawPolygon);
+		this.mapService.addCursorToMap("DrawPolygon");
 	}
 
 	public drawFreeLine() {
@@ -129,8 +139,8 @@ export class DrawComponent implements OnInit {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
 			if (
-				interaction.get("drawType") === DrawType.Draw ||
-				interaction.get("drawType") === DrawType.Measurement
+				interaction.get("sidenavTool") === SidenavTools.Draw ||
+				interaction.get("sidenavTool") === SidenavTools.Measurement
 			) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
@@ -138,6 +148,7 @@ export class DrawComponent implements OnInit {
 		const drawFreeLine = this.drawService.initalizeFreeLine(this.map);
 		this.activeInteraction = drawFreeLine;
 		this.drawService.addGlobalInteraction(this.map, drawFreeLine);
+		this.mapService.addCursorToMap("DrawLine");
 	}
 
 	public drawFreePolygon() {
@@ -150,8 +161,8 @@ export class DrawComponent implements OnInit {
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
 			if (
-				interaction.get("drawType") === DrawType.Draw ||
-				interaction.get("drawType") === DrawType.Measurement
+				interaction.get("sidenavTool") === SidenavTools.Draw ||
+				interaction.get("sidenavTool") === SidenavTools.Measurement
 			) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
@@ -159,6 +170,7 @@ export class DrawComponent implements OnInit {
 		const drawFreePolygon = this.drawService.initalizeFreePolygon(this.map);
 		this.activeInteraction = drawFreePolygon;
 		this.drawService.addGlobalInteraction(this.map, drawFreePolygon);
+		this.mapService.addCursorToMap("DrawPolygon");
 	}
 
 	public drawFigure() {
@@ -170,12 +182,16 @@ export class DrawComponent implements OnInit {
 		this.drawService.removeGlobalInteraction(this.map, this.activeInteraction);
 		const interactions = this.map.getInteractions().getArray();
 		interactions.forEach((interaction) => {
-			if (interaction.get("drawType") === DrawType.Measurement) {
+			if (
+				interaction.get("sidenavTool") === SidenavTools.Draw ||
+				interaction.get("sidenavTool") === SidenavTools.Measurement
+			) {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
 		});
 		const drawFigure = this.drawService.initializeFigure(this.map, "Circle");
 		this.activeInteraction = drawFigure;
 		this.drawService.addGlobalInteraction(this.map, drawFigure);
+		this.mapService.addCursorToMap("DrawPolygon");
 	}
 }
