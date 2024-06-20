@@ -7,7 +7,7 @@
 	"elevation": "Высота",
 	"goToCoordinates": "Перейти",
 	"showPoint": "Нанести точку на карту",
-	"addPoint": "Добавить точку на карту",
+	"addPoint": "Нанести точку по координатам",
 	"selectColor": "Выберите цвет",
 	"accept": "Принять",
 	"reject": "Отменить",
@@ -18,7 +18,7 @@
 	"outlineColor": "Цвет контура",
 	"strokeColor": "Цвет линии",
 	"pointSize": "Размер",
-	"forms": "Формы",
+	"forms": "Форма",
 	"transparency": "Прозрачность",
 	"outline": "Контур",
 	"fill": "Заливка",
@@ -53,5 +53,7 @@
 	"logout": "Выйти",
 	"measurementResult": "Сохраненные измерения",
 	"x": "X",
-	"y": "Y"
+	"y": "Y",
+	"showDrawCoordinates": "Отобразить координаты на карте",
+	"addToMap": "Нанести на карту"
 }

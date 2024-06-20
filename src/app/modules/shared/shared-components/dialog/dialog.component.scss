@@ -1,0 +1,14 @@
+.dialog-container {
+	position: relative;
+}
+
+::ng-deep .mat-mdc-dialog-container {
+	position: absolute;
+	display: flex;
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
+	width: auto;
+	height: auto;
+}

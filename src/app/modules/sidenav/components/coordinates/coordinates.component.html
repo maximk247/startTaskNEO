@@ -1,0 +1,116 @@
+<div class="coordinates-container">
+	<div class="coordinates-container__header">
+		<app-coordinate-system
+			[spatialReferences]="spatialReferences"
+			(selectedReferenceChange)="onSelectedReferenceChange($event)"
+		>
+		</app-coordinate-system>
+	</div>
+	<div class="coordinates-container__main">
+		<form
+			*ngIf="newProjection"
+			[ngSwitch]="newProjection.type"
+			class="location-form"
+			[formGroup]="coordinatesForm"
+		>
+			<ng-container *ngSwitchCase="'degree'">
+				<span class="location-form__label"> {{ "latitude" | transloco }}:</span>
+				<div class="location-form__row">
+					<ng-container
+						*ngTemplateOutlet="
+							coordinateTemplate;
+							context: { controlName: 'latitudeDegrees', label: 'degrees' }
+						"
+					></ng-container>
+					<ng-container
+						*ngTemplateOutlet="
+							coordinateTemplate;
+							context: { controlName: 'latitudeMinutes', label: 'minutes' }
+						"
+					></ng-container>
+					<ng-container
+						*ngTemplateOutlet="
+							coordinateTemplate;
+							context: { controlName: 'latitudeSeconds', label: 'seconds' }
+						"
+					></ng-container>
+				</div>
+				<span class="location-form__label">{{ "longitude" | transloco }}:</span>
+				<div class="location-form__row">
+					<ng-container
+						*ngTemplateOutlet="
+							coordinateTemplate;
+							context: { controlName: 'longitudeDegrees', label: 'degrees' }
+						"
+					></ng-container>
+					<ng-container
+						*ngTemplateOutlet="
+							coordinateTemplate;
+							context: { controlName: 'longitudeMinutes', label: 'minutes' }
+						"
+					></ng-container>
+					<ng-container
+						*ngTemplateOutlet="
+							coordinateTemplate;
+							context: { controlName: 'longitudeSeconds', label: 'seconds' }
+						"
+					></ng-container>
+				</div>
+			</ng-container>
+			<ng-container *ngSwitchCase="'metric'">
+				<span class="location-form__label">Метры</span>
+				<ng-container
+					*ngTemplateOutlet="
+						coordinateTemplate;
+						context: { controlName: 'x', label: 'x' }
+					"
+				></ng-container>
+				<ng-container
+					*ngTemplateOutlet="
+						coordinateTemplate;
+						context: { controlName: 'y', label: 'y' }
+					"
+				></ng-container>
+			</ng-container>
+			<label class="location-form__checkbox" for="checkbox">
+				<input type="checkbox" formControlName="showPoint" id="checkbox" />
+				<span>{{ "showPoint" | transloco }}</span>
+			</label>
+		</form>
+	</div>
+
+	<div class="coordinates-container__footer">
+		<button
+			type="button"
+			(click)="goToCoordinates()"
+			class="button button--rounded button--primary"
+			[disabled]="!coordinatesForm.valid"
+		>
+			{{ "goToCoordinates" | transloco }}:
+		</button>
+		<button
+			type="button"
+			(click)="removeAllCoordinates()"
+			class="button button--rounded"
+			[disabled]="!isAnyFieldFilled"
+		>
+			{{ "clear" | transloco }}
+		</button>
+	</div>
+</div>
+
+<ng-template
+	#coordinateTemplate
+	let-controlName="controlName"
+	let-label="label"
+	[formGroup]="coordinatesForm"
+>
+	<section class="location-form__section">
+		<input
+			type="text"
+			[formControlName]="controlName"
+			class="location-form__field"
+		/>
+		<span class="location-form__col-name">{{ label | transloco }}</span>
+	</section>
+</ng-template>

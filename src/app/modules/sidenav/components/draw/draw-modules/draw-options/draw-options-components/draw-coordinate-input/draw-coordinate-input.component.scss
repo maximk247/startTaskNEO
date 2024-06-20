@@ -1,0 +1,59 @@
+.list {
+	&__row {
+		display: flex;
+		gap: 0.833rem;
+		align-items: center;
+		justify-content: space-between;
+		height: 2.916rem;
+		padding-bottom: 10px;
+		font-size: 12px;
+	}
+
+	&__menu {
+		max-height: 8.75rem;
+		overflow: auto;
+		font-size: 12px;
+	}
+
+	&__input {
+		height: 27px;
+		padding: 0.4166rem 0.333rem 0.5rem;
+		font-family: inherit;
+		font-size: 14px;
+		color: var(--accent-800);
+		background: var(--primary-100);
+		border: 1px solid var(--accent-600);
+		border-radius: 0;
+		box-shadow: none;
+		transition-duration: 0.1s;
+	}
+
+	&__field {
+		flex-grow: 1;
+		min-width: 0;
+	}
+
+	&__button {
+		min-width: 28px;
+		min-height: 27px;
+		color: var(--primary-100);
+		cursor: pointer;
+		border: none;
+
+		&--primary {
+			background-color: var(--primary-a100);
+
+			&:hover,
+			&:focus {
+				background-color: var(--primary-a200);
+			}
+		}
+	}
+}
+
+:host ::ng-deep {
+	svg {
+		width: 16px;
+		height: 16px;
+	}
+}

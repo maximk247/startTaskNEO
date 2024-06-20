@@ -7,7 +7,7 @@ import { Coordinate, toStringHDMS } from "ol/coordinate";
 import MousePosition from "ol/control/MousePosition";
 import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
-import { Feature } from "ol";
+import { Feature, MapBrowserEvent } from "ol";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { ZoomSlider } from "ol/control";
@@ -23,6 +23,7 @@ export class MapService {
 	private map: Map;
 
 	private vectorLayer: VectorLayer<VectorSource<Feature>>;
+	private clickHandler: (event: MapBrowserEvent<UIEvent>) => void;
 
 	public getMap(): Map {
 		return this.map;
@@ -103,8 +104,9 @@ export class MapService {
 			}
 		});
 	}
+
 	public removeFeatureOnMouseClick(map: Map) {
-		map.on("click", (event) => {
+		this.clickHandler = (event) => {
 			const pixel = event.pixel;
 			const vectorForRemoveFeatures: Array<Feature<Geometry>> = [];
 
@@ -130,10 +132,11 @@ export class MapService {
 					vectorForRemoveFeatures.some((feature) => {
 						const geometry = feature.getGeometry();
 						const coordinate = map.getCoordinateFromPixel(pixel);
+
 						if (geometry instanceof Point) {
 							return geometry.getClosestPoint(coordinate) !== undefined;
 						} else if (geometry instanceof LineString) {
-							return geometry.intersectsCoordinate(coordinate);
+							return geometry.intersectsCoordinate(coordinate) !== undefined;
 						} else if (geometry instanceof Polygon) {
 							return geometry.intersectsCoordinate(coordinate);
 						} else if (geometry instanceof Circle) {
@@ -149,13 +152,68 @@ export class MapService {
 
 			if (clickedFeature) {
 				const source = this.vectorLayer?.getSource();
-
 				if (source instanceof VectorSource) {
 					forRemoveSources.forEach((source) => {
 						source.removeFeature(clickedFeature);
 					});
 				}
 			}
+		};
+		map.on("click", this.clickHandler);
+	}
+	public removeClickHandler(map: Map) {
+		if (this.clickHandler) {
+			map.un("click", this.clickHandler);
+		}
+	}
+
+	public checkFeature(
+		map: Map,
+		featureName: string,
+		featureValue: string,
+	): boolean {
+		const layers = map.getLayers().getArray();
+
+		for (let i = 0; i < layers.length; i++) {
+			const layer = layers[i];
+
+			if (layer instanceof VectorLayer) {
+				const source = layer.getSource();
+
+				const features = source.getFeatures();
+
+				for (let j = 0; j < features.length; j++) {
+					const feature = features[j];
+
+					if (feature.get(featureName) === featureValue) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	public getAllFeatures(
+		map: Map,
+		featureName: string,
+		featureValue: string,
+	): Array<Feature> {
+		const allFeatures: Array<Feature> = [];
+		map.getLayers().forEach((layer) => {
+			if (layer instanceof VectorLayer) {
+				const source = layer.getSource();
+				if (source instanceof VectorSource) {
+					const features = source.getFeatures();
+					features.forEach((feature) => {
+						if (feature.get(featureName) === featureValue) {
+							allFeatures.push(feature);
+						}
+					});
+				}
+			}
 		});
+		return allFeatures;
 	}
 }

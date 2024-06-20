@@ -1,0 +1,66 @@
+:host ::ng-deep {
+	.draw-container {
+		&__header {
+			display: flex;
+			flex-direction: column;
+		}
+
+		&__tools {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(1.666rem, 1fr));
+			grid-gap: 10px;
+			margin-bottom: 1vh;
+		}
+
+		&__main {
+			display: flex;
+			flex-direction: column;
+		}
+	}
+
+	svg {
+		width: 16px;
+		height: 16px;
+	}
+
+	.drawing-title {
+		margin-bottom: 0.8333rem;
+		font-size: 12px;
+		font-weight: 400;
+		text-align: start;
+	}
+
+	.drawing-forms {
+		display: flex;
+		margin-bottom: 2vh;
+	}
+
+	.draw-forms-button {
+		width: 30px;
+		height: 30px;
+		color: rgb(0 0 0 / 87%);
+		cursor: pointer;
+		background-color: transparent;
+		border: none;
+		outline: none;
+
+		&:hover {
+			color: var(--accent-100);
+			background-color: var(--primary-a100);
+		}
+	}
+
+	.tools-button {
+		padding: unset;
+		line-height: 1;
+		color: rgb(0 0 0 / 87%);
+		cursor: pointer;
+		background-color: transparent;
+		border: none;
+		outline: none;
+
+		&:hover {
+			color: var(--primary-a100);
+		}
+	}
+}

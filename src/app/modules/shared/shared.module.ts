@@ -1,12 +1,12 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { CoordinateSystemComponent } from "./components/coordinate-system-selector/coordinate-system.component";
+import { CoordinateSystemComponent } from "./shared-components/coordinate-system-selector/coordinate-system.component";
+import { ExplanationComponent } from "./shared-components/explanation/explanation.component";
 import { TranslocoRootModule } from "./transloco/transloco-root.module";
-import { ExplanationComponent } from "./components/explanation/explanation.component";
 
 @NgModule({
 	declarations: [CoordinateSystemComponent, ExplanationComponent],
-	imports: [CommonModule, TranslocoRootModule, ],
+	imports: [CommonModule, TranslocoRootModule],
 	exports: [
 		CoordinateSystemComponent,
 		TranslocoRootModule,

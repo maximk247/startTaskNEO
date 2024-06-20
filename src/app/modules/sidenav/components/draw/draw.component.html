@@ -1,0 +1,70 @@
+<div class="draw-container">
+	<div class="draw-container__header">
+		<span class="drawing-title">Инструменты рисования</span>
+
+		<div class="draw-container__tools">
+			<button (click)="drawPoint()" type="button" class="tools-button">
+				<div [inlineSVG]="'/tools/point.svg'"></div>
+			</button>
+			<button (click)="drawLine()" type="button" class="tools-button">
+				<div [inlineSVG]="'/tools/polyline.svg'"></div>
+			</button>
+			<button (click)="drawPolygon()" type="button" class="tools-button">
+				<div [inlineSVG]="'/tools/polygon.svg'"></div>
+			</button>
+			<button (click)="drawFreeLine()" type="button" class="tools-button">
+				<div [inlineSVG]="'/tools/freehand-polyline.svg'"></div>
+			</button>
+			<button (click)="drawFreePolygon()" type="button" class="tools-button">
+				<div [inlineSVG]="'/tools/freehand-polygon.svg'"></div>
+			</button>
+			<button (click)="drawFigure()" type="button" class="tools-button">
+				<div [inlineSVG]="'/tools/forms.svg'"></div>
+			</button>
+		</div>
+
+		<span class="drawing-title">Инструменты редактирования</span>
+		<div class="draw-container__tools">
+			<app-draw-delete-on-click
+				(interactionDeleted)="deleteActiveInteraction()"
+			></app-draw-delete-on-click>
+			<app-draw-delete-all
+				(interactionDeleted)="deleteActiveInteraction()"
+			></app-draw-delete-all>
+		</div>
+	</div>
+	<div class="draw-container__main">
+		<ng-container *ngFor="let tool of tools">
+			<app-draw-point
+				*ngIf="componentVisibility[tool] && tool === 'drawPoint'"
+				[tool]="tool"
+				(pointSizeChange)="updateSize($event, tool)"
+			></app-draw-point>
+			<app-draw-line
+				*ngIf="componentVisibility[tool] && tool === 'drawLine'"
+				[tool]="tool"
+				(lineSizeChange)="updateSize($event, tool)"
+			></app-draw-line>
+			<app-draw-polygon
+				*ngIf="componentVisibility[tool] && tool === 'drawPolygon'"
+				[tool]="tool"
+				(polygonSizeChange)="updateSize($event, tool)"
+			></app-draw-polygon>
+			<app-draw-free-line
+				*ngIf="componentVisibility[tool] && tool === 'drawFreeLine'"
+				[tool]="tool"
+				(freeLineSizeChange)="updateSize($event, tool)"
+			></app-draw-free-line>
+			<app-draw-free-polygon
+				*ngIf="componentVisibility[tool] && tool === 'drawFreePolygon'"
+				[tool]="tool"
+				(freePolygonSizeChange)="updateSize($event, tool)"
+			></app-draw-free-polygon>
+			<app-draw-figure
+				*ngIf="componentVisibility[tool] && tool === 'drawFigure'"
+				[tool]="tool"
+				(figureSizeChange)="updateSize($event, tool)"
+			></app-draw-figure>
+		</ng-container>
+	</div>
+</div>

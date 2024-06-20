@@ -1,0 +1,14 @@
+<!-- eslint-disable @angular-eslint/template/elements-content -->
+
+<button
+	color="primary"
+	(click)="openColorDialog()"
+	[ngStyle]="{
+		'background-color': backgroundColor,
+		width: '25px',
+		height: '24px',
+		padding: '0px',
+		border: '0px',
+		'background-image': 'url(assets/images/picker.gif)'
+	}"
+></button>

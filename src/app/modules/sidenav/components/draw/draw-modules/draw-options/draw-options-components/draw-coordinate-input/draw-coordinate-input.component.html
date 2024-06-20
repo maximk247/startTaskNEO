@@ -1,0 +1,82 @@
+<div>
+	<app-coordinate-system
+		[spatialReferences]="spatialReferences"
+		(selectedReferenceChange)="onSelectedReferenceChange($event)"
+	>
+	</app-coordinate-system>
+	<div class="list__row">
+		<span>{{ "latitude" | transloco }} (X):</span>
+		<span>{{ "longitude" | transloco }} (Y):</span>
+		<button
+			type="button"
+			(click)="removeAllCoordinates()"
+			class="button__icon list__button"
+		>
+			<div [inlineSVG]="'/editing/trash.svg'"></div>
+		</button>
+	</div>
+	<ul class="list__menu">
+		<ng-container *ngFor="let point of points; let i = index">
+			<li class="list__row">
+				<input
+					class="list__field list__input"
+					type="text"
+					[(ngModel)]="point.x"
+					[id]="'x' + i"
+				/>
+				<input
+					class="list__field list__input"
+					type="text"
+					[(ngModel)]="point.y"
+					[id]="'y' + i"
+				/>
+
+				<button
+					class="list__button list__button--primary"
+					type="button"
+					(click)="removePoint(i)"
+					*ngIf="points.length > i + 1"
+				>
+					<div [inlineSVG]="'/editing/minus.svg'"></div>
+				</button>
+				<button
+					class="list__button list__button--primary"
+					type="button"
+					(click)="addPoint()"
+					*ngIf="points.length === i + 1"
+				>
+					<div [inlineSVG]="'/editing/plus.svg'"></div>
+				</button>
+			</li>
+		</ng-container>
+	</ul>
+	<div [ngSwitch]="tool">
+		<div *ngSwitchCase="drawPoint">
+			<button
+				type="button"
+				(click)="addPointToMap()"
+				class="button button--rounded"
+			>
+				{{ "addToMap" | transloco }}
+			</button>
+		</div>
+		<div *ngSwitchCase="drawLine">
+			<button
+				type="button"
+				(click)="addLineToMap()"
+				class="button button--rounded"
+			>
+				{{ "addToMap" | transloco }}
+			</button>
+		</div>
+		<div *ngSwitchCase="drawPolygon">
+			<button
+				type="button"
+				(click)="addPolygonToMap()"
+				class="button button--rounded"
+			>
+				{{ "addToMap" | transloco }}
+			</button>
+		</div>
+	</div>
+</div>
