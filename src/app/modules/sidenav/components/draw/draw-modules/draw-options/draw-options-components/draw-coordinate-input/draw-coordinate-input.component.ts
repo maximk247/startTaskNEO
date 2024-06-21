@@ -17,6 +17,7 @@ import {
 	CoordinatesForDraw,
 } from "../../interfaces/draw-options.interface";
 import { SidenavTools } from "src/app/modules/sidenav/enums/sidenav.enums";
+import { Tools } from "../../../../enum/draw.enum";
 
 @Component({
 	selector: "app-coordinate-input",
@@ -25,6 +26,7 @@ import { SidenavTools } from "src/app/modules/sidenav/enums/sidenav.enums";
 })
 export class DrawCoordinateInputComponent {
 	@Input() public tool: string;
+	@Input() public showCoordinates: boolean;
 
 	public spatialReferences: Array<SpatialReference> = [];
 	private newProjection: SpatialReference;
@@ -37,7 +39,6 @@ export class DrawCoordinateInputComponent {
 	public constructor(
 		private mapService: MapService,
 		private drawService: DrawService,
-
 		private translocoService: TranslocoService,
 	) {}
 
@@ -85,8 +86,11 @@ export class DrawCoordinateInputComponent {
 				});
 				break;
 		}
-		feature.set("sidenavTools", SidenavTools.Draw);
+		feature.set("sidenavTool", SidenavTools.Draw);
 		feature.setStyle(style);
+		if (this.showCoordinates) {
+			this.drawService.addText(feature, "drawPoint");
+		}
 		this.mapService.addFeatureToMap(feature);
 	}
 

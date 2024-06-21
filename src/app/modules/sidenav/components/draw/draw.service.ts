@@ -29,9 +29,9 @@ import {
 } from "./enum/draw.enum";
 import { SidenavTools } from "../../enums/sidenav.enums";
 import { CustomDraw } from "src/app/modules/shared/classes/draw-interaction.class";
-import { MapService } from "src/app/modules/map/map.service";
 import { CoordinateSystemService } from "src/app/modules/shared/shared-components/coordinate-system-selector/coordintate-system.service";
 import { Point } from "ol/geom";
+import { Feature } from "ol";
 
 @Injectable({
 	providedIn: "root",
@@ -46,11 +46,11 @@ export class DrawService {
 		this.coordinatesChanged.emit();
 	}
 
-	public constructor(private coordinateSystem: CoordinateSystemService) {}
-
 	public getShowCoordinates() {
 		return this.showCoordinatesFlag;
 	}
+
+	public constructor(private coordinateSystem: CoordinateSystemService) {}
 
 	private point = this.createDefaultPoint();
 
@@ -213,6 +213,33 @@ export class DrawService {
 		return this.vectorSource;
 	}
 
+	public async addText(feature: Feature, tool: DrawToolKey) {
+		const style = (await this.getStyle(tool)) as Style;
+		const geometry = feature.getGeometry() as Point;
+		const coordinate = geometry.getCoordinates();
+
+		const transformCoordinates =
+			this.coordinateSystem.transformCoordinates(coordinate);
+
+		const textStyle = new Text({
+			text: `(${transformCoordinates[0]}\n ${transformCoordinates[1]})`,
+			font: "12px Calibri,sans-serif",
+			fill: new Fill({
+				color: "#fff",
+			}),
+			offsetX: 0,
+			offsetY: 20,
+			stroke: new Stroke({
+				color: "#000",
+				width: 3,
+			}),
+			padding: [2, 2, 2, 2],
+		});
+		style.setText(textStyle);
+
+		feature.setStyle(style);
+	}
+
 	private initializeDrawingTool(
 		map: Map,
 		tool: DrawToolKey,
@@ -243,30 +270,7 @@ export class DrawService {
 			draw.flag = false;
 			if (tool === Tools.Point) {
 				if (this.showCoordinatesFlag) {
-					const style = (await this.getStyle(tool)) as Style;
-					const geometry = event.feature.getGeometry() as Point;
-					const coordinate = geometry.getCoordinates();
-
-					const transformCoordinates =
-						this.coordinateSystem.transformCoordinates(coordinate);
-
-					const textStyle = new Text({
-						text: `(${transformCoordinates[0]}\n ${transformCoordinates[1]})`,
-						font: "12px Calibri,sans-serif",
-						fill: new Fill({
-							color: "#fff",
-						}),
-						offsetX: 0,
-						offsetY: 20,
-						stroke: new Stroke({
-							color: "#000",
-							width: 3,
-						}),
-						padding: [2, 2, 2, 2],
-					});
-					style.setText(textStyle);
-
-					event!.feature.setStyle(style);
+					this.addText(event.feature, "drawPoint");
 				}
 			}
 		});

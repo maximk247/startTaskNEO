@@ -34,7 +34,7 @@ export class DrawPointComponent implements OnInit {
 	public showCoordinates: boolean;
 	public showCoordinatesFlag: boolean;
 	public coordinate: Array<Coordinate>;
-	private coordinatesSubscription: Subscription;
+	public coordinatesSubscription: Subscription;
 
 	@Input() public tool: string;
 	@Output() public pointSizeChange: EventEmitter<number> =
@@ -44,7 +44,6 @@ export class DrawPointComponent implements OnInit {
 	public constructor(
 		private drawService: DrawService,
 		private mapService: MapService,
-		private coordinateSystem: CoordinateSystemService,
 	) {}
 
 	public ngOnInit() {
@@ -69,31 +68,9 @@ export class DrawPointComponent implements OnInit {
 		if (this.showCoordinates) {
 			this.mapService
 				.getAllFeatures(this.map, "sidenavTool", SidenavTools.Draw)
-				.forEach(async (feature) => {
-					const style = (await this.drawService.getStyle("drawPoint")) as Style;
-					const geometry = feature.getGeometry() as Point;
-					const coordinate = geometry.getCoordinates();
-
-					const transformCoordinates =
-						this.coordinateSystem.transformCoordinates(coordinate);
-
-					const textStyle = new Text({
-						text: `(${transformCoordinates[0]}\n ${transformCoordinates[1]})`,
-						font: "12px Calibri,sans-serif",
-						fill: new Fill({
-							color: "#fff",
-						}),
-						offsetX: 0,
-						offsetY: 20,
-						stroke: new Stroke({
-							color: "#000",
-							width: 3,
-						}),
-						padding: [2, 2, 2, 2],
-					});
-					style.setText(textStyle);
-
-					feature.setStyle(style);
+				.forEach((feature) => {
+					console.log(feature);
+					this.drawService.addText(feature, "drawPoint");
 				});
 		} else {
 			this.mapService
