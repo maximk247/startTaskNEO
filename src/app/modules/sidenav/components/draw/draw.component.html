@@ -39,31 +39,37 @@
 				*ngIf="componentVisibility[tool] && tool === 'drawPoint'"
 				[tool]="tool"
 				(pointSizeChange)="updateSize($event, tool)"
+				class="tool-content"
 			></app-draw-point>
 			<app-draw-line
 				*ngIf="componentVisibility[tool] && tool === 'drawLine'"
 				[tool]="tool"
 				(lineSizeChange)="updateSize($event, tool)"
+				class="tool-content"
 			></app-draw-line>
 			<app-draw-polygon
 				*ngIf="componentVisibility[tool] && tool === 'drawPolygon'"
 				[tool]="tool"
 				(polygonSizeChange)="updateSize($event, tool)"
+				class="tool-content"
 			></app-draw-polygon>
 			<app-draw-free-line
 				*ngIf="componentVisibility[tool] && tool === 'drawFreeLine'"
 				[tool]="tool"
 				(freeLineSizeChange)="updateSize($event, tool)"
+				class="tool-content"
 			></app-draw-free-line>
 			<app-draw-free-polygon
 				*ngIf="componentVisibility[tool] && tool === 'drawFreePolygon'"
 				[tool]="tool"
 				(freePolygonSizeChange)="updateSize($event, tool)"
+				class="tool-content"
 			></app-draw-free-polygon>
 			<app-draw-figure
 				*ngIf="componentVisibility[tool] && tool === 'drawFigure'"
 				[tool]="tool"
 				(figureSizeChange)="updateSize($event, tool)"
+				class="tool-content"
 			></app-draw-figure>
 		</ng-container>
 	</div>

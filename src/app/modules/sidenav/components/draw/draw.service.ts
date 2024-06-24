@@ -32,6 +32,7 @@ import { CustomDraw } from "src/app/modules/shared/classes/draw-interaction.clas
 import { CoordinateSystemService } from "src/app/modules/shared/shared-components/coordinate-system-selector/coordintate-system.service";
 import { Point } from "ol/geom";
 import { Feature } from "ol";
+import { style } from "@angular/animations";
 
 @Injectable({
 	providedIn: "root",
@@ -68,12 +69,13 @@ export class DrawService {
 	private vectorSource: VectorSource;
 
 	public colorChanged = new Subject<string>();
+	public alphaChanged = new Subject<number>();
 	private createDefaultPolygon(): DrawPolygon {
 		return {
 			size: 10,
 			fillStyle: null,
 			strokeStyle: null,
-			color: "rgba(0, 0, 255, 1)",
+			color: "rgba(255, 0, 0, 1)rgba(0, 0, 255, 1)",
 			fillColor: "rgba(255, 0, 0, 1)",
 			strokeColor: "rgba(0, 0, 255, 1)",
 			pattern: "none",
@@ -94,7 +96,7 @@ export class DrawService {
 			size: 10,
 			fillStyle: null,
 			strokeStyle: null,
-			color: "rgba(0, 0, 255, 1)",
+			color: "rgba(255, 0, 0, 1)rgba(0, 0, 255, 1)",
 			fillColor: "rgba(255, 0, 0, 1)",
 			strokeColor: "rgba(0, 0, 255, 1)",
 			pattern: "none",
@@ -156,7 +158,7 @@ export class DrawService {
 				break;
 		}
 	}
-	private replaceAlpha(rgbaString: string, newAlpha: string) {
+	public replaceAlpha(rgbaString: string, newAlpha: string) {
 		return rgbaString.replace(
 			/(rgba\(\d+,\s*\d+,\s*\d+,\s*)\d*\.?\d+(\))/,
 			`$1${newAlpha}$2`,
@@ -344,32 +346,100 @@ export class DrawService {
 		);
 	}
 
+	public splitRgbaColors(color: string): {
+		fillColor: string;
+		strokeColor: string;
+	} {
+		// eslint-disable-next-line no-useless-escape
+		const rgbaMatches = color.match(/rgba\([^\)]+\)/g);
+		let fillColor = "";
+		let strokeColor = "";
+
+		if (rgbaMatches && rgbaMatches.length > 1) {
+			[fillColor, strokeColor] = rgbaMatches;
+		} else if (rgbaMatches && rgbaMatches.length === 1) {
+			fillColor = strokeColor = rgbaMatches[0];
+		}
+
+		return { fillColor, strokeColor };
+	}
+
 	public setColor(color: string, tool: DrawToolKey, type?: string) {
 		const toolOptions = this.getToolOptions(tool);
 		if (this.isPolygonTool(toolOptions)) {
-			if (type === ColorType.Polygon) {
-				toolOptions.fillColor = this.replaceAlpha(toolOptions.fillColor, color);
-				toolOptions.strokeColor = this.replaceAlpha(
-					toolOptions.strokeColor,
-					color,
-				);
-			} else if (type === ColorType.Fill) {
+			if (type === ColorType.Fill) {
 				toolOptions.fillColor = color;
 			} else if (type === ColorType.Stroke) {
 				toolOptions.strokeColor = color;
 			}
 			toolOptions.color = toolOptions.fillColor + toolOptions.strokeColor;
+			if (color.length > 30) {
+				const { fillColor, strokeColor } = this.splitRgbaColors(color);
+				if (type === ColorType.Polygon || type === ColorType.Figure) {
+					toolOptions.fillColor = fillColor;
+					toolOptions.strokeColor = strokeColor;
+				}
+				toolOptions.color = fillColor + strokeColor;
+			}
 		} else {
 			toolOptions!.color = color;
 		}
 		this.colorChanged.next(color);
 	}
 
-	public getColor(tool: DrawToolKey): string | undefined {
+	public getColor(tool: DrawToolKey, type?: string): string | undefined {
+		const toolOptions = this.getToolOptions(tool);
+		if (this.isPolygonTool(toolOptions)) {
+			if (type === ColorType.Fill) {
+				return toolOptions.fillColor;
+			} else if (type === ColorType.Stroke) {
+				return toolOptions.strokeColor;
+			}
+		}
 		return this.getToolOptions(tool)?.color;
 	}
 
-	private getPatternImageName(style: string): string {
+	public setAlpha(alpha: number, tool: DrawToolKey) {
+		const toolOptions = this.getToolOptions(tool);
+		if (this.isPolygonTool(toolOptions)) {
+			if (toolOptions.fillColor) {
+				toolOptions.fillColor = this.replaceAlpha(
+					toolOptions.fillColor,
+					alpha.toString(),
+				);
+			}
+			if (toolOptions.strokeColor) {
+				toolOptions.strokeColor = this.replaceAlpha(
+					toolOptions.strokeColor,
+					alpha.toString(),
+				);
+			}
+			this.alphaChanged.next(alpha);
+		}
+	}
+
+	public getAlpha(tool: DrawToolKey): number {
+		const toolOptions = this.getToolOptions(tool);
+		if (!toolOptions) {
+			return 1;
+		}
+
+		let rgbaString: string;
+		if (this.isPolygonTool(toolOptions)) {
+			rgbaString = toolOptions.fillColor || toolOptions.strokeColor;
+		} else {
+			rgbaString = toolOptions.color;
+		}
+
+		if (!rgbaString) {
+			return 1;
+		}
+
+		const match = rgbaString.match(/rgba\(.*?,.*?,.*?,(.*?)\)/);
+		return match ? parseFloat(match[1]) : 1;
+	}
+
+	private getPatternImageName(style: string): string | undefined {
 		switch (style) {
 			case FillStyles.VerticalHatching:
 				return "vertical.png";
@@ -383,14 +453,14 @@ export class DrawService {
 				return "reverseDiagonal.png";
 			case FillStyles.DiagonalCrossHatching:
 				return "cross.png";
-			default:
+			case FillStyles.Solid:
 				return "";
 		}
 	}
 
 	private async setPolygonFill(style: string) {
 		this.polygon.fillStyle = await this.stylePatternSimplePoly(
-			this.getPatternImageName(style),
+			this.getPatternImageName(style)!,
 			this.polygon.fillColor,
 			Tools.Polygon,
 		);
@@ -398,7 +468,7 @@ export class DrawService {
 
 	private async setFreePolygonFill(style: string) {
 		this.freePolygon.fillStyle = await this.stylePatternSimplePoly(
-			this.getPatternImageName(style),
+			this.getPatternImageName(style)!,
 			this.freePolygon.fillColor,
 			Tools.FreePolygon,
 		);
@@ -406,7 +476,7 @@ export class DrawService {
 
 	private async setFigureFill(style: string) {
 		this.figure.fillStyle = await this.stylePatternSimplePoly(
-			this.getPatternImageName(style),
+			this.getPatternImageName(style)!,
 			this.figure.fillColor,
 			Tools.Figure,
 		);

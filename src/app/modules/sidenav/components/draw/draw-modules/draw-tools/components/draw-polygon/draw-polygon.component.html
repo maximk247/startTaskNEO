@@ -1,0 +1,58 @@
+<div>
+	<h2 class="drawing-title">{{ "outline" | transloco }}</h2>
+	<select (change)="setStrokeStyle($event)" class="select-container">
+		<option value="Solid">Сплошной</option>
+		<option value="Dashed">Штрих</option>
+		<option value="DashDot">Штрихпунктирный</option>
+		<option value="DashDotDot">Штрихпунктирный с двумя точками</option>
+		<option value="Dotted">Точки</option>
+	</select>
+</div>
+
+<div>
+	<h2 class="drawing-title">{{ "fill" | transloco }}</h2>
+	<select (change)="setPolygonFillStyle($event)" class="select-container">
+		<option value="Solid">Сплошная</option>
+		<option value="DiagonalHatching">Прямая диагональная штриховка</option>
+		<option value="ReverseDiagonalHatching">
+			Обратная диагональная штриховка
+		</option>
+		<option value="CrossHatching">Клетчатая штриховка</option>
+		<option value="DiagonalCrossHatching">Диагональная клетчатая штриховка</option>
+		<option value="HorizontalHatching">Горизонтальная штриховка</option>
+		<option value="VerticalHatching">Вертикальная штриховка</option>
+	</select>
+</div>
+
+<h2 class="drawing-title">{{ "outlineThickness" | transloco }}</h2>
+<app-draw-size
+	[(size)]="polygonSize"
+	(sizeChange)="updatePolygonSize()"
+></app-draw-size>
+<div class="line-row">
+	<div>
+		<h2 class="drawing-title">{{ "outlineColor" | transloco }}</h2>
+		<app-draw-color
+			[color]="polygonStrokeColor"
+			[tool]="tool"
+			[type]="'stroke'"
+		></app-draw-color>
+	</div>
+	<div>
+		<h2 class="drawing-title">{{ "fillColor" | transloco }}</h2>
+		<app-draw-color
+			[color]="polygonFillColor"
+			[tool]="tool"
+			[type]="'fill'"
+		></app-draw-color>
+	</div>
+</div>
+<h2 class="drawing-title">{{ "transparency" | transloco }}</h2>
+<app-draw-transparency [tool]="tool" [type]="type"></app-draw-transparency>
+<div class="checkbox-container">
+	<label class="checkbox-container__item">
+		<input type="checkbox" [(ngModel)]="addCoordinates" />
+		<span>{{ "addPoint" | transloco }}</span>
+	</label>
+</div>
+<app-coordinate-input [tool]="tool" *ngIf="addCoordinates"></app-coordinate-input>

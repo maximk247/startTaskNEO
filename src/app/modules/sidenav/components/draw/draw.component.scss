@@ -63,4 +63,11 @@
 			color: var(--primary-a100);
 		}
 	}
+
+	.tool-content {
+		display: block;
+		padding: 15px;
+		margin: 0 -15px -15px;
+		background: var(--draw-background);
+	}
 }

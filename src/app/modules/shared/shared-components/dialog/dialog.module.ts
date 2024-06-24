@@ -6,7 +6,7 @@ import { ColorPickerModule } from "ngx-color-picker";
 import { SharedModule } from "src/app/modules/shared/shared.module";
 import { DialogComponent } from "./dialog.component";
 import { MatMenuModule } from "@angular/material/menu";
-import { TranslocoRootModule } from "../../transloco/transloco-root.module";
+
 
 @NgModule({
 	declarations: [DialogComponent],
@@ -16,7 +16,7 @@ import { TranslocoRootModule } from "../../transloco/transloco-root.module";
 		ColorPickerModule,
 		FormsModule,
 		MatDialogModule,
-		TranslocoRootModule,
+		SharedModule
 	],
 	exports: [DialogComponent],
 })

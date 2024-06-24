@@ -6,6 +6,7 @@
 		[cpToggle]="true"
 		[cpDialogDisplay]="'inline'"
 		[cpOutputFormat]="'rgba'"
+		(colorPickerChange)="onColorChange($event)"
 	></span>
 
 	<button mat-button type="button" (click)="onClose('accept')">

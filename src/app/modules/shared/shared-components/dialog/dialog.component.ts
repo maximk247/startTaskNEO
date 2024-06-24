@@ -32,4 +32,38 @@ export class DialogComponent {
 		}
 		this.dialogRef.close(this.color);
 	}
+
+	public onColorChange(newColor: string) {
+		this.color = this.limitAlphaChannel(newColor);
+	}
+
+	private limitAlphaChannel(color: string): string {
+		const rgba = this.extractRgba(color);
+		const alpha = Math.min(rgba[3], this.drawService.getAlpha(this.data.tool));
+		return `rgba(${rgba[0]}, ${rgba[1]}, ${rgba[2]}, ${alpha})`;
+	}
+
+	private extractRgba(color: string): Array<number> {
+		const rgbaRegex = /^rgba\((\d+),\s*(\d+),\s*(\d+),\s*(\d*\.?\d+)\)$/;
+		const rgbRegex = /^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/;
+		let match = rgbaRegex.exec(color);
+		if (match) {
+			return [
+				parseInt(match[1], 10),
+				parseInt(match[2], 10),
+				parseInt(match[3], 10),
+				parseFloat(match[4]),
+			];
+		}
+		match = rgbRegex.exec(color);
+		if (match) {
+			return [
+				parseInt(match[1], 10),
+				parseInt(match[2], 10),
+				parseInt(match[3], 10),
+				1,
+			];
+		}
+		return [0, 0, 0, 1];
+	}
 }

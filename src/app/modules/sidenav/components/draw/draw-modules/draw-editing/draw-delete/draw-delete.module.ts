@@ -1,9 +1,9 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { DrawDeleteAllComponent } from "./draw-delete-all/draw-delete-all.component";
-import { DrawDeleteOnClickComponent } from "./draw-delete-on-click/draw-delete-on-click.component";
+import { DrawDeleteAllComponent } from "./components/draw-delete-all/draw-delete-all.component";
 import { InlineSVGModule } from "ng-inline-svg-2";
 import { SharedModule } from "src/app/modules/shared/shared.module";
+import { DrawDeleteOnClickComponent } from "./components/draw-delete-on-click/draw-delete-on-click.component";
 
 @NgModule({
 	declarations: [DrawDeleteOnClickComponent, DrawDeleteAllComponent],
