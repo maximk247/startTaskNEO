@@ -13,6 +13,7 @@ import {
 	CoordinatesForDraw,
 } from "../../interfaces/draw-options.interface";
 import { SidenavTools } from "src/app/modules/sidenav/enums/sidenav.enums";
+import { Tools } from "../../../../enum/draw.enum";
 
 @Component({
 	selector: "app-coordinate-input",
@@ -83,8 +84,8 @@ export class DrawCoordinateInputComponent {
 		}
 		feature.set("sidenavTool", SidenavTools.Draw);
 		feature.setStyle(style);
-		if (this.showCoordinates && this.tool === "drawPoint") {
-			this.drawService.addText(feature, "drawPoint");
+		if (this.showCoordinates && this.tool === Tools.Point) {
+			this.drawService.addText(feature, Tools.Point);
 		}
 		this.mapService.addFeatureToMap(feature);
 	}

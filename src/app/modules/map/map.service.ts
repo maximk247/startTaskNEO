@@ -15,6 +15,8 @@ import { useGeographic } from "ol/proj";
 import { Circle, Geometry, LineString, Point, Polygon } from "ol/geom";
 import { SidenavTools } from "../sidenav/enums/sidenav.enums";
 import { CURSOR_URLS } from "./consts/map-consts.consts";
+import { DrawToolKey } from "../sidenav/components/draw/interfaces/draw.interface";
+import { Tools } from "../sidenav/components/draw/enum/draw.enum";
 
 @Injectable({
 	providedIn: "root",
@@ -183,10 +185,11 @@ export class MapService {
 				const features = source.getFeatures();
 
 				for (let j = 0; j < features.length; j++) {
-					const feature = features[j];
-
-					if (feature.get(featureName) === featureValue) {
-						return true;
+					const feature = features[j] as Feature;
+					if (feature.getGeometry() instanceof Point) {
+						if (feature.get(featureName) === featureValue) {
+							return true;
+						}
 					}
 				}
 			}

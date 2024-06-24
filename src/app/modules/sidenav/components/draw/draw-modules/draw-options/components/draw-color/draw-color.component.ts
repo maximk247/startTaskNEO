@@ -4,7 +4,7 @@ import { DialogComponent } from "src/app/modules/shared/shared-components/dialog
 import { DrawService } from "../../../../draw.service";
 import { Subscription } from "rxjs";
 import { ColorService } from "./draw-color.service";
-import { ColorType } from "../../../../enum/draw.enum";
+import { ColorType, Tools } from "../../../../enum/draw.enum";
 
 @Component({
 	selector: "app-draw-color",
@@ -27,9 +27,9 @@ export class DrawColorComponent implements OnInit {
 		this.colorSubscription = this.colorService.color$.subscribe((color) => {
 			this.backgroundColor = color;
 			if (
-				this.tool === "drawFigure" ||
-				this.tool === "drawPolygon" ||
-				this.tool === "drawFreePolygon"
+				this.tool === Tools.Figure ||
+				this.tool === Tools.Polygon ||
+				this.tool === Tools.FreePolygon
 			) {
 				const { fillColor, strokeColor } =
 					this.drawService.splitRgbaColors(color);

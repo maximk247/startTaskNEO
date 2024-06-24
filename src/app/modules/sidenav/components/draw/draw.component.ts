@@ -144,7 +144,7 @@ export class DrawComponent implements OnInit {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
 		});
-		const drawFreeLine = this.drawService.initalizeFreeLine(this.map);
+		const drawFreeLine = this.drawService.initializeFreeLine(this.map);
 		this.activeInteraction = drawFreeLine;
 		this.drawService.addGlobalInteraction(this.map, drawFreeLine);
 		this.mapService.addCursorToMap("DrawLine");
@@ -167,7 +167,7 @@ export class DrawComponent implements OnInit {
 				this.drawService.removeGlobalInteraction(this.map, interaction);
 			}
 		});
-		const drawFreePolygon = this.drawService.initalizeFreePolygon(this.map);
+		const drawFreePolygon = this.drawService.initializeFreePolygon(this.map);
 		this.activeInteraction = drawFreePolygon;
 		this.drawService.addGlobalInteraction(this.map, drawFreePolygon);
 		this.mapService.addCursorToMap("DrawPolygon");

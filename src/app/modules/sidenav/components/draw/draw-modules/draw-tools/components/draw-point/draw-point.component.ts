@@ -1,4 +1,11 @@
-import { Component, DoCheck, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import {
+	Component,
+	DoCheck,
+	EventEmitter,
+	Input,
+	OnInit,
+	Output,
+} from "@angular/core";
 import { DrawService } from "../../../../draw.service";
 import { POINT_SHAPES } from "../../../../consts/draw-consts.consts";
 import { MapService } from "src/app/modules/map/map.service";
@@ -6,6 +13,8 @@ import { Map } from "ol";
 import { Coordinate } from "ol/coordinate";
 import { SidenavTools } from "src/app/modules/sidenav/enums/sidenav.enums";
 import { Subscription } from "rxjs";
+import { Tools } from "../../../../enum/draw.enum";
+import { Point } from "ol/geom";
 
 @Component({
 	selector: "app-draw-point",
@@ -18,7 +27,7 @@ export class DrawPointComponent implements OnInit, DoCheck {
 	public pointColor: string;
 	public addCoordinates: boolean;
 	public showCoordinates: boolean;
-	public showCoordinatesFlag: boolean;
+	public showCoordinatesFlag: boolean | undefined;
 	public coordinate: Array<Coordinate>;
 	public coordinatesSubscription: Subscription;
 
@@ -35,7 +44,8 @@ export class DrawPointComponent implements OnInit, DoCheck {
 	public ngOnInit() {
 		this.map = this.mapService.getMap();
 		this.pointSize = this.drawService.getSize(this.tool);
-		this.showCoordinatesFlag = false;
+		this.showCoordinatesFlag = this.drawService.getShowCoordinates();
+		this.showCoordinates = this.showCoordinatesFlag;
 		this.coordinatesSubscription =
 			this.drawService.coordinatesChanged.subscribe(() => {
 				this.updateCoordinates();
@@ -55,14 +65,16 @@ export class DrawPointComponent implements OnInit, DoCheck {
 			this.mapService
 				.getAllFeatures(this.map, "sidenavTool", SidenavTools.Draw)
 				.forEach((feature) => {
-					this.drawService.addText(feature, "drawPoint");
+					this.drawService.addText(feature, Tools.Point);
 				});
 		} else {
 			this.mapService
 				.getAllFeatures(this.map, "sidenavTool", SidenavTools.Draw)
 				.forEach(async (feature) => {
-					feature.set("sidenavTool", SidenavTools.Draw);
-					feature.setStyle(await this.drawService.getStyle(this.tool));
+					if (feature.getGeometry() instanceof Point) {
+						feature.set("sidenavTool", SidenavTools.Draw);
+						feature.setStyle(await this.drawService.getStyle(this.tool));
+					}
 				});
 		}
 	}

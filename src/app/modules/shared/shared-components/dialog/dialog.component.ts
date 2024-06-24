@@ -2,6 +2,7 @@ import { Component, Inject } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { DrawService } from "src/app/modules/sidenav/components/draw/draw.service";
 import { DialogData } from "./interfaces/dialog.interface";
+import { Tools } from "src/app/modules/sidenav/components/draw/enum/draw.enum";
 
 @Component({
 	selector: "app-dialog",
@@ -23,9 +24,9 @@ export class DialogComponent {
 				this.color = this.color.replace("rgb", "rgba").replace(")", ", 1)");
 			}
 			if (
-				this.data.tool === "drawPolygon" ||
-				this.data.tool === "drawFreePolygon" ||
-				this.data.tool === "drawFigure"
+				this.data.tool === Tools.Polygon ||
+				this.data.tool === Tools.Figure ||
+				this.data.tool === Tools.FreePolygon
 			) {
 				this.drawService.setColor(this.color, this.data.tool, this.data.type);
 			} else this.drawService.setColor(this.color, this.data.tool);
