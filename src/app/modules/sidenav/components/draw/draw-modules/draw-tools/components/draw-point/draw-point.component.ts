@@ -9,7 +9,7 @@ import {
 import { DrawService } from "../../../../draw.service";
 import { POINT_SHAPES } from "../../../../consts/draw-consts.consts";
 import { MapService } from "src/app/modules/map/map.service";
-import { Map } from "ol";
+import { Feature, Map } from "ol";
 import { Coordinate } from "ol/coordinate";
 import { SidenavTools } from "src/app/modules/sidenav/enums/sidenav.enums";
 import { Subscription } from "rxjs";
@@ -57,7 +57,7 @@ export class DrawPointComponent implements OnInit, DoCheck {
 			this.map,
 			"sidenavTool",
 			SidenavTools.Draw,
-			'Point'
+			"Point",
 		);
 	}
 
@@ -71,10 +71,9 @@ export class DrawPointComponent implements OnInit, DoCheck {
 		} else {
 			this.mapService
 				.getAllFeatures(this.map, "sidenavTool", SidenavTools.Draw)
-				.forEach(async (feature) => {
+				.forEach((feature) => {
 					if (feature.getGeometry() instanceof Point) {
-						feature.set("sidenavTool", SidenavTools.Draw);
-						feature.setStyle(await this.drawService.getStyle(this.tool));
+						this.drawService.removeText(feature);
 					}
 				});
 		}

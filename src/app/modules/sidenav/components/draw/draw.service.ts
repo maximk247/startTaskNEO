@@ -4,7 +4,7 @@ import { Interaction } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
 import Map from "ol/Map";
 import VectorSource from "ol/source/Vector";
-import { Style, RegularShape, Stroke, Fill, Text } from "ol/style";
+import { RegularShape, Stroke, Fill, Text, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { GeometryFunction } from "ol/interaction/Draw.js";
 import { Subject } from "rxjs";
@@ -57,6 +57,12 @@ export class DrawService {
 	private polygon = this.createDefaultPolygon();
 	private freePolygon = this.createDefaultPolygon();
 	private figure = this.createDefaultFigure();
+
+	private drawFeatures: Array<any> = [];
+
+	public getFeatures() {
+		return this.drawFeatures;
+	}
 
 	private vectorLayer: VectorLayer<VectorSource>;
 	private vectorSource: VectorSource;
@@ -206,8 +212,8 @@ export class DrawService {
 		return this.vectorSource;
 	}
 
-	public async addText(feature: Feature, tool: DrawToolKey) {
-		const style = (await this.getStyle(tool)) as Style;
+	public addText(feature: Feature, tool: DrawToolKey) {
+		const style = feature.getStyle() as Style;
 		const geometry = feature.getGeometry() as Point;
 		const coordinate = geometry.getCoordinates();
 
@@ -229,6 +235,14 @@ export class DrawService {
 			padding: [2, 2, 2, 2],
 		});
 		style.setText(textStyle);
+		feature.setStyle(style);
+	}
+
+	public removeText(feature: Feature) {
+		const style = feature.getStyle() as Style;
+
+		const textStyle = new Text();
+		style.setText(textStyle);
 
 		feature.setStyle(style);
 	}
@@ -249,23 +263,23 @@ export class DrawService {
 			freehand,
 			geometryFunction,
 		);
+
 		draw.set("sidenavTool", SidenavTools.Draw);
 		draw.on("drawstart", async (event) => {
 			if (tool !== Tools.Point) {
 				draw.flag = true;
 			}
-
 			event.feature.set("sidenavTool", SidenavTools.Draw);
 			event.feature.setStyle(await this.getStyle(tool));
-		});
-
-		draw.on("drawend", async (event) => {
-			draw.flag = false;
 			if (tool === Tools.Point) {
 				if (this.showCoordinatesFlag) {
-					this.addText(event.feature, "drawPoint");
+					this.addText(event.feature, Tools.Point);
 				}
 			}
+		});
+
+		draw.on("drawend", () => {
+			draw.flag = false;
 		});
 
 		return draw;

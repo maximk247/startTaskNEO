@@ -217,6 +217,7 @@ export class MapService {
 				}
 			}
 		});
+
 		return allFeatures;
 	}
 }
