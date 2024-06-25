@@ -57,6 +57,7 @@ export class DrawPointComponent implements OnInit, DoCheck {
 			this.map,
 			"sidenavTool",
 			SidenavTools.Draw,
+			'Point'
 		);
 	}
 

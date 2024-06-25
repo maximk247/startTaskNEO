@@ -1,4 +1,3 @@
-// map.service.ts
 import { Injectable } from "@angular/core";
 import Map from "ol/Map";
 import View from "ol/View";
@@ -15,8 +14,6 @@ import { useGeographic } from "ol/proj";
 import { Circle, Geometry, LineString, Point, Polygon } from "ol/geom";
 import { SidenavTools } from "../sidenav/enums/sidenav.enums";
 import { CURSOR_URLS } from "./consts/map-consts.consts";
-import { DrawToolKey } from "../sidenav/components/draw/interfaces/draw.interface";
-import { Tools } from "../sidenav/components/draw/enum/draw.enum";
 
 @Injectable({
 	providedIn: "root",
@@ -173,6 +170,7 @@ export class MapService {
 		map: Map,
 		featureName: string,
 		featureValue: string,
+		featureType: string,
 	): boolean {
 		const layers = map.getLayers().getArray();
 
@@ -186,7 +184,9 @@ export class MapService {
 
 				for (let j = 0; j < features.length; j++) {
 					const feature = features[j] as Feature;
-					if (feature.getGeometry() instanceof Point) {
+					const geometry = feature.getGeometry();
+
+					if (geometry && geometry.getType() === featureType) {
 						if (feature.get(featureName) === featureValue) {
 							return true;
 						}

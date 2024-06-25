@@ -10,11 +10,12 @@ import { ColorService } from "../draw-color/draw-color.service";
 	templateUrl: "./draw-transparency.component.html",
 	styleUrls: ["./draw-transparency.component.scss"],
 })
-export class DrawTransparencyComponent implements OnInit, OnDestroy {
+export class DrawTransparencyComponent implements OnInit {
 	@Input() public tool: string;
 	@Input() public type: string;
 	public alphaValue: number;
 	private alphaSubscription: Subscription;
+	private colorSubscription: Subscription;
 	private currentColor: string | undefined;
 	public constructor(
 		private drawService: DrawService,
@@ -27,6 +28,12 @@ export class DrawTransparencyComponent implements OnInit, OnDestroy {
 		this.alphaSubscription = this.drawService.alphaChanged.subscribe(
 			(alpha) => {
 				this.alphaValue = alpha;
+			},
+		);
+		this.colorSubscription = this.drawService.colorChanged.subscribe(
+			(color) => {
+				this.currentColor = color;
+				this.alphaValue = this.drawService.getAlpha(this.tool);
 			},
 		);
 	}
@@ -45,9 +52,5 @@ export class DrawTransparencyComponent implements OnInit, OnDestroy {
 
 	public formatSliderValue(value: number) {
 		return (value * 100).toFixed(0) + "%";
-	}
-
-	public ngOnDestroy() {
-		this.alphaSubscription.unsubscribe();
 	}
 }

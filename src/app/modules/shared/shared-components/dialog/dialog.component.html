@@ -1,18 +1,51 @@
-<div class="dialog-container">
-	<h2>{{ "selectColor" | transloco }}</h2>
-	<span
-		[(colorPicker)]="color"
-		[style.background]="color"
-		[cpToggle]="true"
-		[cpDialogDisplay]="'inline'"
-		[cpOutputFormat]="'rgba'"
-		(colorPickerChange)="onColorChange($event)"
-	></span>
+<div
+	class="dialog-container"
+	cdkDragBoundary=".mat-mdc-dialog-container "
+	appDraggableDialog
+>
+	<header class="dialog-container__header">
+		<p>{{ "selectColor" | transloco }}</p>
+		<button
+			type="button"
+			class="dialog-container__close"
+			(click)="onClose('reject')"
+		>
+			<div [inlineSVG]="'cancel.svg'"></div>
+		</button>
+	</header>
+	<div class="dialog-container__main">
+		<div class="dialog-container__color">
+			<span
+				[style.background]="color"
+				[style.width]="'100px'"
+				[style.height]="'100px'"
+			></span>
+			<span
+				[style.width]="'100px'"
+				[style.height]="'100px'"
+				[style.background]="newColor"
+			>
+			</span>
+		</div>
+		<span
+			[(colorPicker)]="newColor"
+			[style.background]="newColor"
+			[cpToggle]="true"
+			[cpWidth]="'400px'"
+			[cpDialogDisplay]="'inline'"
+			[cpOutputFormat]="'rgba'"
+			[cpAlphaChannel]="'disabled'"
+			(colorPickerChange)="onColorChange($event)"
+			[cpUseRootViewContainer]="true"
+		></span>
 
-	<button mat-button type="button" (click)="onClose('accept')">
-		{{ "accept" | transloco }}
-	</button>
-	<button mat-button type="button" (click)="onClose('reject')">
-		{{ "reject" | transloco }}
-	</button>
+		<div class="dialog-container__buttons">
+			<button mat-button type="button" (click)="onClose('accept')">
+				{{ "accept" | transloco }}
+			</button>
+			<button mat-button type="button" (click)="onClose('reject')">
+				{{ "reject" | transloco }}
+			</button>
+		</div>
+	</div>
 </div>

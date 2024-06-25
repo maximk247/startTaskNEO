@@ -1,14 +1,111 @@
+/* stylelint-disable selector-class-pattern */
 .dialog-container {
 	position: relative;
+	display: flex;
+	flex-direction: column;
+
+	&__header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		padding: 1rem 1.333rem;
+		font-size: 15px;
+		color: var(--primary-100);
+		cursor: move;
+		background-color: var(--primary-700);
+	}
+
+	&__color {
+		display: flex;
+		flex-direction: column;
+		gap: 15px;
+	}
+
+	&__close {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 12px;
+		height: 12px;
+		padding: 0;
+		color: var(--primary-100);
+		cursor: pointer;
+		background-color: transparent;
+		border: none;
+
+		&:hover {
+			color: var(--primary-a300);
+		}
+
+		& > div {
+			width: 12px;
+			height: 12px;
+		}
+	}
+
+	&__main {
+		display: flex;
+		gap: 15px;
+		padding: 15px;
+		overflow: hidden;
+		background-color: var(--accent-200);
+	}
+
+	&__buttons {
+		display: flex;
+		flex-direction: column;
+		gap: 15px;
+	}
 }
 
-::ng-deep .mat-mdc-dialog-container {
+::ng-deep.mat-mdc-dialog-container {
 	position: absolute;
 	display: flex;
+	width: 100%;
+	background: rgb(0 0 0 / 50%);
 }
 
-/* stylelint-disable-next-line selector-class-pattern */
-::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
-	width: auto;
-	height: auto;
+::ng-deep {
+	.mat-mdc-dialog-container,
+	.mat-mdc-dialog-container .mdc-dialog__container,
+	.mat-mdc-dialog-container .mdc-dialog__surface {
+		min-width: none;
+		max-width: none;
+		min-height: none;
+		max-height: none;
+	}
+
+	.mat-mdc-dialog-container .mdc-dialog__surface {
+		height: auto;
+	}
+}
+
+:host ::ng-deep {
+	svg {
+		width: 12px;
+		height: 12px;
+	}
+
+	.hsla-text,
+	.hex-text {
+		display: block !important;
+	}
+
+	.type-policy,
+	.left {
+		display: none;
+	}
+
+	.color-picker {
+		background-color: var(--accent-200);
+		border: none;
+	}
+
+	.color-picker .cmyk-text .box,
+	.color-picker .hsla-text .box,
+	.color-picker .rgba-text .box,
+	.color-picker .hex-text .box {
+		padding: 8px 24px;
+	}
 }

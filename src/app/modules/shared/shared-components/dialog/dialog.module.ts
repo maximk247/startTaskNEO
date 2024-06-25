@@ -6,17 +6,24 @@ import { ColorPickerModule } from "ngx-color-picker";
 import { SharedModule } from "src/app/modules/shared/shared.module";
 import { DialogComponent } from "./dialog.component";
 import { MatMenuModule } from "@angular/material/menu";
-
+import { CdkDrag, DragDropModule } from "@angular/cdk/drag-drop";
+import { DraggableDialogDirective } from "./directives/add-drag.directive";
+import { InlineSVGModule } from "ng-inline-svg-2";
 
 @NgModule({
-	declarations: [DialogComponent],
+	declarations: [DialogComponent, DraggableDialogDirective],
 	imports: [
 		MatMenuModule,
 		CommonModule,
 		ColorPickerModule,
 		FormsModule,
 		MatDialogModule,
-		SharedModule
+		SharedModule,
+		CdkDrag,
+		DragDropModule,
+		InlineSVGModule.forRoot({
+			baseUrl: "/assets/images/",
+		}),
 	],
 	exports: [DialogComponent],
 })

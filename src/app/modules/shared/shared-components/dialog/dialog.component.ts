@@ -10,50 +10,62 @@ import { Tools } from "src/app/modules/sidenav/components/draw/enum/draw.enum";
 	styleUrls: ["./dialog.component.scss"],
 })
 export class DialogComponent {
-	public color: string;
+	public color: string | undefined;
+	public newColor: string;
 	public constructor(
 		private dialogRef: MatDialogRef<DialogComponent>,
 		private drawService: DrawService,
 		@Inject(MAT_DIALOG_DATA)
 		public data: DialogData,
-	) {}
+	) {
+		this.color = this.drawService.getColor(data.tool, data.type);
+		this.newColor = data.color;
+	}
 
 	public onClose(status: string): void {
 		if (status === "accept") {
-			if (this.color.indexOf("rgba") === -1) {
-				this.color = this.color.replace("rgb", "rgba").replace(")", ", 1)");
+			if (this.newColor.indexOf("rgba") === -1) {
+				this.newColor = this.newColor
+					.replace("rgb", "rgba")
+					.replace(")", ", 1)");
 			}
 			if (
 				this.data.tool === Tools.Polygon ||
 				this.data.tool === Tools.Figure ||
 				this.data.tool === Tools.FreePolygon
 			) {
-				this.drawService.setColor(this.color, this.data.tool, this.data.type);
-			} else this.drawService.setColor(this.color, this.data.tool);
+				this.drawService.setColor(
+					this.newColor,
+					this.data.tool,
+					this.data.type,
+				);
+			} else this.drawService.setColor(this.newColor, this.data.tool);
 		}
-		this.dialogRef.close(this.color);
+		this.dialogRef.close(this.newColor);
 	}
 
 	public onColorChange(newColor: string) {
-		this.color = this.limitAlphaChannel(newColor);
+		this.newColor = this.limitAlphaChannel(newColor);
 	}
 
 	private limitAlphaChannel(color: string): string {
 		const rgba = this.extractRgba(color);
 		const alpha = Math.min(rgba[3], this.drawService.getAlpha(this.data.tool));
+
 		return `rgba(${rgba[0]}, ${rgba[1]}, ${rgba[2]}, ${alpha})`;
 	}
 
 	private extractRgba(color: string): Array<number> {
 		const rgbaRegex = /^rgba\((\d+),\s*(\d+),\s*(\d+),\s*(\d*\.?\d+)\)$/;
 		const rgbRegex = /^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/;
+
 		let match = rgbaRegex.exec(color);
 		if (match) {
 			return [
 				parseInt(match[1], 10),
 				parseInt(match[2], 10),
 				parseInt(match[3], 10),
-				parseFloat(match[4]),
+				this.drawService.getAlpha(this.data.tool),
 			];
 		}
 		match = rgbRegex.exec(color);

@@ -5,7 +5,7 @@
 						fill="none"
 					>
 						<path
-							fill="#fff"
+							fill="currentColor"
 							d="M13.222 7.778H0.778a.778.778 0 1 1 0-1.556h12.444a.778.778 0 0 1 0 1.556Z"
 						></path>
 					</svg>
