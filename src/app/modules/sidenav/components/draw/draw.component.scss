@@ -23,6 +23,10 @@
 		height: 16px;
 	}
 
+	.tools-button.active-tool {
+		color: var(--primary-a100);
+	}
+
 	.drawing-title {
 		margin-bottom: 0.8333rem;
 		font-size: 12px;

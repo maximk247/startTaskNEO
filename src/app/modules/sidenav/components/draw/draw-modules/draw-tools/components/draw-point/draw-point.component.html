@@ -4,6 +4,7 @@
 		type="submit"
 		(click)="setPointShape('Circle')"
 		class="draw-forms-button"
+		[ngClass]="getActive('Circle')"
 	>
 		<div [inlineSVG]="'forms_point/form-circle.svg'"></div>
 	</button>
@@ -11,6 +12,7 @@
 		type="submit"
 		(click)="setPointShape('Cross')"
 		class="draw-forms-button"
+		[ngClass]="getActive('Cross')"
 	>
 		<div [inlineSVG]="'forms_point/form-plus.svg'"></div>
 	</button>
@@ -18,6 +20,7 @@
 		type="submit"
 		(click)="setPointShape('Diamond')"
 		class="draw-forms-button"
+		[ngClass]="getActive('Diamond')"
 	>
 		<div [inlineSVG]="'forms_point/form-square.svg'" class="rotate"></div>
 	</button>
@@ -25,6 +28,7 @@
 		type="submit"
 		(click)="setPointShape('Square')"
 		class="draw-forms-button"
+		[ngClass]="getActive('Square')"
 	>
 		<div [inlineSVG]="'forms_point/form-square.svg'"></div>
 	</button>
@@ -32,6 +36,7 @@
 		type="submit"
 		(click)="setPointShape('Cancel')"
 		class="draw-forms-button"
+		[ngClass]="getActive('Cancel')"
 	>
 		<div [inlineSVG]="'forms_point/form-plus.svg'" class="rotate"></div>
 	</button>

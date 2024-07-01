@@ -3,22 +3,52 @@
 		<span class="drawing-title">Инструменты рисования</span>
 
 		<div class="draw-container__tools">
-			<button (click)="drawPoint()" type="button" class="tools-button">
+			<button
+				(click)="drawPoint()"
+				type="button"
+				class="tools-button"
+				[ngClass]="getActiveTool('drawPoint')"
+			>
 				<div [inlineSVG]="'/tools/point.svg'"></div>
 			</button>
-			<button (click)="drawLine()" type="button" class="tools-button">
+			<button
+				(click)="drawLine()"
+				type="button"
+				class="tools-button"
+				[ngClass]="getActiveTool('drawLine')"
+			>
 				<div [inlineSVG]="'/tools/polyline.svg'"></div>
 			</button>
-			<button (click)="drawPolygon()" type="button" class="tools-button">
+			<button
+				(click)="drawPolygon()"
+				type="button"
+				class="tools-button"
+				[ngClass]="getActiveTool('drawPolygon')"
+			>
 				<div [inlineSVG]="'/tools/polygon.svg'"></div>
 			</button>
-			<button (click)="drawFreeLine()" type="button" class="tools-button">
+			<button
+				(click)="drawFreeLine()"
+				type="button"
+				class="tools-button"
+				[ngClass]="getActiveTool('drawFreeLine')"
+			>
 				<div [inlineSVG]="'/tools/freehand-polyline.svg'"></div>
 			</button>
-			<button (click)="drawFreePolygon()" type="button" class="tools-button">
+			<button
+				(click)="drawFreePolygon()"
+				type="button"
+				class="tools-button"
+				[ngClass]="getActiveTool('drawFreePolygon')"
+			>
 				<div [inlineSVG]="'/tools/freehand-polygon.svg'"></div>
 			</button>
-			<button (click)="drawFigure()" type="button" class="tools-button">
+			<button
+				(click)="drawFigure()"
+				type="button"
+				class="tools-button"
+				[ngClass]="getActiveTool('drawFigure')"
+			>
 				<div [inlineSVG]="'/tools/forms.svg'"></div>
 			</button>
 		</div>

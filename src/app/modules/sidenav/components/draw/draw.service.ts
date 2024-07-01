@@ -58,12 +58,6 @@ export class DrawService {
 	private freePolygon = this.createDefaultPolygon();
 	private figure = this.createDefaultFigure();
 
-	private drawFeatures: Array<any> = [];
-
-	public getFeatures() {
-		return this.drawFeatures;
-	}
-
 	private vectorLayer: VectorLayer<VectorSource>;
 	private vectorSource: VectorSource;
 
@@ -109,6 +103,15 @@ export class DrawService {
 			shape: "Circle",
 			color: "rgba(0, 255, 0, 1)",
 		};
+	}
+
+	public resetDrawFeatures() {
+		this.point = this.createDefaultPoint();
+		this.line = this.createDefaultLine();
+		this.freeLine = this.createDefaultLine();
+		this.polygon = this.createDefaultPolygon();
+		this.freePolygon = this.createDefaultPolygon();
+		this.figure = this.createDefaultFigure();
 	}
 	private async stylePatternSimplePoly(
 		pattern: string,
@@ -483,6 +486,10 @@ export class DrawService {
 
 	public setPointShape(shape: string) {
 		this.point.shape = shape;
+	}
+
+	public getPointShape() {
+		return this.point.shape;
 	}
 
 	private setImageForPoint(

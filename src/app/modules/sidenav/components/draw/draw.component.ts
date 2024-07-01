@@ -35,6 +35,7 @@ export class DrawComponent implements OnInit {
 		this.drawService.initializeLayer();
 		this.map.addLayer(this.drawService.getVectorLayer());
 		this.mapService.addCursorToMap();
+		this.drawService.resetDrawFeatures();
 	}
 
 	public componentVisibility: DrawTools = {
@@ -194,5 +195,20 @@ export class DrawComponent implements OnInit {
 		this.activeInteraction = drawFigure;
 		this.drawService.addGlobalInteraction(this.map, drawFigure);
 		this.mapService.addCursorToMap("DrawPolygon");
+	}
+
+	private findActiveTool(obj: DrawTools): string | null {
+		for (const key in obj) {
+			if (obj[key] === true) {
+				return key;
+			}
+		}
+		return null;
+	}
+
+	public getActiveTool(tool: string) {
+		return this.findActiveTool(this.componentVisibility) === tool
+			? "active-tool"
+			: "";
 	}
 }

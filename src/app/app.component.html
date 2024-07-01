@@ -43,6 +43,7 @@
 			<app-modal
 				[mode]="menuMode"
 				*ngIf="menuMode !== null && isWindowVisible"
+				(visibleChange)="updateVisible($event)"
 			></app-modal>
 
 			<app-map></app-map>

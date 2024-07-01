@@ -20,6 +20,7 @@ import { SidenavTools } from "src/app/modules/sidenav/enums/sidenav.enums";
 export class DrawShapeComponent implements OnInit {
 	private map: Map;
 	public activeInteraction: Draw | null = null;
+	private figureShape: string;
 	public constructor(
 		private drawService: DrawService,
 		private mapService: MapService,
@@ -33,19 +34,22 @@ export class DrawShapeComponent implements OnInit {
 			case DrawShapes.Circle:
 				this.drawService.removeGlobalInteraction(this.map);
 				geometryFunction = undefined;
+				this.figureShape = DrawShapes.Circle;
 				break;
 			case DrawShapes.Square:
 				this.drawService.removeGlobalInteraction(this.map);
 				geometryFunction = createRegularPolygon(4);
+				this.figureShape = DrawShapes.Square;
 				break;
 			case DrawShapes.Rectangle:
 				this.drawService.removeGlobalInteraction(this.map);
 				geometryFunction = createBox();
+				this.figureShape = DrawShapes.Rectangle;
 				break;
 			case DrawShapes.Triangle:
 				this.drawService.removeGlobalInteraction(this.map);
 				geometryFunction = createRegularPolygon(3);
-
+				this.figureShape = DrawShapes.Triangle;
 				break;
 			case DrawShapes.Arrow:
 				this.drawService.removeGlobalInteraction(this.map);
@@ -107,7 +111,7 @@ export class DrawShapeComponent implements OnInit {
 					geometry.setCoordinates([arrowCoords]);
 					return geometry;
 				};
-
+				this.figureShape = DrawShapes.Arrow;
 				break;
 		}
 		const interactions = this.map.getInteractions().getArray();
@@ -123,5 +127,9 @@ export class DrawShapeComponent implements OnInit {
 		);
 		this.activeInteraction = drawFigure;
 		this.map.addInteraction(drawFigure);
+	}
+
+	public getActiveFigureShape(shape: string) {
+		return this.figureShape === shape ? 'active-figure-shape': ''
 	}
 }

@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject, Renderer2 } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { DrawService } from "src/app/modules/sidenav/components/draw/draw.service";
 import { DialogData } from "./interfaces/dialog.interface";
@@ -17,9 +17,18 @@ export class DialogComponent {
 		private drawService: DrawService,
 		@Inject(MAT_DIALOG_DATA)
 		public data: DialogData,
+		private renderer: Renderer2,
 	) {
 		this.color = this.drawService.getColor(data.tool, data.type);
-		this.newColor = data.color;
+		this.newColor = this.color!;
+	}
+
+	public ngAfterViewInit(): void {
+		const presetArea = document.querySelector(".preset-area");
+		const colorActions = document.querySelector(".color__actions");
+		if (presetArea && colorActions) {
+			this.renderer.appendChild(colorActions, presetArea);
+		}
 	}
 
 	public onClose(status: string): void {

@@ -9,7 +9,7 @@ import {
 import { DrawService } from "../../../../draw.service";
 import { POINT_SHAPES } from "../../../../consts/draw-consts.consts";
 import { MapService } from "src/app/modules/map/map.service";
-import { Feature, Map } from "ol";
+import { Map } from "ol";
 import { Coordinate } from "ol/coordinate";
 import { SidenavTools } from "src/app/modules/sidenav/enums/sidenav.enums";
 import { Subscription } from "rxjs";
@@ -81,6 +81,10 @@ export class DrawPointComponent implements OnInit, DoCheck {
 
 	public setPointShape(shape: string) {
 		this.drawService.setPointShape(shape);
+	}
+
+	public getActive(shape: string) {
+		return this.drawService.getPointShape() === shape ? 'active': ''
 	}
 
 	public updatePointSize() {

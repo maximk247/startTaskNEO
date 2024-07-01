@@ -19,4 +19,9 @@
 	.shape-container {
 		display: flex;
 	}
+
+	.active-figure-shape {
+		color: var(--primary-100);
+		background-color: var(--primary-a100);
+	}
 }
