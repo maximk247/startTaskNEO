@@ -1,4 +1,5 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, OnInit, ViewChild } from "@angular/core";
+import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
 import { LineString, Polygon } from "ol/geom";
@@ -8,41 +9,69 @@ import { TranslocoService } from "@ngneat/transloco";
 import { MapService } from "src/app/modules/map/map.service";
 import { DrawService } from "../../../../draw.service";
 import { DrawTools, ProjectionType } from "../../enum/draw-options.enum";
-import {
-	CoordinateForDraw,
-	CoordinatesForDraw,
-} from "../../interfaces/draw-options.interface";
 import { SidenavTools } from "src/app/modules/sidenav/enums/sidenav.enums";
 import { Tools } from "../../../../enum/draw.enum";
+import { NotificationComponent } from "src/app/modules/shared/shared-components/notification/notification.component";
 
 @Component({
 	selector: "app-coordinate-input",
 	templateUrl: "./draw-coordinate-input.component.html",
 	styleUrls: ["./draw-coordinate-input.component.scss"],
 })
-export class DrawCoordinateInputComponent {
+export class DrawCoordinateInputComponent implements OnInit {
 	@Input() public tool: string;
 	@Input() public showCoordinates: boolean;
 
 	public spatialReferences: Array<SpatialReference> = [];
 	private newProjection: SpatialReference;
 
-	public points: Array<CoordinateForDraw> = [{ x: "", y: "" }];
+	public coordinateForm: FormGroup;
 
 	public drawPoint = DrawTools.Point;
 	public drawLine = DrawTools.Line;
 	public drawPolygon = DrawTools.Polygon;
+
+	@ViewChild(NotificationComponent) public notification: NotificationComponent;
+
 	public constructor(
+		private fb: FormBuilder,
 		private mapService: MapService,
 		private drawService: DrawService,
 		private translocoService: TranslocoService,
 	) {}
 
+	public ngOnInit(): void {
+		this.coordinateForm = this.fb.group({
+			points: this.fb.array([this.createPointFormGroup()]),
+		});
+	}
+
+	public get points(): FormArray {
+		return this.coordinateForm.get("points") as FormArray;
+	}
+
+	private createPointFormGroup(): FormGroup {
+		return this.fb.group({
+			x: ["", [Validators.required, Validators.pattern(/^[0-9]+(?!.)/)]],
+			y: ["", [Validators.required, Validators.pattern(/^[0-9]+(?!.)/)]],
+		});
+	}
+
+	public addPoint(): void {
+		this.points.push(this.createPointFormGroup());
+	}
+
+	public removePoint(index: number): void {
+		if (this.points.length > 1) {
+			this.points.removeAt(index);
+		}
+	}
+
 	public onSelectedReferenceChange(selectedReference: SpatialReference): void {
 		this.newProjection = selectedReference;
 	}
 
-	private transformCoordinates(point: CoordinateForDraw) {
+	private transformCoordinates(point: any) {
 		const proj4 = (proj4x as any).default;
 		let [x, y] = [+point.x, +point.y];
 
@@ -59,7 +88,7 @@ export class DrawCoordinateInputComponent {
 	}
 
 	private async createFeature(
-		coordinates: CoordinatesForDraw,
+		coordinates: Array<any>,
 		geometryType: DrawTools,
 	) {
 		const style = await this.drawService.getStyle(this.tool);
@@ -91,23 +120,31 @@ export class DrawCoordinateInputComponent {
 	}
 
 	public async addPointToMap(): Promise<void> {
-		for (const point of this.points) {
-			const coordinates = [this.transformCoordinates(point)];
+		for (const point of this.points.controls) {
+			const coordinates = [this.transformCoordinates(point.value)];
 			await this.createFeature(coordinates, DrawTools.Point);
 		}
 	}
+
 	public async addLineToMap(): Promise<void> {
-		const coordinates = this.points.map((point) =>
-			this.transformCoordinates(point),
-		);
-		coordinates.push(coordinates[0]);
-		await this.createFeature(coordinates, DrawTools.Line);
+		if (this.points.length >= 2) {
+			const coordinates = this.points.controls.map((point) =>
+				this.transformCoordinates(point.value),
+			);
+			coordinates.push(coordinates[0]);
+			await this.createFeature(coordinates, DrawTools.Line);
+		} else {
+			const errorMessage = this.translocoService.translate(
+				"errorDueToNotEnoughPoints",
+			);
+			this.notification.show(errorMessage);
+		}
 	}
 
 	public async addPolygonToMap(): Promise<void> {
-		if (this.points.length > 2) {
-			const coordinates = this.points.map((point) =>
-				this.transformCoordinates(point),
+		if (this.points.length >= 4) {
+			const coordinates = this.points.controls.map((point) =>
+				this.transformCoordinates(point.value),
 			);
 			coordinates.push(coordinates[0]);
 			await this.createFeature(coordinates, DrawTools.Polygon);
@@ -115,23 +152,15 @@ export class DrawCoordinateInputComponent {
 			const errorMessage = this.translocoService.translate(
 				"errorDueToNotEnoughPoints",
 			);
-			console.error(errorMessage);
-		}
-	}
-
-	public addPoint(): void {
-		this.points.push({ x: "", y: "" });
-	}
-
-	public removePoint(index: number): void {
-		if (this.points.length > 1) {
-			this.points.splice(index, 1);
+			this.notification.show(errorMessage);
 		}
 	}
 
 	public removeAllCoordinates() {
-		this.points = [{ x: "", y: "" }];
+		this.points.clear();
+		this.addPoint();
 	}
+
 	public onChange(event: Event): void {
 		const target = event.target as HTMLSelectElement;
 		const selectedRef = this.spatialReferences.find(

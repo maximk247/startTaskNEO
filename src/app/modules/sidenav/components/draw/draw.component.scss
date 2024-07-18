@@ -23,7 +23,8 @@
 		height: 16px;
 	}
 
-	.tools-button.active-tool {
+	.tools-button.active-tool,
+	.active-tool {
 		color: var(--primary-a100);
 	}
 
@@ -57,7 +58,7 @@
 	.tools-button {
 		padding: unset;
 		line-height: 1;
-		color: rgb(0 0 0 / 87%);
+		color: inherit;
 		cursor: pointer;
 		background-color: transparent;
 		border: none;

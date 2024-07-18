@@ -2,7 +2,7 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { DrawShapeComponent } from "./components/draw-shape/draw-shape.component";
 import { DrawSizeComponent } from "./components/draw-size/draw-size.component";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatSliderModule } from "@angular/material/slider";
 import { SharedModule } from "src/app/modules/shared/shared.module";
 import { DrawCoordinateInputComponent } from "./components/draw-coordinate-input/draw-coordinate-input.component";
@@ -22,6 +22,7 @@ import { DrawColorComponent } from "./components/draw-color/draw-color.component
 		CommonModule,
 		FormsModule,
 		MatSliderModule,
+		ReactiveFormsModule,
 		SharedModule,
 		InlineSVGModule.forRoot({
 			baseUrl: "/assets/images/",

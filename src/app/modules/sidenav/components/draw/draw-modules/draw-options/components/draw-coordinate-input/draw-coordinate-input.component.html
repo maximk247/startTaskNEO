@@ -1,9 +1,8 @@
-<div>
+<div [formGroup]="coordinateForm">
 	<app-coordinate-system
 		[spatialReferences]="spatialReferences"
 		(selectedReferenceChange)="onSelectedReferenceChange($event)"
-	>
-	</app-coordinate-system>
+	></app-coordinate-system>
 	<div class="list__row">
 		<span>{{ "latitude" | transloco }} (X):</span>
 		<span>{{ "longitude" | transloco }} (Y):</span>
@@ -16,23 +15,29 @@
 		</button>
 	</div>
 	<ul class="list__menu">
-		<ng-container *ngFor="let point of points; let i = index">
-			<li class="list__row">
+		<ng-container formArrayName="points">
+			<li
+				*ngFor="let point of points.controls; let i = index"
+				[formGroupName]="i"
+				class="list__row"
+			>
 				<input
 					class="list__field list__input"
 					type="text"
-					[(ngModel)]="point.x"
+					formControlName="x"
 					[id]="'x' + i"
+					numbers
 				/>
 				<input
 					class="list__field list__input"
 					type="text"
-					[(ngModel)]="point.y"
+					formControlName="y"
 					[id]="'y' + i"
+					numbers
 				/>
 
 				<button
-					class="list__button list__button--primary"
+					class="list__button list__button--primary minus"
 					type="button"
 					(click)="removePoint(i)"
 					*ngIf="points.length > i + 1"
@@ -40,7 +45,7 @@
 					<div [inlineSVG]="'/editing/minus.svg'"></div>
 				</button>
 				<button
-					class="list__button list__button--primary"
+					class="list__button list__button--primary plus"
 					type="button"
 					(click)="addPoint()"
 					*ngIf="points.length === i + 1"
@@ -80,3 +85,4 @@
 		</div>
 	</div>
 </div>
+<app-notification #notification></app-notification>

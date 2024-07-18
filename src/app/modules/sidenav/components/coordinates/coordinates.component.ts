@@ -76,16 +76,24 @@ export class CoordinatesComponent implements OnInit {
 
 	private setValidators() {
 		if (this.newProjection.type === ProjectionType.Metric) {
-			this.coordinatesForm.controls["x"].setValidators(Validators.required);
-			this.coordinatesForm.controls["y"].setValidators(Validators.required);
+			this.coordinatesForm.controls["x"].setValidators([
+				Validators.required,
+				Validators.pattern(/^[0-9]+(?!.)/),
+			]);
+			this.coordinatesForm.controls["y"].setValidators([
+				Validators.required,
+				Validators.pattern(/^[0-9]+(?!.)/),
+			]);
 			this.clearValidators(["latitudeDegrees", "longitudeDegrees"]);
 		} else if (this.newProjection.type === ProjectionType.Degree) {
-			this.coordinatesForm.controls["latitudeDegrees"].setValidators(
+			this.coordinatesForm.controls["latitudeDegrees"].setValidators([
 				Validators.required,
-			);
-			this.coordinatesForm.controls["longitudeDegrees"].setValidators(
+				Validators.pattern(/^[0-9]+(?!.)/),
+			]);
+			this.coordinatesForm.controls["longitudeDegrees"].setValidators([
 				Validators.required,
-			);
+				Validators.pattern(/^[0-9]+(?!.)/),
+			]);
 			this.clearValidators(["x", "y"]);
 		}
 		this.coordinatesForm.updateValueAndValidity();

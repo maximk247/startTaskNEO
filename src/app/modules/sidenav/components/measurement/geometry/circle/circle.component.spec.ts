@@ -13,6 +13,7 @@ import { Interaction } from "ol/interaction";
 import { FormsModule } from "@angular/forms";
 import { getTranslocoModule } from "src/app/modules/shared/transloco/transloco-testing.module";
 import { SharedModule } from "src/app/modules/shared/shared.module";
+import { CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
 
 describe("CircleComponent", () => {
 	let component: CircleComponent;
@@ -50,6 +51,7 @@ describe("CircleComponent", () => {
 				{ provide: MeasurementService, useValue: mockMeasurementService },
 			],
 			imports: [FormsModule, SharedModule, getTranslocoModule()],
+			schemas: [CUSTOM_ELEMENTS_SCHEMA],
 		});
 		fixture = TestBed.createComponent(CircleComponent);
 		component = fixture.componentInstance;

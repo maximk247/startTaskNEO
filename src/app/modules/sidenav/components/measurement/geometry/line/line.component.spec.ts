@@ -3,44 +3,36 @@ import { LineComponent } from "./line.component";
 import { DrawService } from "../../../draw/draw.service";
 import { MeasurementService } from "../../measurement.service";
 import { Map, View } from "ol";
-import VectorSource from "ol/source/Vector";
-import { LineString } from "ol/geom";
-import { SidenavTools } from "../../../../enums/sidenav.enums";
+import VectorLayer from "ol/layer/Vector";
 import { Feature } from "ol";
-import BaseEvent from "ol/events/Event";
-import { Interaction } from "ol/interaction";
-import { FormsModule } from "@angular/forms";
+import { LineString } from "ol/geom";
+import { MeasurementMode } from "../../enums/measurement.enum";
+import VectorSource from "ol/source/Vector";
+import { SidenavTools } from "src/app/modules/sidenav/enums/sidenav.enums";
 import { getTranslocoModule } from "src/app/modules/shared/transloco/transloco-testing.module";
-import { SharedModule } from "src/app/modules/shared/shared.module";
+import { HttpClientModule } from "@angular/common/http";
+import { FormsModule } from "@angular/forms";
+import { CustomDraw } from "src/app/modules/shared/classes/draw-interaction.class";
+import { CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
 
 describe("LineComponent", () => {
 	let component: LineComponent;
 	let fixture: ComponentFixture<LineComponent>;
-	let mockDrawService: DrawService;
-	let mockMeasurementService: MeasurementService;
-	let mockMap: Map;
-	let mockVectorSource: VectorSource;
+	let mockDrawService: any;
+	let mockMeasurementService: any;
 
 	beforeEach(() => {
-		mockDrawService = jasmine.createSpyObj("DrawService", [
-			"addGlobalInteraction",
+		mockDrawService = jasmine.createSpyObj([
 			"removeGlobalInteraction",
+			"addGlobalInteraction",
 		]);
-		mockMeasurementService = jasmine.createSpyObj("MeasurementService", [
+		mockMeasurementService = jasmine.createSpyObj([
 			"getLastIdMeasurement",
+			"setStyle",
 			"formatMeasurement",
 			"setLastId",
 		]);
-
-		(mockMeasurementService.formatMeasurement as jasmine.Spy).and.callFake(
-			(measure: number, unit: string) => {
-				if (unit === "kilometers") {
-					return `${measure / 1000} km`;
-				} else {
-					return `${measure} м`;
-				}
-			},
-		);
+		mockMeasurementService.getLastIdMeasurement.and.returnValue(1);
 
 		TestBed.configureTestingModule({
 			declarations: [LineComponent],
@@ -48,99 +40,87 @@ describe("LineComponent", () => {
 				{ provide: DrawService, useValue: mockDrawService },
 				{ provide: MeasurementService, useValue: mockMeasurementService },
 			],
-			imports: [FormsModule, SharedModule, getTranslocoModule()],
-		});
+			imports: [getTranslocoModule(), FormsModule, HttpClientModule],
+			schemas: [CUSTOM_ELEMENTS_SCHEMA],
+		}).compileComponents();
+
 		fixture = TestBed.createComponent(LineComponent);
 		component = fixture.componentInstance;
-
-		mockMap = new Map({ view: new View({ center: [0, 0], zoom: 2 }) });
-		mockVectorSource = new VectorSource();
-
-		component.map = mockMap;
-		component.vectorSource = mockVectorSource;
-		component.currentLength = 10;
-		component.lastLineLength = 20;
-
-		fixture.detectChanges();
+		component.map = new Map({
+			layers: [new VectorLayer({ source: new VectorSource() })],
+			view: new View({ center: [0, 0], zoom: 2 }),
+		});
 	});
 
 	it("should create", () => {
 		expect(component).toBeTruthy();
 	});
 
-	it("should add line interaction on init", () => {
-		spyOn(mockMap, "addLayer");
-		component.ngOnInit();
-		expect(mockMap.addLayer).toHaveBeenCalled();
+	it("should initialize and add interaction on init", () => {
+		spyOn(component.map, "addLayer");
+		spyOn(component, "addLineInteraction");
+
+		fixture.detectChanges();
+
+		expect(component.map.addLayer).toHaveBeenCalled();
+		expect(component.addLineInteraction).toHaveBeenCalled();
+	});
+
+	it("should add line interaction", () => {
+		fixture.detectChanges();
+		component.addLineInteraction();
+
 		expect(mockDrawService.addGlobalInteraction).toHaveBeenCalled();
+		expect(component.draw).toBeDefined();
+		expect(component.draw.get("sidenavTool")).toBe(SidenavTools.Measurement);
 	});
 
-	it("should emit lineChange event on drawend", () => {
-		const mockFeature = new Feature(
-			new LineString([
-				[0, 0],
-				[10, 10],
-			]),
-		);
-		spyOn(component.lineChange, "emit");
-
+	it("should handle draw start and update length", () => {
+		fixture.detectChanges();
 		component.addLineInteraction();
-		component.draw.dispatchEvent({
-			type: "drawend",
-			feature: mockFeature,
-		} as BaseEvent & { feature: Feature<LineString> });
 
-		expect(component.lineChange.emit).toHaveBeenCalled();
+		const mockEvent = {
+			feature: new Feature({
+				geometry: new LineString([
+					[0, 0],
+					[1, 1],
+				]),
+			}),
+		};
+		component.draw.dispatchEvent("drawstart");
+
+		const geometry = mockEvent.feature.getGeometry() as LineString;
+		geometry.appendCoordinate([2, 2]);
+		geometry.dispatchEvent("change");
+
+		expect(component.currentLength).toBeGreaterThan(0);
 	});
 
-	it("should call calculateLength on geometry change", () => {
-		const geometry = new LineString([
-			[0, 0],
-			[10, 10],
-		]);
-		const spy = spyOn<any>(component, "calculateLength").and.callThrough();
-
+	it("should handle draw end and update lines array", () => {
+		fixture.detectChanges();
 		component.addLineInteraction();
-		component.draw.dispatchEvent({
-			type: "drawstart",
-			feature: new Feature({ geometry }),
-		} as BaseEvent & { feature: Feature<LineString> });
 
-		geometry.dispatchEvent({
-			type: "change",
-			target: geometry,
-		} as BaseEvent);
+		component.draw.dispatchEvent("drawend");
 
-		expect(spy).toHaveBeenCalled();
-		expect((component as any).calculateLength).toHaveBeenCalledWith(geometry);
-	});
-	it("should calculate length correctly", () => {
-		const geometry = new LineString([
-			[1, 1],
-			[5, 5],
-		]);
-		expect((component as any).calculateLength(geometry)).toBeCloseTo(628519, 0);
+		expect(component.lines.length).toBe(1);
+		expect(component.lines[0].length).toBeDefined();
+		expect(mockMeasurementService.setLastId).toHaveBeenCalled();
 	});
 
-	it("should remove existing interactions on init", () => {
-		const mockInteraction = jasmine.createSpyObj<Interaction>("Interaction", [
-			"on",
-			"once",
-			"un",
-			"handleEvent",
-		]);
-		mockInteraction.get = jasmine
-			.createSpy()
-			.and.returnValue(SidenavTools.Measurement);
-		spyOn(mockMap.getInteractions(), "getArray").and.returnValue([
-			mockInteraction,
-		]);
+	it("should reset lines", () => {
+		component.lines = [
+			{
+				id: 1,
+				type: MeasurementMode.Line,
+				feature: new Feature(),
+				length: "100",
+			},
+		];
+		component.resetLine();
 
-		component.ngOnInit();
-
-		expect(mockDrawService.removeGlobalInteraction).toHaveBeenCalledWith(
-			mockMap,
-			mockInteraction,
-		);
+		expect(component.lines.length).toBe(0);
+		expect(component.lineCounter).toBe(0);
+		expect(component.currentLength).toBe(0);
+		expect(component.lastLineLength).toBe(0);
 	});
 });

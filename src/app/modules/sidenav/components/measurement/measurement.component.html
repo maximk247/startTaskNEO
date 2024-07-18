@@ -91,7 +91,10 @@
 										class="button__icon"
 										(click)="removeMeasurement(measurement)"
 									>
-										<div [inlineSVG]="'editing/trash.svg'" class="svg-icon"></div>
+										<div
+											[inlineSVG]="'editing/trash.svg'"
+											class="svg-icon"
+										></div>
 									</button>
 								</div>
 							</li>
@@ -112,7 +115,10 @@
 										class="button__icon"
 										(click)="removeMeasurement(measurement)"
 									>
-										<div [inlineSVG]="'editing/trash.svg'" class="svg-icon"></div>
+										<div
+											[inlineSVG]="'editing/trash.svg'"
+											class="svg-icon"
+										></div>
 									</button>
 								</div>
 							</li>
@@ -132,7 +138,10 @@
 										class="button__icon"
 										(click)="removeMeasurement(measurement)"
 									>
-										<div [inlineSVG]="'editing/trash.svg'" class="svg-icon"></div>
+										<div
+											[inlineSVG]="'editing/trash.svg'"
+											class="svg-icon"
+										></div>
 									</button>
 								</div>
 							</li>
@@ -147,6 +156,7 @@
 			type="button"
 			(click)="removeAllMeasurement()"
 			class="button button--rounded"
+			[disabled]="allMeasurements.length === 0"
 		>
 			{{ "clear" | transloco }}
 		</button>

@@ -27,6 +27,7 @@ export class DrawShapeComponent implements OnInit {
 	) {}
 	public ngOnInit() {
 		this.map = this.mapService.getMap();
+		this.figureShape = DrawShapes.Circle;
 	}
 	public addDrawInteraction(shape: string) {
 		let geometryFunction;
@@ -130,6 +131,6 @@ export class DrawShapeComponent implements OnInit {
 	}
 
 	public getActiveFigureShape(shape: string) {
-		return this.figureShape === shape ? 'active-figure-shape': ''
+		return this.figureShape === shape ? "active-figure-shape" : "";
 	}
 }

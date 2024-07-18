@@ -45,6 +45,8 @@ export class DrawComponent implements OnInit {
 		drawPolygon: false,
 		drawFreePolygon: false,
 		drawFigure: false,
+		deleteOnClick: false,
+		deleteAll: false,
 	};
 
 	public updateSize(size: number, tool: DrawToolKey) {
@@ -195,6 +197,14 @@ export class DrawComponent implements OnInit {
 		this.activeInteraction = drawFigure;
 		this.drawService.addGlobalInteraction(this.map, drawFigure);
 		this.mapService.addCursorToMap("DrawPolygon");
+	}
+
+	public deleteOnClick() {
+		this.resetComponentVisibility();
+		this.componentVisibility = {
+			...this.componentVisibility,
+			deleteOnClick: true,
+		};
 	}
 
 	private findActiveTool(obj: DrawTools): string | null {

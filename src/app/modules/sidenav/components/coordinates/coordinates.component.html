@@ -110,7 +110,21 @@
 			type="text"
 			[formControlName]="controlName"
 			class="location-form__field"
+			[ngClass]="{
+				'is-invalid':
+					coordinatesForm.get(controlName)?.invalid &&
+					coordinatesForm.get(controlName)?.touched
+			}"
 		/>
+		<div
+			*ngIf="
+				coordinatesForm.get(controlName)?.invalid &&
+				coordinatesForm.get(controlName)?.touched
+			"
+			class="error-message"
+		>
+			Введите только цифры
+		</div>
 		<span class="location-form__col-name">{{ label | transloco }}</span>
 	</section>
 </ng-template>

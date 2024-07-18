@@ -9,6 +9,8 @@ export interface DrawTools {
 	drawPolygon: boolean;
 	drawFreePolygon: boolean;
 	drawFigure: boolean;
+	deleteOnClick: boolean;
+	deleteAll: boolean;
 }
 
 export type DrawToolKey = keyof DrawTools;

@@ -11,7 +11,6 @@ import { FormsModule } from "@angular/forms";
 import { SpatialReferenceService } from "./modules/shared/spatial-reference.service";
 import { MapModule } from "./modules/map/map.module";
 import { ModalModule } from "./modules/modal/modal.module";
-
 import { SidenavModule } from "./modules/sidenav/sidenav.module";
 import { SharedModule } from "./modules/shared/shared.module";
 

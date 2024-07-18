@@ -171,3 +171,13 @@ button.button {
 	display: flex;
 	gap: 1rem;
 }
+
+input.ng-invalid.ng-touched {
+	border: 2px solid red;
+}
+
+.error-message {
+	margin-top: 5px;
+	font-size: 12px;
+	color: red;
+}

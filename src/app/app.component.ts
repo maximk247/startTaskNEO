@@ -27,4 +27,5 @@ export class AppComponent {
 	public getButtonClass(mode: MenuMode): string {
 		return this.menuMode === mode && this.isWindowVisible ? "active" : "";
 	}
+
 }

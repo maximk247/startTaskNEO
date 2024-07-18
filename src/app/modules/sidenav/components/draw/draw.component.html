@@ -56,6 +56,8 @@
 		<span class="drawing-title">Инструменты редактирования</span>
 		<div class="draw-container__tools">
 			<app-draw-delete-on-click
+				(click)="deleteOnClick()"
+				[ngClass]="getActiveTool('deleteOnClick')"
 				(interactionDeleted)="deleteActiveInteraction()"
 			></app-draw-delete-on-click>
 			<app-draw-delete-all
