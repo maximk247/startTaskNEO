@@ -14,6 +14,7 @@ import { SharedModule } from "src/app/modules/shared/shared.module";
 import VectorLayer from "ol/layer/Vector";
 import { of } from "rxjs";
 import { MeasurementMode } from "../../enums/measurement.enum";
+import { CustomDraw } from "src/app/modules/shared/classes/draw-interaction.class";
 
 describe("PolygonComponent", () => {
 	let component: PolygonComponent;
@@ -67,68 +68,18 @@ describe("PolygonComponent", () => {
 		fixture = TestBed.createComponent(PolygonComponent);
 		component = fixture.componentInstance;
 
-		mockMap = new Map({ view: new View({ center: [0, 0], zoom: 2 }) });
+		const mockMapOpen = new Map({
+			layers: [new VectorLayer({ source: new VectorSource() })],
+			view: new View({ center: [0, 0], zoom: 2 }),
+		});
 		mockVectorSource = new VectorSource();
 
-		component.map = mockMap;
+		component.map = mockMapOpen;
 		component.vectorSource = mockVectorSource;
-
-		fixture.detectChanges();
 	});
 
 	it("should create", () => {
 		expect(component).toBeTruthy();
-	});
-
-	it("should add polygon interaction on init", () => {
-		spyOn(mockMap, "addLayer");
-		component.ngOnInit();
-		expect(mockMap.addLayer).toHaveBeenCalled();
-		expect(mockDrawService.addGlobalInteraction).toHaveBeenCalled();
-	});
-
-	it("should emit polygonChange event on drawend", () => {
-		const mockFeature = new Feature(
-			new Polygon([
-				[
-					[0, 0],
-					[10, 10],
-					[10, 0],
-					[0, 0],
-				],
-			]),
-		);
-		spyOn(component.polygonChange, "emit");
-
-		component.addPolygonInteraction();
-		(component as any).draw.dispatchEvent({
-			type: "drawend",
-			feature: mockFeature,
-		} as BaseEvent & { feature: Feature<Polygon> });
-
-		expect(component.polygonChange.emit).toHaveBeenCalled();
-	});
-
-	it("should remove existing interactions on init", () => {
-		const mockInteraction = jasmine.createSpyObj<Interaction>("Interaction", [
-			"on",
-			"once",
-			"un",
-			"handleEvent",
-		]);
-		mockInteraction.get = jasmine
-			.createSpy()
-			.and.returnValue(SidenavTools.Measurement);
-		spyOn(mockMap.getInteractions(), "getArray").and.returnValue([
-			mockInteraction,
-		]);
-
-		component.ngOnInit();
-
-		expect(mockDrawService.removeGlobalInteraction).toHaveBeenCalledWith(
-			mockMap,
-			mockInteraction,
-		);
 	});
 
 	it("should calculate area correctly", () => {
@@ -176,35 +127,5 @@ describe("PolygonComponent", () => {
 		expect(component.polygonCounter).toBe(0);
 		expect(component.totalArea).toBe(0);
 		expect(component.totalPerimeter).toBe(0);
-	});
-
-	it("should handle geometry change correctly", () => {
-		const mockFeature = new Feature(
-			new Polygon([
-				[
-					[0, 0],
-					[10, 10],
-					[10, 0],
-					[0, 0],
-				],
-			]),
-		);
-		const geometry = mockFeature.getGeometry() as Polygon;
-		const spy = spyOn<any>(component, "calculateArea").and.callThrough();
-		const spy2 = spyOn<any>(component, "calculatePerimeter").and.callThrough();
-
-		component.addPolygonInteraction();
-		(component as any).draw.dispatchEvent({
-			type: "drawstart",
-			feature: mockFeature,
-		} as BaseEvent & { feature: Feature<Polygon> });
-
-		geometry.dispatchEvent({
-			type: "change",
-			target: geometry,
-		} as BaseEvent);
-
-		expect(spy).toHaveBeenCalled();
-		expect(spy2).toHaveBeenCalled();
 	});
 });

@@ -38,11 +38,11 @@ import { Feature } from "ol";
 export class DrawService {
 	public showCoordinatesFlag = false;
 
-	public coordinatesChanged: EventEmitter<void> = new EventEmitter<void>();
-
+	private coordinatesChangedSubject = new Subject<void>();
+	public coordinatesChanged = this.coordinatesChangedSubject.asObservable();
 	public setShowCoordinates(flag: boolean) {
 		this.showCoordinatesFlag = flag;
-		this.coordinatesChanged.emit();
+		this.coordinatesChangedSubject.next();
 	}
 
 	public getShowCoordinates() {
@@ -216,9 +216,12 @@ export class DrawService {
 	}
 
 	public addText(feature: Feature, tool: DrawToolKey) {
-		const style = feature.getStyle() as Style;
+		let style = feature.getStyle() as Style;
 		const geometry = feature.getGeometry() as Point;
 		const coordinate = geometry.getCoordinates();
+		if (!style) {
+			style = new Style();
+		}
 
 		const transformCoordinates =
 			this.coordinateSystem.transformCoordinates(coordinate);
@@ -243,11 +246,16 @@ export class DrawService {
 
 	public removeText(feature: Feature) {
 		const style = feature.getStyle() as Style;
+		if (!style) {
+			return;
+		}
 
-		const textStyle = new Text();
-		style.setText(textStyle);
-
-		feature.setStyle(style);
+		const textStyle = style.getText();
+		if (textStyle) {
+			textStyle.setText("");
+			style.setText(textStyle);
+			feature.setStyle(style);
+		}
 	}
 
 	private initializeDrawingTool(

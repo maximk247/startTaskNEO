@@ -29,7 +29,6 @@ export class DrawPointComponent implements OnInit, DoCheck {
 	public showCoordinates: boolean;
 	public showCoordinatesFlag: boolean | undefined;
 	public coordinate: Array<Coordinate>;
-	public coordinatesSubscription: Subscription;
 
 	@Input() public tool: string;
 	@Output() public pointSizeChange: EventEmitter<number> =
@@ -46,10 +45,10 @@ export class DrawPointComponent implements OnInit, DoCheck {
 		this.pointSize = this.drawService.getSize(this.tool);
 		this.showCoordinatesFlag = this.drawService.getShowCoordinates();
 		this.showCoordinates = this.showCoordinatesFlag;
-		this.coordinatesSubscription =
-			this.drawService.coordinatesChanged.subscribe(() => {
-				this.updateCoordinates();
-			});
+
+		this.drawService.coordinatesChanged.subscribe(() => {
+			this.updateCoordinates();
+		});
 	}
 
 	public ngDoCheck() {
@@ -84,7 +83,7 @@ export class DrawPointComponent implements OnInit, DoCheck {
 	}
 
 	public getActive(shape: string) {
-		return this.drawService.getPointShape() === shape ? 'active': ''
+		return this.drawService.getPointShape() === shape ? "active" : "";
 	}
 
 	public updatePointSize() {

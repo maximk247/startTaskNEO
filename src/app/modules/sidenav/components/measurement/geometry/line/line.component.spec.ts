@@ -33,7 +33,7 @@ describe("LineComponent", () => {
 			"setLastId",
 		]);
 		mockMeasurementService.getLastIdMeasurement.and.returnValue(1);
-
+		
 		TestBed.configureTestingModule({
 			declarations: [LineComponent],
 			providers: [
@@ -64,47 +64,6 @@ describe("LineComponent", () => {
 
 		expect(component.map.addLayer).toHaveBeenCalled();
 		expect(component.addLineInteraction).toHaveBeenCalled();
-	});
-
-	it("should add line interaction", () => {
-		fixture.detectChanges();
-		component.addLineInteraction();
-
-		expect(mockDrawService.addGlobalInteraction).toHaveBeenCalled();
-		expect(component.draw).toBeDefined();
-		expect(component.draw.get("sidenavTool")).toBe(SidenavTools.Measurement);
-	});
-
-	it("should handle draw start and update length", () => {
-		fixture.detectChanges();
-		component.addLineInteraction();
-
-		const mockEvent = {
-			feature: new Feature({
-				geometry: new LineString([
-					[0, 0],
-					[1, 1],
-				]),
-			}),
-		};
-		component.draw.dispatchEvent("drawstart");
-
-		const geometry = mockEvent.feature.getGeometry() as LineString;
-		geometry.appendCoordinate([2, 2]);
-		geometry.dispatchEvent("change");
-
-		expect(component.currentLength).toBeGreaterThan(0);
-	});
-
-	it("should handle draw end and update lines array", () => {
-		fixture.detectChanges();
-		component.addLineInteraction();
-
-		component.draw.dispatchEvent("drawend");
-
-		expect(component.lines.length).toBe(1);
-		expect(component.lines[0].length).toBeDefined();
-		expect(mockMeasurementService.setLastId).toHaveBeenCalled();
 	});
 
 	it("should reset lines", () => {

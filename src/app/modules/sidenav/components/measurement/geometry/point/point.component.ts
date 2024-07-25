@@ -189,7 +189,6 @@ export class PointComponent implements OnInit, MeasurementComponentBase {
 			} else if (i === 1 && latitudeSign) {
 				transformedCoordinates[i] = "-" + Math.abs(transformedCoordinates[i]);
 			}
-
 		}
 
 		return transformedCoordinates;

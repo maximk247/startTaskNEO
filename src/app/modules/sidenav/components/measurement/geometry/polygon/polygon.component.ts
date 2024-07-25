@@ -27,7 +27,7 @@ export class PolygonComponent implements OnInit, MeasurementComponentBase {
 
 	public polygons: Array<MeasurementPolygon> = [];
 	public polygonCounter = 1;
-	public draw: CustomDraw;
+	public draw: CustomDraw ;
 
 	public selectedAreaUnit = "squareMeters";
 	public selectedUnit = "meters";

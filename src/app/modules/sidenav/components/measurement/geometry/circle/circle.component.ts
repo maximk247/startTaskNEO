@@ -24,7 +24,7 @@ import { CustomDraw } from "src/app/modules/shared/classes/draw-interaction.clas
 })
 export class CircleComponent implements OnInit, MeasurementComponentBase {
 	@Input() public map: Map;
-	@Input() public vectorSource: VectorSource;
+	@Input() public vectorSource: VectorSource = new VectorSource();
 	@Output() public circleChange = new EventEmitter<MeasurementType>();
 
 	public circles: Array<MeasurementCircle> = [];

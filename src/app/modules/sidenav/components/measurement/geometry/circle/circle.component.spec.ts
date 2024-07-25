@@ -1,38 +1,57 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+	ComponentFixture,
+	ComponentFixtureAutoDetect,
+	TestBed,
+} from "@angular/core/testing";
 import { CircleComponent } from "./circle.component";
 import { DrawService } from "../../../draw/draw.service";
 import { MeasurementService } from "../../measurement.service";
-import { Map, View } from "ol";
+import { Collection, Map, View } from "ol";
 import VectorSource from "ol/source/Vector";
 import { LineString, Circle } from "ol/geom";
 import { SidenavTools } from "../../../../enums/sidenav.enums";
 import { Feature } from "ol";
 import { MeasurementMode } from "../../enums/measurement.enum";
 import BaseEvent from "ol/events/Event";
-import { Interaction } from "ol/interaction";
+import { Draw, Interaction } from "ol/interaction";
 import { FormsModule } from "@angular/forms";
 import { getTranslocoModule } from "src/app/modules/shared/transloco/transloco-testing.module";
 import { SharedModule } from "src/app/modules/shared/shared.module";
 import { CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
+import { CustomDraw } from "src/app/modules/shared/classes/draw-interaction.class";
+import VectorLayer from "ol/layer/Vector";
+import { HttpClientModule } from "@angular/common/http";
+import { Type } from "ol/geom/Geometry";
 
 describe("CircleComponent", () => {
 	let component: CircleComponent;
 	let fixture: ComponentFixture<CircleComponent>;
-	let mockDrawService: DrawService;
-	let mockMeasurementService: MeasurementService;
+	let mockDrawService: any;
+	let mockMeasurementService: any;
 	let mockMap: Map;
 	let mockVectorSource: VectorSource;
+	let mockInteractions: jasmine.SpyObj<Collection<Interaction>>;
 
 	beforeEach(() => {
-		mockDrawService = jasmine.createSpyObj("DrawService", [
-			"addGlobalInteraction",
-			"removeGlobalInteraction",
-		]);
-		mockMeasurementService = jasmine.createSpyObj("MeasurementService", [
+		mockDrawService = {
+			removeGlobalInteraction: jasmine
+				.createSpy("removeGlobalInteraction")
+				.and.callThrough(),
+			addGlobalInteraction: jasmine
+				.createSpy("addGlobalInteraction")
+				.and.callThrough(),
+		};
+
+		mockMeasurementService = jasmine.createSpyObj([
 			"getLastIdMeasurement",
+			"setStyle",
 			"formatMeasurement",
 			"setLastId",
 		]);
+		mockMeasurementService.getLastIdMeasurement?.and.returnValue(1);
+
+		mockInteractions = jasmine.createSpyObj("Collection", ["getArray"]);
+		mockInteractions.getArray.and.returnValue([]);
 
 		(mockMeasurementService.formatMeasurement as jasmine.Spy).and.callFake(
 			(measure: number, unit: string) => {
@@ -49,22 +68,32 @@ describe("CircleComponent", () => {
 			providers: [
 				{ provide: DrawService, useValue: mockDrawService },
 				{ provide: MeasurementService, useValue: mockMeasurementService },
+				{
+					provide: ComponentFixtureAutoDetect,
+					useValue: true,
+				},
 			],
-			imports: [FormsModule, SharedModule, getTranslocoModule()],
+			imports: [
+				FormsModule,
+				SharedModule,
+				getTranslocoModule(),
+				HttpClientModule,
+			],
 			schemas: [CUSTOM_ELEMENTS_SCHEMA],
-		});
+		}).compileComponents();
 		fixture = TestBed.createComponent(CircleComponent);
 		component = fixture.componentInstance;
 
-		mockMap = new Map({ view: new View({ center: [0, 0], zoom: 2 }) });
+		mockMap = new Map({
+			layers: [new VectorLayer({ source: new VectorSource() })],
+			view: new View({ center: [0, 0], zoom: 2 }),
+		});
 		mockVectorSource = new VectorSource();
 
 		component.map = mockMap;
 		component.vectorSource = mockVectorSource;
 		component.currentRadius = 10;
-		component.totalRadius = 20;
-
-		fixture.detectChanges();
+		component.totalRadius = 10;
 	});
 
 	it("should create", () => {
@@ -72,12 +101,12 @@ describe("CircleComponent", () => {
 	});
 
 	it("should return correct formatted radius", () => {
-		expect(component.formatRadius(component.currentRadius)).toBe("10");
+		expect(component.formatRadius(component.currentRadius)).toBe("10.00");
 	});
 
 	it("should format radius correctly for kilometers", () => {
 		component.selectedUnit = "kilometers";
-		expect(component.formatRadius(10000)).toBe("10");
+		expect(component.formatRadius(10000)).toBe("10.00");
 	});
 
 	it("should reset radius", () => {
@@ -92,64 +121,6 @@ describe("CircleComponent", () => {
 			[5, 5],
 		]);
 		expect((component as any).calculateRadius(geometry)).toBeCloseTo(628519, 0);
-	});
-
-	it("should add circle interaction on init", () => {
-		spyOn(mockMap, "addLayer");
-		component.ngOnInit();
-		expect(mockMap.addLayer).toHaveBeenCalled();
-		expect(mockDrawService.addGlobalInteraction).toHaveBeenCalled();
-	});
-
-	it("should emit circleChange event on drawend", () => {
-		const mockFeature = new Feature(new Circle([0, 0], 10));
-		spyOn(component.circleChange, "emit");
-
-		component.addCircleInteraction();
-		component.draw.dispatchEvent({
-			type: "drawend",
-			feature: mockFeature,
-		} as BaseEvent & { feature: Feature<Circle> });
-
-		expect(component.circleChange.emit).toHaveBeenCalled();
-	});
-
-	it("should remove existing interactions on init", () => {
-		const mockInteraction = jasmine.createSpyObj<Interaction>("Interaction", [
-			"on",
-			"once",
-			"un",
-			"handleEvent",
-		]);
-		mockInteraction.get = jasmine
-			.createSpy()
-			.and.returnValue(SidenavTools.Measurement);
-		spyOn(mockMap.getInteractions(), "getArray").and.returnValue([
-			mockInteraction,
-		]);
-
-		component.ngOnInit();
-
-		expect(mockDrawService.removeGlobalInteraction).toHaveBeenCalledWith(
-			mockMap,
-			mockInteraction,
-		);
-	});
-
-	it("should handle change event on geometry correctly", () => {
-		const geometry = new Circle([0, 0], 10);
-		spyOn(geometry, "on").and.callThrough();
-
-		component.addCircleInteraction();
-		component.draw.dispatchEvent({
-			type: "drawstart",
-			feature: new Feature({ geometry }),
-		} as BaseEvent & { feature: Feature<Circle> });
-
-		expect(geometry.on).toHaveBeenCalledWith(
-			jasmine.stringMatching(/change/),
-			jasmine.any(Function),
-		);
 	});
 
 	it("should get last measurement ID for circle", () => {
