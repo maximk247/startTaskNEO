@@ -1,0 +1,16 @@
+:host ::ng-deep {
+	.rotate {
+		transform: rotate(45deg);
+		transform-origin: center;
+	}
+
+	svg {
+		width: 14px;
+		height: 14px;
+	}
+
+	.active {
+		color: var(--accent-100);
+		background-color: var(--primary-a100);
+	}
+}

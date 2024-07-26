@@ -1,0 +1,22 @@
+<div class="size-choice">
+	<button
+		type="button"
+		(click)="decreaseSize()"
+		class="button button__icon button--primary"
+	>
+		-
+	</button>
+	<input
+		type="text"
+		[(ngModel)]="size"
+		(change)="updateSize()"
+		class="input form-input"
+	/>
+	<button
+		type="button"
+		(click)="increaseSize()"
+		class="button button__icon button--primary"
+	>
+		+
+	</button>
+</div>

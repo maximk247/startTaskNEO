@@ -1,0 +1,11 @@
+<div class="container__header">
+    <span class="container-text">Система координат</span>
+    <select (change)="onChange($event)" class="select">
+        <option
+            *ngFor="let spatialReference of spatialReferences"
+            [value]="spatialReference.id"
+        >
+            {{ spatialReference.name }}
+        </option>
+    </select>
+</div>

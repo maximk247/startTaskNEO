@@ -1,5 +1,4 @@
-import { isDevMode, NgModule } from "@angular/core";
-
+import { NgModule, isDevMode } from "@angular/core";
 import { TranslocoModule, provideTransloco } from "@ngneat/transloco";
 import { TranslocoHttpLoader } from "./transloco.service";
 

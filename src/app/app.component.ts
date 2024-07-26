@@ -1,4 +1,4 @@
-import { Component} from "@angular/core";
+import { Component } from "@angular/core";
 import { MenuMode } from "./interfaces/app.interface";
 
 @Component({
@@ -7,8 +7,11 @@ import { MenuMode } from "./interfaces/app.interface";
 	styleUrls: ["./app.component.scss"],
 })
 export class AppComponent {
-
 	public menuMode: MenuMode;
+
+	public updateVisible(visible: boolean) {
+		this.isWindowVisible = visible;
+	}
 
 	public isWindowVisible = false;
 
@@ -24,4 +27,5 @@ export class AppComponent {
 	public getButtonClass(mode: MenuMode): string {
 		return this.menuMode === mode && this.isWindowVisible ? "active" : "";
 	}
+
 }

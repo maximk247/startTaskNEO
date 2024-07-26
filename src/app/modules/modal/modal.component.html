@@ -3,29 +3,37 @@
 		class="modal-container"
 		cdkDragBoundary=".box-boundary"
 		cdkDrag
-		[ngClass]="{'turn': turn}"
+		[ngClass]="{ turn: turn, 'menu-width': mode === 'menu' }"
 	>
 		<header class="modal-container__header" cdkDragHandle>
-			<div class="header__title" [ngSwitch]="mode">
-				<span *ngSwitchCase="'menu'">{{ "menu" | transloco }}</span>
-				<span *ngSwitchCase="'measurement'">{{
+			<div [ngSwitch]="mode">
+				<span class="header__title" *ngSwitchCase="'menu'">{{
+					"menu" | transloco
+				}}</span>
+				<span class="header__title" *ngSwitchCase="'measurement'">{{
 					"measurement" | transloco
 				}}</span>
-				<span *ngSwitchCase="'coordinates'">{{
+				<span class="header__title" *ngSwitchCase="'coordinates'">{{
 					"coordinates" | transloco
 				}}</span>
-				<span *ngSwitchCase="'draw'">{{ "draw" | transloco }}</span>
+				<span class="header__title" *ngSwitchCase="'draw'">{{
+					"draw" | transloco
+				}}</span>
 			</div>
 			<div class="header__buttons" *ngIf="mode !== 'menu'; else profileIcon">
-				<button type="button" (click)="turn = !turn">
+				<button type="button" (click)="turn = !turn" class="header__button">
 					<div [inlineSVG]="'turn.svg'"></div>
 				</button>
-				<button type="button" (click)="isVisible = false">
+				<button
+					type="button"
+					(click)="cancelModal()"
+					class="header__button"
+				>
 					<div [inlineSVG]="'cancel.svg'"></div>
 				</button>
 			</div>
 			<ng-template #profileIcon>
-				<div [inlineSVG]="'profile.svg'"></div>
+				<div [inlineSVG]="'profile.svg'" class="profile-icon"></div>
 			</ng-template>
 		</header>
 		<div class="modal-container__content" [ngSwitch]="mode">

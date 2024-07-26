@@ -1,0 +1,73 @@
+.coordinates-container {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+
+	&__main {
+		margin-bottom: 2vh;
+		font-size: 12px;
+	}
+
+	&__footer {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+}
+
+.location-form {
+	margin-bottom: 2vh;
+
+	&__section {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		margin-bottom: 2vh;
+
+		&__coordinate {
+			padding-right: 0.25rem;
+		}
+	}
+
+	&__field {
+		width: 100%;
+		height: 29px;
+		padding: 6px 8px;
+		font-size: 12px;
+		font-weight: 400;
+		line-height: 1.4166rem;
+		border: 1px solid #d8d8d8;
+		border-radius: 2px;
+		outline: none;
+	}
+
+	&__label {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		margin-bottom: 1.1vh;
+		font-size: 10px;
+		text-transform: uppercase;
+		letter-spacing: 0.45px;
+	}
+
+	&__checkbox {
+		display: flex;
+		gap: 8px;
+		align-items: center;
+		justify-content: flex-start;
+	}
+
+	&__row {
+		display: flex;
+		gap: 0.5vw;
+		justify-content: space-between;
+	}
+
+	&__col-name {
+		display: block;
+		margin-top: 0.3vh;
+		margin-left: 0.6667rem;
+		font-size: 10px;
+	}
+}

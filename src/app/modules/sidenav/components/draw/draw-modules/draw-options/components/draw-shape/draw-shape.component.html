@@ -1,0 +1,37 @@
+<div class="shape-container">
+	<button
+		(click)="addDrawInteraction('Arrow')"
+		class="button-shape"
+		[ngClass]="getActiveFigureShape('Arrow')"
+	>
+		<div [inlineSVG]="'forms_figure/tool-arrow.svg'"></div>
+	</button>
+	<button
+		(click)="addDrawInteraction('Rectangle')"
+		class="button-shape"
+		[ngClass]="getActiveFigureShape('Rectangle')"
+	>
+		<div [inlineSVG]="'forms_figure/tool-rectangle.svg'"></div>
+	</button>
+	<button
+		(click)="addDrawInteraction('Square')"
+		class="button-shape"
+		[ngClass]="getActiveFigureShape('Square')"
+	>
+		<div [inlineSVG]="'forms_figure/tool-square.svg'"></div>
+	</button>
+	<button
+		(click)="addDrawInteraction('Triangle')"
+		class="button-shape"
+		[ngClass]="getActiveFigureShape('Triangle')"
+	>
+		<div [inlineSVG]="'forms_figure/tool-triangle.svg'"></div>
+	</button>
+	<button
+		(click)="addDrawInteraction('Circle')"
+		class="button-shape"
+		[ngClass]="getActiveFigureShape('Circle')"
+	>
+		<div [inlineSVG]="'forms_figure/tool-circle.svg'"></div>
+	</button>
+</div>

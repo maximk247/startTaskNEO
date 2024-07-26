@@ -1,0 +1,11 @@
+.menu-container {
+	&__logout {
+		width: 100%;
+		padding: 1.25em 2.08em;
+		font-size: 12px;
+		color: var(--font-color);
+		cursor: pointer;
+		background-color: var(--primary-100);
+		border: none;
+	}
+}

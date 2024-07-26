@@ -1,0 +1,27 @@
+:host ::ng-deep {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 2vh;
+
+	.button {
+		width: auto;
+		background-color: var(--primary-a100);
+		border-radius: 50%;
+	}
+
+	.form-input {
+		height: 29px;
+		padding: 5px 4px 6px;
+		font-size: 14px;
+		font-weight: 400;
+		line-height: 1.2;
+		color: var(--accent-500);
+		border: 1px solid var(--accent-700);
+		border-radius: 0;
+		outline: 0;
+		box-shadow: none;
+		transition-duration: 0.1s;
+	}
+}

@@ -1,0 +1,88 @@
+<div [formGroup]="coordinateForm">
+	<app-coordinate-system
+		[spatialReferences]="spatialReferences"
+		(selectedReferenceChange)="onSelectedReferenceChange($event)"
+	></app-coordinate-system>
+	<div class="list__row">
+		<span>{{ "latitude" | transloco }} (X):</span>
+		<span>{{ "longitude" | transloco }} (Y):</span>
+		<button
+			type="button"
+			(click)="removeAllCoordinates()"
+			class="button__icon list__button"
+		>
+			<div [inlineSVG]="'/editing/trash.svg'"></div>
+		</button>
+	</div>
+	<ul class="list__menu">
+		<ng-container formArrayName="points">
+			<li
+				*ngFor="let point of points.controls; let i = index"
+				[formGroupName]="i"
+				class="list__row"
+			>
+				<input
+					class="list__field list__input"
+					type="text"
+					formControlName="x"
+					[id]="'x' + i"
+					numbers
+				/>
+				<input
+					class="list__field list__input"
+					type="text"
+					formControlName="y"
+					[id]="'y' + i"
+					numbers
+				/>
+
+				<button
+					class="list__button list__button--primary minus"
+					type="button"
+					(click)="removePoint(i)"
+					*ngIf="points.length > i + 1"
+				>
+					<div [inlineSVG]="'/editing/minus.svg'"></div>
+				</button>
+				<button
+					class="list__button list__button--primary plus"
+					type="button"
+					(click)="addPoint()"
+					*ngIf="points.length === i + 1"
+				>
+					<div [inlineSVG]="'/editing/plus.svg'"></div>
+				</button>
+			</li>
+		</ng-container>
+	</ul>
+	<div [ngSwitch]="tool">
+		<div *ngSwitchCase="drawPoint">
+			<button
+				type="button"
+				(click)="addPointToMap()"
+				class="button button--rounded"
+			>
+				{{ "addToMap" | transloco }}
+			</button>
+		</div>
+		<div *ngSwitchCase="drawLine">
+			<button
+				type="button"
+				(click)="addLineToMap()"
+				class="button button--rounded"
+			>
+				{{ "addToMap" | transloco }}
+			</button>
+		</div>
+		<div *ngSwitchCase="drawPolygon">
+			<button
+				type="button"
+				(click)="addPolygonToMap()"
+				class="button button--rounded"
+			>
+				{{ "addToMap" | transloco }}
+			</button>
+		</div>
+	</div>
+</div>
+<app-notification #notification></app-notification>

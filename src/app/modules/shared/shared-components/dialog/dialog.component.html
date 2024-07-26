@@ -1,0 +1,119 @@
+<div
+	class="dialog-container"
+	cdkDragBoundary=".mat-mdc-dialog-container "
+	appDraggableDialog
+>
+	<header class="dialog-container__header">
+		<p>{{ "selectColor" | transloco }}</p>
+		<button
+			type="button"
+			class="dialog-container__close"
+			(click)="onClose('reject')"
+		>
+			<div [inlineSVG]="'cancel.svg'"></div>
+		</button>
+	</header>
+	<div class="dialog-container__main">
+		<span
+			[(colorPicker)]="newColor"
+			[style.background]="newColor"
+			[cpToggle]="true"
+			[cpWidth]="'400px'"
+			[cpDialogDisplay]="'inline'"
+			[cpOutputFormat]="'rgba'"
+			[cpAlphaChannel]="'disabled'"
+			(colorPickerChange)="onColorChange($event)"
+			[cpUseRootViewContainer]="true"
+			[cpPresetColors]="[
+				'rgb(255, 170, 170)',
+				'rgb(255, 86, 86)',
+				'rgb(255, 0, 0)',
+				'rgb(191, 0, 0)',
+				'rgb(127, 0, 0)',
+				'rgb(255, 255, 255)',
+				'rgb(255, 212, 170)',
+				'rgb(255, 170, 86)',
+				'rgb(255, 127, 0)',
+				'rgb(191, 95, 0)',
+				'rgb(127, 63, 0)',
+				'rgb(229, 229, 229)',
+				'rgb(255, 255, 170)',
+				'rgb(255, 255, 86)',
+				'rgb(255, 255, 0)',
+				'rgb(191, 191, 0)',
+				'rgb(127, 127, 0)',
+				'rgb(204, 204, 204)',
+				'rgb(212, 255, 170)',
+				'rgb(170, 255, 86)',
+				'rgb(127, 255, 0)',
+				'rgb(95, 191, 0)',
+				'rgb(63, 127, 0)',
+				'rgb(178, 178, 178)',
+				'rgb(170, 255, 170)',
+				'rgb(86, 255, 86)',
+				'rgb(0, 255, 0)',
+				'rgb(0, 191, 0)',
+				'rgb(0, 127, 0)',
+				'rgb(153, 153, 153)',
+				'rgb(170, 255, 212)',
+				'rgb(86, 255, 170)',
+				'rgb(0, 255, 127)',
+				'rgb(0, 191, 95)',
+				'rgb(0, 127, 63)',
+				'rgb(127, 127, 127)',
+				'rgb(170, 255, 255)',
+				'rgb(86, 255, 255)',
+				'rgb(0, 255, 255)',
+				'rgb(0, 191, 191)',
+				'rgb(0, 127, 127)',
+				'rgb(102, 102, 102)',
+				'rgb(170, 212, 255)',
+				'rgb(86, 170, 255)',
+				'rgb(0, 127, 255)',
+				'rgb(0, 95, 191)',
+				'rgb(0, 63, 127)',
+				'rgb(76, 76, 76)',
+				'rgb(170, 170, 255)',
+				'rgb(86, 86, 255)',
+				'rgb(0, 0, 255)',
+				'rgb(0, 0, 191)',
+				'rgb(0, 0, 127)',
+				'rgb(51, 51, 51)',
+				'rgb(212, 170, 255)',
+				'rgb(170, 86, 255)',
+				'rgb(127, 0, 255)',
+				'rgb(95, 0, 191)',
+				'rgb(63, 0, 127)',
+				'rgb(25, 25, 25)',
+				'rgb(255, 170, 255)',
+				'rgb(255, 86, 170)',
+				'rgb(255, 0, 255)',
+				'rgb(191, 0, 191)',
+				'rgb(127, 0, 127)',
+				'rgb(0, 0, 0)',
+				'rgb(255, 170, 212)',
+				'rgb(255, 86, 255)',
+				'rgb(255, 0, 127)',
+				'rgb(191, 0, 95)',
+				'rgb(127, 0, 63)'
+			]"
+		></span>
+		<div class="color__views">
+			<div class="color__watch">
+				<div [style.background]="newColor" class="color color--new"></div>
+				<div [style.background]="color" class="color color--current"></div>
+			</div>
+		</div>
+		<div class="color__actions">
+			<span></span>
+			<div class="dialog-container__buttons">
+				<button mat-button type="button" (click)="onClose('accept')">
+					{{ "accept" | transloco }}
+				</button>
+				<button mat-button type="button" (click)="onClose('reject')">
+					{{ "reject" | transloco }}
+				</button>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,27 @@
+:host ::ng-deep {
+	svg {
+		width: 14px;
+		height: 14px;
+	}
+
+	.button-shape {
+		padding: 8px;
+		cursor: pointer;
+		background-color: transparent;
+		border: none;
+
+		&:hover {
+			color: var(--primary-100);
+			background: var(--primary-a100);
+		}
+	}
+
+	.shape-container {
+		display: flex;
+	}
+
+	.active-figure-shape {
+		color: var(--primary-100);
+		background-color: var(--primary-a100);
+	}
+}

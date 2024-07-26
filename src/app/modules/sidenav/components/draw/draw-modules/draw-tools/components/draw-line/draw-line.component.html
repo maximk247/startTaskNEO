@@ -1,0 +1,29 @@
+<div>
+	<h2 class="drawing-title">{{ "outline" | transloco }}</h2>
+	<select (change)="setStrokeStyle($event)" class="select-container">
+		<option value="Solid">Сплошной</option>
+		<option value="Dashed">Штрих</option>
+		<option value="DashDot">Штрихпунктирный</option>
+		<option value="DashDotDot">Штрихпунктирный с двумя точками</option>
+		<option value="Dotted">Точки</option>
+	</select>
+</div>
+<h2 class="drawing-title">{{ "strokeThickness" | transloco }}</h2>
+<app-draw-size
+	[(size)]="lineSize"
+	(sizeChange)="updateLineSize()"
+></app-draw-size>
+<h2 class="drawing-title">{{ "strokeColor" | transloco }}</h2>
+<app-draw-color [color]="lineColor" [tool]="tool"></app-draw-color>
+<h2 class="drawing-title">{{ "transparency" | transloco }}</h2>
+<app-draw-transparency [tool]="tool"></app-draw-transparency>
+<div class="checkbox-container">
+	<label class="checkbox-container__item">
+		<input type="checkbox" [(ngModel)]="addCoordinates" />
+		<span>{{ "addPoint" | transloco }}</span>
+	</label>
+</div>
+<app-coordinate-input
+	*ngIf="addCoordinates"
+	[tool]="tool"
+></app-coordinate-input>
