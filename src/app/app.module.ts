@@ -14,21 +14,6 @@ import { ModalModule } from "./modules/modal/modal.module";
 import { SidenavModule } from "./modules/sidenav/sidenav.module";
 import { SharedModule } from "./modules/shared/shared.module";
 
-function initializeKeycloak(keycloak: KeycloakService) {
-	return () =>
-		keycloak.init({
-			config: {
-				url: "https://gs-keycloak.neostk.com",
-				realm: "geo-solution",
-				clientId: "neoportal",
-			},
-			initOptions: {
-				onLoad: "check-sso",
-				silentCheckSsoRedirectUri:
-					window.location.origin + "/assets/silent-check-sso.html",
-			},
-		});
-}
 @NgModule({
 	declarations: [AppComponent],
 	exports: [],
@@ -49,12 +34,6 @@ function initializeKeycloak(keycloak: KeycloakService) {
 		}),
 	],
 	providers: [
-		{
-			provide: APP_INITIALIZER,
-			useFactory: initializeKeycloak,
-			multi: true,
-			deps: [KeycloakService],
-		},
 		SpatialReferenceService,
 	],
 	bootstrap: [AppComponent],

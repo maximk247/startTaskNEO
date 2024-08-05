@@ -195,11 +195,11 @@ export class MeasurementComponent implements OnInit {
 		component: any,
 		resetMethod: string,
 	) {
-		const measurementsLeft = this.allMeasurements.filter(
+		const measurements = this.allMeasurements.filter(
 			(m) => m?.type === type,
 		);
 
-		if (measurementsLeft.length === 0 && component) {
+		if (measurements.length === 0 && component) {
 			component[resetMethod]();
 		}
 	}
